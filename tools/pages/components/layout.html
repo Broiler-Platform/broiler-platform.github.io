@@ -1,0 +1,135 @@
+{"title": "Broiler.Layout — Broiler Platform", "desc": "A graphics-independent CSS box-model and layout engine for .NET 10, over the canonical Broiler DOM and computed styles. Public host seam, internal box tree, ten locked friend assemblies.", "nav": "components"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Component · Web engine</span>
+    <h1>Broiler.Layout</h1>
+    <p class="lede">
+      A CSS box-model and layout engine that knows nothing about graphics backends. It takes a
+      DOM and computed styles and produces geometry; painting, resource acquisition, HTML
+      parsing and platform UI all stay in their own assemblies.
+    </p>
+    <div class="tag-row" style="margin-top:1.4rem">
+      <span class="pill pill-pending">Re-review required</span>
+      <span class="pill pill-plain">net10.0</span>
+      <span class="pill pill-plain">Apache-2.0</span>
+      <span class="pill pill-plain">In-tree, not a submodule</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="seam">The public seam</h2>
+
+<p>
+  The public API is deliberately small: the host abstractions
+  <code>ILayoutEnvironment</code>, <code>ILayoutFont</code> and <code>ILayoutImageLoader</code>,
+  their value types, and the renderer-neutral HTML metadata types used to construct a layout
+  input. <strong>The concrete box tree and the layout algorithms are internal.</strong>
+</p>
+
+<p>
+  Layout consumes only <a href="/components/css.html">Broiler.CSS</a> and
+  <code>Broiler.CSS.Dom</code>, <a href="/components/dom.html">Broiler.Dom</a>, the
+  backend-neutral <a href="/components/graphics.html">Broiler.Graphics</a> primitive layer, and
+  the BCL. Nothing else.
+</p>
+
+<h2 id="friends">Ten friend assemblies, locked by a test</h2>
+
+<p>
+  Ten assemblies have deliberate access to internal layout state. The exact set is pinned by
+  <code>LayoutArchitectureTests</code>, so a new grant requires an explicit boundary decision
+  and a documentation update rather than an <code>InternalsVisibleTo</code> line nobody notices.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Friend assembly</th><th>Compatibility need</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.HTML.Dom</code></td><td>Parses, serializes and visits renderer box trees</td></tr>
+    <tr><td><code>Broiler.HTML</code></td><td>Selection, hit-testing and context-menu interaction over laid-out boxes</td></tr>
+    <tr><td><code>Broiler.HTML.Orchestration</code></td><td>Projects computed style, invokes layout, builds paint fragments</td></tr>
+    <tr><td><code>Broiler.HTML.Headless</code></td><td>Produces the live geometry snapshot through <code>ILayoutView</code></td></tr>
+    <tr><td><code>Broiler.HtmlBridge.Dom</code></td><td>Supplies the visual-viewport scale around geometry snapshots</td></tr>
+    <tr><td><code>Broiler.DevConsole</code></td><td>Converts the internal tree into renderer-independent diagnostic snapshots</td></tr>
+    <tr><td><code>Broiler.Wpt</code></td><td>Scoped native anchor placement around final WPT renders</td></tr>
+    <tr><td><code>Broiler.Layout.Tests</code></td><td>Exercises the internal layout kernel directly</td></tr>
+    <tr><td><code>Broiler.Cli.Tests</code></td><td>Characterizes renderer integration and internal box state during the preview compatibility window</td></tr>
+    <tr><td><code>Broiler.DevConsole.Tests</code></td><td>Characterizes diagnostic snapshots with constructed boxes</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Facade and application assemblies consume owned projections instead of traversing the internal
+  tree — <code>Broiler.HTML.Image</code> delegates canvas-background resolution to orchestration,
+  and the WPF app consumes dev-console snapshots. Reducing this surface further, as consumers
+  move onto owned projections, is tracked work.
+</p>
+
+<h2 id="open">What is still open</h2>
+
+<h3 id="hardening">Resource hardening</h3>
+<ul class="checklist">
+  <li>Establish CPU, allocation, nesting and document-size baselines for malformed and adversarial layout inputs.</li>
+  <li>Add stress and fuzz coverage for deep trees, extreme numeric values, large inline runs, tables, grid/flex interactions, anchor positioning and repeated relayout.</li>
+  <li>Define host-enforceable budgets or cancellation points wherever measurement shows unbounded work.</li>
+</ul>
+
+<h3 id="correctness">Active layout correctness</h3>
+<ul class="checklist">
+  <li>Close the remaining absolute-position static-position and self-alignment WPT clusters.</li>
+  <li>Complete vertical-grid <code>fit-content</code> and baseline behaviour, plus the open multi-column cases.</li>
+  <li>Finish <code>position-try</code> fit geometry, state/cascade handling and flip tactics.</li>
+  <li>Keep focused unit and architecture checks, plus the affected WPT pixel and reftest clusters, as CI gates for each correction — roadmap status text is not behaviour evidence.</li>
+</ul>
+
+<h2 id="review">Review status</h2>
+
+<div class="callout callout-warn">
+  <p class="callout-title">The recorded approval no longer covers current source</p>
+  <p>
+    The first-preview review targets commit
+    <code class="mono">6eaa76cc8fbe753ad2ba4db9f570f66256306c55</code> (2026-07-01). The
+    component has changed substantially since then, so that approval must not be treated as
+    covering the current checkout or a broader release. A new release needs source review and a
+    new attributable human decision, plus dependency/license review and recorded
+    static-analysis and vulnerability-scan evidence.
+  </p>
+</div>
+
+<h2 id="build">Build and test</h2>
+
+<p>
+  <code>Broiler.Layout</code> is the one component with no standalone repository: it lives in
+  the aggregate <code>Broiler</code> checkout, and <a href="/applications/browser.html">Broiler.Browser</a>
+  vendors it as ordinary tracked files. Build it from the aggregate repository root.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">from the aggregate root</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet build Broiler.Layout/Broiler.Layout/Broiler.Layout.csproj
+dotnet test  Broiler.Layout/Broiler.Layout.Tests/Broiler.Layout.Tests.csproj</code></pre>
+</div>
+
+<p class="small">
+  <code>Broiler.Layout.Tests</code> is the aggregate repository's largest green xUnit suite —
+  1,317 tests at the last recorded measurement. See
+  <a href="/conformance.html#unit">unit-test status</a> for what the rest of the suite reports.
+</p>
+
+<div class="pager">
+  <a href="/components/css.html"><span class="dir">Previous</span><span class="ttl">Broiler.CSS</span></a>
+  <a class="next" href="/components/graphics.html"><span class="dir">Next</span><span class="ttl">Broiler.Graphics</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

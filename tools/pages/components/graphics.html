@@ -1,0 +1,174 @@
+{"title": "Broiler.Graphics — Broiler Platform", "desc": "Broiler's rendering component: a platform-neutral managed core with deterministic CPU rasterization, text and render lists, plus Direct2D, OpenGL, Vulkan, EGL and browser Canvas backends.", "nav": "components"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Component · Platform core</span>
+    <h1>Broiler.Graphics</h1>
+    <p class="lede">
+      A platform-neutral managed rendering core — <code>BBitmap</code>, <code>BCanvas</code>,
+      deterministic CPU rasterization, text and font handling, render lists — with one
+      presentation backend per platform. Image <em>decoding</em> deliberately lives outside it.
+    </p>
+    <div class="tag-row" style="margin-top:1.4rem">
+      <span class="pill pill-ok">Approved, conditions</span>
+      <span class="pill pill-plain">7 packages</span>
+      <span class="pill pill-plain">Apache-2.0</span>
+      <span class="pill pill-risk">Security-sensitive interop</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="packages">Packages</h2>
+
+<p>
+  There is no meta-package. An application takes the core plus exactly the backends it presents
+  with. Every package ships XML documentation and a <code>.snupkg</code> symbol package, and is
+  built deterministically with SourceLink.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Package</th><th>Target</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Graphics</code></td><td><code>net10.0</code></td><td>Platform-neutral core: bitmaps, canvas, geometry, colour, deterministic CPU raster, text and fonts, render lists. Trimming- and AOT-friendly, fully safe code.</td></tr>
+    <tr><td><code>Broiler.Graphics.Windows</code></td><td><code>net10.0-windows</code></td><td>Direct2D/DirectWrite backend, window and input integration, HWND-backed video presentation target.</td></tr>
+    <tr><td><code>Broiler.Graphics.Linux</code></td><td><code>net10.0</code></td><td>Shared Linux runtime support: native library probing, dependency resolution, runtime diagnostics.</td></tr>
+    <tr><td><code>Broiler.Graphics.Linux.OpenGL</code></td><td><code>net10.0</code></td><td>OpenGL/EGL presentation over Mesa/EGL, with pbuffer and opt-in X11 window surfaces.</td></tr>
+    <tr><td><code>Broiler.Graphics.Linux.Vulkan</code></td><td><code>net10.0</code></td><td>Vulkan 1.2 loader/device path. Presentation is still CPU-present.</td></tr>
+    <tr><td><code>Broiler.Graphics.Android</code></td><td><code>net10.0</code></td><td>EGL / OpenGL ES presentation. Reaches Android through P/Invoke, so it needs no <code>Mono.Android</code> reference and no android workload.</td></tr>
+    <tr><td><code>Broiler.Graphics.WebAssembly</code></td><td><code>net10.0</code></td><td>Browser Canvas backend: a platform-neutral frame planner plus <code>JSImport</code>/<code>JSExport</code> interop gated with <code>[SupportedOSPlatform("browser")]</code>.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="codecs">The core does not decode images</h2>
+
+<p>
+  This is the component's central design decision. The core references the image
+  <em>abstraction</em> only — <code>Broiler.Media.Image</code> — never an implementation. The
+  application composition root supplies the concrete codecs:
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">composition root</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>BImageCodecs.Use(new MediaCodecCatalog(ManagedImageCodecs.CreateCodecs()));</code></pre>
+</div>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">dependency direction</span></div>
+  <pre><code>Broiler.Graphics.Windows       -> Broiler.Graphics -> Broiler.Media.Image   (abstraction only)
+Broiler.Graphics.Windows       -> Broiler.Media.Video                       (declares the HWND video target)
+Broiler.Graphics.Linux.OpenGL  -> Broiler.Graphics.Linux -> Broiler.Graphics
+Broiler.Graphics.Linux.Vulkan  -> Broiler.Graphics.Linux -> Broiler.Graphics
+Broiler.Graphics.Android       -> Broiler.Graphics
+Broiler.Graphics.WebAssembly   -> Broiler.Graphics</code></pre>
+</div>
+
+<h2 id="backends">Backend status</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Backend</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Windows Direct2D</strong></td>
+      <td>The most complete backend: render-list replay, DirectWrite text, window and input integration.</td>
+    </tr>
+    <tr>
+      <td><strong>Linux OpenGL</strong></td>
+      <td>Preview. A GPU-native replay slice covers clear, opaque fill/stroke rectangles and rectangular clips; <em>text, images, rounded rectangles, transforms and translucent draws fall back to CPU-present</em> — render lists replayed through the managed renderer, uploaded to an OpenGL texture/FBO, presented through an EGL pbuffer or opt-in X11 window surface.</td>
+    </tr>
+    <tr>
+      <td><strong>Linux Vulkan</strong></td>
+      <td>Earliest preview. Creates a Vulkan 1.2 loader/device path when available and shares the CPU-present fallback. WSI/swapchain presentation and Vulkan command replay are still being built out.</td>
+    </tr>
+    <tr><td><strong>Android</strong></td><td>EGL / OpenGL ES presentation surfaces and renderer.</td></tr>
+    <tr><td><strong>WebAssembly</strong></td><td>Frame planner validated against a CPU oracle; the browser Canvas interop runs on the <code>browser-wasm</code> runtime.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="build">Building, testing and demos</h2>
+
+<p>
+  The solution defines six configurations. <code>Debug</code>/<code>Release</code> build the
+  platform-neutral set — core, WebAssembly, Android and their test runners. The
+  <code>-Windows</code> and <code>-Linux</code> variants add the backends for that platform and
+  select the matching runtime identifier. <strong>A plain <code>dotnet build</code> does not
+  compile the Direct2D backend.</strong>
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">build &amp; test</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>git clone --recurse-submodules https://github.com/Broiler-Platform/Broiler.Graphics.git
+dotnet build Broiler.Graphics.slnx -c Release-Windows
+bash ./eng/run-tests.sh Release-Windows</code></pre>
+</div>
+
+<p>
+  Tests are <strong>self-hosted console runners rather than a test framework</strong>, so there
+  is nothing for <code>dotnet test</code> to discover. The script picks the runners the
+  configuration produced — the Direct2D suite under <code>-Windows</code>, the Linux suite under
+  <code>-Linux</code>, and the three neutral suites under every configuration — and starts them
+  with <code>--no-build</code>, so they exercise exactly the binaries the build produced.
+</p>
+
+<h3 id="demos">The Linux demo is the composition root for graphics plus input</h3>
+
+<p>
+  It opens the OpenGL X11 preview window and, with explicit raw-input acknowledgement, wires
+  Linux evdev keyboard and mouse providers while pausing delivery when the window loses focus.
+  It also prints OS/runtime, display-server, OpenGL driver, Vulkan device and selected
+  evdev-device diagnostics.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">linux demo</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet run --project src/demos/Broiler.Graphics.Linux.Demo -c Debug-Linux -- \
+  --window --enable-evdev-input --interactive</code></pre>
+</div>
+
+<h2 id="security">Preview status and security</h2>
+
+<div class="callout callout-danger">
+  <p class="callout-title">What the review record says</p>
+  <ul style="margin-bottom:0">
+    <li>The component is preview software and is neither fully optimized nor final.</li>
+    <li>Public APIs and behaviour may change while the global refactoring continues.</li>
+    <li><strong>Image decoding is injected from Broiler.Media, parses complex binary input, and must be treated as security-sensitive.</strong> Do not decode untrusted input in security-sensitive environments without sandboxing, resource limits, fuzzing and additional review.</li>
+    <li>The Windows backend uses native Windows APIs and Direct2D/DirectWrite/DXGI/D3D interop. Correct and security-relevant usage of every involved API is not guaranteed by a first-preview review.</li>
+    <li>No dedicated fuzzing campaign, SAST report, dependency scan or independent security audit is recorded. This review is not a production security audit.</li>
+  </ul>
+</div>
+
+<h2 id="ci">CI and releases</h2>
+
+<p>
+  CI builds and tests both configurations on every push and pull request —
+  <code>Release-Linux</code> on Ubuntu, <code>Release-Windows</code> on Windows — and attaches
+  the packed packages to each run. Neither configuration alone produces the whole set, so the
+  Windows leg packs both: it can build every project, because the Linux libraries are plain
+  <code>net10.0</code> with no runtime identifier.
+</p>
+
+<p>
+  Publishing is manual by default and dry-runs unless told otherwise. Pushing a <code>v*</code>
+  tag publishes to nuget.org, and the tag must match the version in
+  <code>eng/Broiler.Packaging.props</code>.
+</p>
+
+<div class="pager">
+  <a href="/components/layout.html"><span class="dir">Previous</span><span class="ttl">Broiler.Layout</span></a>
+  <a class="next" href="/components/media.html"><span class="dir">Next</span><span class="ttl">Broiler.Media</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

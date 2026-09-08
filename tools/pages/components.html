@@ -1,0 +1,187 @@
+{"title": "Components — Broiler Platform", "desc": "The eleven Broiler components: DOM, CSS, Layout, Graphics, Media, Input, HTML, JS, UI, Documents and VM. Purpose, packages, dependency direction and release status.", "nav": "components"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Components</span>
+    <h1>Eleven components, released independently</h1>
+    <p class="lede">
+      Almost every reusable part of Broiler is its own repository, with its own solution, its
+      own CI and its own NuGet packages — <code>Broiler.Layout</code> is the exception, and
+      lives in the aggregate checkout. An application takes the pieces it needs; nothing is
+      bundled by default, and no abstraction ever references an implementation.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+
+    <div class="callout callout-ember">
+      <p class="callout-title">Lockstep preview versioning</p>
+      <p>
+        Published component packages are versioned in lockstep at
+        <code>0.1.0-preview.1</code> — a prerelease, so every install needs
+        <code>--prerelease</code>. The version lives in
+        <code>eng/Broiler.Packaging.props</code>, vendored per component from one canonical
+        file. The <a href="/applications.html">applications</a> are not published as packages.
+      </p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Component</th><th>What it owns</th><th class="nowrap">Packages</th><th class="nowrap">Status</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="/components/dom.html"><strong>Broiler.DOM</strong></a></td>
+            <td>Document, node, element, attribute, mutation, range and traversal primitives; HTML tokenization, document and fragment parsing, tree building and serialization</td>
+            <td class="num">2</td>
+            <td><span class="pill pill-pending">Review pending</span></td>
+          </tr>
+          <tr>
+            <td><a href="/components/css.html"><strong>Broiler.CSS</strong></a></td>
+            <td>CSS syntax, rules, selectors, declarations, values, diagnostics, parsing and serialization; selector matching, cascade, computed values and DOM-facing style services</td>
+            <td class="num">2</td>
+            <td><span class="pill pill-ok">Approved for preview</span></td>
+          </tr>
+          <tr>
+            <td><a href="/components/layout.html"><strong>Broiler.Layout</strong></a></td>
+            <td>Graphics-independent CSS box model and layout engine over the canonical DOM and computed styles</td>
+            <td class="num">1</td>
+            <td><span class="pill pill-pending">Re-review needed</span></td>
+          </tr>
+          <tr>
+            <td><a href="/components/graphics.html"><strong>Broiler.Graphics</strong></a></td>
+            <td>Bitmaps, canvas, geometry, colour, deterministic CPU raster, text and fonts, render lists — plus one presentation backend per platform</td>
+            <td class="num">7</td>
+            <td><span class="pill pill-ok">Approved, conditions</span></td>
+          </tr>
+          <tr>
+            <td><a href="/components/media.html"><strong>Broiler.Media</strong></a></td>
+            <td>Image, audio and video decoding, format probing and codec selection behind small abstraction assemblies</td>
+            <td class="num">8</td>
+            <td><span class="pill pill-preview">Preview</span></td>
+          </tr>
+          <tr>
+            <td><a href="/components/input.html"><strong>Broiler.Input</strong></a></td>
+            <td>Device discovery, lifecycle, timing, bounded delivery, capture leases and diagnostics, with Windows, Linux and Android providers</td>
+            <td class="num">25+</td>
+            <td><span class="pill pill-preview">Preview</span></td>
+          </tr>
+          <tr>
+            <td><a href="/components/html.html"><strong>Broiler.HTML</strong></a></td>
+            <td>The modular renderer: parsing, CSS processing, layout integration, painting, image generation and the CLI render tool</td>
+            <td class="num">—</td>
+            <td><span class="pill pill-ok">Approved, conditions</span></td>
+          </tr>
+          <tr>
+            <td><a href="/components/js.html"><strong>Broiler.JS</strong></a></td>
+            <td>JavaScript parser, compiler, runtime, built-ins and host integration — compiled to .NET IL at runtime. Carries DateTime, Regex and Unicode</td>
+            <td class="num">—</td>
+            <td><span class="pill pill-pending">Review pending</span></td>
+          </tr>
+          <tr>
+            <td><a href="/components/ui.html"><strong>Broiler.UI</strong></a></td>
+            <td>Retained-mode UI: element tree, session, layout protocol, input routing, host and accessibility contracts, and one contract/implementation pair per control</td>
+            <td class="num">56</td>
+            <td><span class="pill pill-pending">Review pending</span></td>
+          </tr>
+          <tr>
+            <td><a href="/components/documents.html"><strong>Broiler.Documents</strong></a></td>
+            <td>UI-free rich-text document model, formatting-codes projection, and the RTF, DOCX, ODT, HTML, Markdown and (unpublished) PDF codecs</td>
+            <td class="num">8</td>
+            <td><span class="pill pill-preview">Preview</span></td>
+          </tr>
+          <tr>
+            <td><a href="/components/vm.html"><strong>Broiler.VM</strong></a></td>
+            <td>NativeAOT-compatible host for verified bytecode profiles — profile selection, bounded loading, the verification boundary, execution lifecycle, resource authority</td>
+            <td class="num">0</td>
+            <td><span class="pill pill-pending">Unaccepted · 0 % reviewed</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="small">
+      Package counts are the shipping NuGet packages a component publishes. Broiler.HTML and
+      Broiler.JS are consumed as project references through the aggregate checkout rather than
+      as packages. Review status is summarised from each component's <code>HUMAN_REVIEW.md</code>;
+      see <a href="/assurance.html">Assurance</a> for what each status actually means.
+    </p>
+
+    <h2 id="direction">Dependency direction at a glance</h2>
+
+    <p>
+      Every arrow points down the stack. There is no cycle, and no abstraction package depends
+      on an implementation package.
+    </p>
+
+    <div class="code">
+      <div class="code-head"><span class="code-title">component graph</span></div>
+      <pre><code>Broiler.UI.&lt;Control&gt;.Standard ─┬─&gt; Broiler.UI.&lt;Control&gt; ─&gt; Broiler.UI ─┬─&gt; Broiler.Graphics
+                              └─&gt; Broiler.UI.Standard ───────────────┴─&gt; Broiler.Input.*
+
+Broiler.Documents.&lt;Format&gt; ──&gt; Broiler.Documents ──&gt; Broiler.Documents.Model ──&gt; Broiler.Graphics
+Broiler.Documents.Html ──────&gt; Broiler.Dom, Broiler.Dom.Html
+
+Broiler.Graphics.&lt;Backend&gt; ──&gt; Broiler.Graphics ──&gt; Broiler.Media.Image      (abstraction only)
+Broiler.Media.&lt;Kind&gt;.&lt;Impl&gt; ─&gt; Broiler.Media.&lt;Kind&gt; ──&gt; Broiler.Media
+Broiler.Input.&lt;Kind&gt;.&lt;OS&gt; ───&gt; Broiler.Input.&lt;Kind&gt; ──&gt; Broiler.Input
+
+Broiler.Layout ──&gt; Broiler.CSS, Broiler.CSS.Dom, Broiler.Dom, Broiler.Graphics (primitives)
+Broiler.CSS.Dom ─&gt; Broiler.CSS, Broiler.Dom</code></pre>
+    </div>
+
+    <h2 id="constraints">Shared component constraints</h2>
+
+    <p>
+      Every component repository holds itself to the same set of rules. They are not aspirations
+      — several are asserted by architecture tests that fail the build.
+    </p>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>Target .NET 10 only</h3>
+        <p>No multi-targeting, no compatibility shims for older runtimes. Platform assemblies target <code>net10.0-windows</code> only where they must.</p>
+      </div>
+      <div class="card">
+        <h3>No third-party runtime dependencies</h3>
+        <p>Image codecs, PDF syntax, regular expressions, Unicode data and the JavaScript engine are implemented in the repository. Test tooling may use external packages; shipping assemblies may not.</p>
+      </div>
+      <div class="card">
+        <h3>Trimming- and AOT-friendly, safe code</h3>
+        <p>Abstraction assemblies are platform-neutral and safe-code compatible. The Writer's desktop heads publish with NativeAOT and report zero <code>IL2xxx</code>/<code>IL3xxx</code> warnings — which is only possible because nothing in the closure needs reflection AOT cannot see through.</p>
+      </div>
+      <div class="card">
+        <h3>Explicit composition, no hidden globals</h3>
+        <p>There is no process-wide mutable codec registry and no module-initializer side effect. An application builds one immutable catalog at its composition root and passes it in.</p>
+      </div>
+    </div>
+
+    <h2 id="nested">Components carried inside other components</h2>
+
+    <p>
+      Three components ship inside <a href="/components/js.html">Broiler.JS</a> as nested
+      submodules rather than as top-level repositories. They are separately reviewed and
+      separately licensed where their data requires it.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Component</th><th>Role</th><th>Review status</th></tr></thead>
+        <tbody>
+          <tr><td><code>Broiler.DateTime</code></td><td>Date and time parsing and semantics for the JavaScript <code>Date</code> surface</td><td><span class="pill pill-ok">Approved for preview</span></td></tr>
+          <tr><td><code>Broiler.Regex</code></td><td>ECMAScript-compatible regular expressions with a step budget against adversarial input</td><td><span class="pill pill-ok">Approved for preview</span></td></tr>
+          <tr><td><code>Broiler.Unicode</code></td><td>Unicode property data and algorithms; runtime libraries use committed data, and the refresh tools download Unicode/CLDR data under their own terms</td><td><span class="pill pill-ok">Approved, conditions</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pager">
+      <a href="/architecture.html"><span class="dir">Previous</span><span class="ttl">Architecture</span></a>
+      <a class="next" href="/applications.html"><span class="dir">Next</span><span class="ttl">Applications</span></a>
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,304 @@
+{"title": "Roadmap — Broiler Platform", "desc": "Cross-repository work and its exit gates: release and distribution, standards infrastructure, WebRTC, Broiler.VM, Android, Linux, PDF and the component-owned roadmaps.", "nav": "roadmap"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Roadmap</span>
+    <h1>What is unfinished, who owns it, and how it ends</h1>
+    <p class="lede">
+      The root roadmap tracks only work that crosses component or application boundaries.
+      Everything else belongs to the component that owns it. Every item carries an owner, current
+      evidence, a next action and an <strong>objective exit gate</strong> — a checked historical
+      task is not release or conformance evidence.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<div class="callout callout-info">
+  <p class="callout-title">The documentation rules that shape this list</p>
+  <ul style="margin-bottom:0">
+    <li>Keep a roadmap item only while an outcome remains open. Remove completed implementation histories once any durable decision has been folded into an architecture or support document.</li>
+    <li>Give every item an owner, current evidence, a next action and an objective exit gate.</li>
+    <li>Put API and dependency rules beside the component that enforces them.</li>
+    <li>Record current support honestly. Local smoke evidence does not imply cross-browser, accessibility, hardware, security or production support.</li>
+    <li>New work enters the root file only when at least two components — or a root application/release workflow — must coordinate to close it.</li>
+  </ul>
+</div>
+
+<h2 id="release">Release and distribution</h2>
+
+<h3 id="first-preview">Publish a reproducible first preview</h3>
+
+<p>
+  <strong>Evidence today:</strong> component package metadata, a packaging workflow, a lockstep
+  preview version, SourceLink and symbol-package configuration, and commit-scoped review records.
+</p>
+
+<p><strong>Next actions:</strong></p>
+<ol>
+  <li>Validate installation from an isolated package feed without relying on the aggregate checkout.</li>
+  <li>Ensure every release submodule pointer contains every required component commit. A release cannot depend on an out-of-tree patch.</li>
+  <li>Complete exact-commit human, dependency, license, static-analysis and vulnerability review for the release graph.</li>
+  <li>Configure the protected release environment and publishing credentials.</li>
+  <li>Run the tag path and install the resulting packages and applications on clean supported hosts.</li>
+</ol>
+
+<div class="callout callout-ember">
+  <p class="callout-title">Exit gate</p>
+  <p style="margin-bottom:0">
+    The exact reviewed commit produces deterministic packages and symbols, installs from the
+    advertised feeds on supported platforms, passes the published smoke suite, and can be
+    reproduced <strong>without uncommitted submodule changes</strong>.
+  </p>
+</div>
+
+<h3 id="install">Deliver installation and update paths</h3>
+
+<p>
+  The repository builds portable Windows and Linux applications, but the proposed native
+  installation and self-update system is not a completed product surface.
+</p>
+
+<ul class="checklist">
+  <li>Freeze product identifiers, release channels, artifact names, signed manifest format, update ownership, rollback behaviour and key-rotation policy.</li>
+  <li>Ship deterministic <em>signed portable</em> releases before adding an in-app updater.</li>
+  <li>Add an atomic per-user portable install/update transaction with recovery and uninstall behaviour.</li>
+  <li>Add Windows and Linux native delivery only after the portable transaction and release-signing gates pass.</li>
+  <li>Keep macOS delivery gated on native application, graphics, input, signing and notarization support.</li>
+</ul>
+
+<div class="callout callout-ember">
+  <p class="callout-title">Exit gate</p>
+  <p style="margin-bottom:0">
+    Each claimed platform has one documented update owner, verified signatures and hashes,
+    rollback after interrupted activation, clean repair and uninstall paths, and end-to-end
+    release tests.
+  </p>
+</div>
+
+<h2 id="standards">Standards and test infrastructure</h2>
+
+<h3 id="chromium">Publish a reproducible Chromium baseline</h3>
+
+<p>
+  Chromium 148 is captured in a lock file, but its WPT revision is unresolved and there is no
+  published root snapshot or alignment workflow.
+</p>
+
+<ol>
+  <li>Resolve and record exact WPT and test262 revisions.</li>
+  <li>Pin the WPT and Octane workflows to reviewed commit SHAs instead of floating <code>master</code>.</li>
+  <li>Publish one generated snapshot linking the lock, focused JS/HTML/bridge results, visual references and performance results.</li>
+  <li>Automate the refresh without making unrelated checkouts download the full WPT corpus.</li>
+</ol>
+
+<div class="callout callout-ember">
+  <p class="callout-title">Exit gate</p>
+  <p style="margin-bottom:0">
+    A clean checkout can reproduce the same corpus and focused results from immutable revisions,
+    and an upstream refresh is a reviewable diff.
+  </p>
+</div>
+
+<h3 id="evidence">Re-establish current Acid, Google and WPT evidence</h3>
+
+<p>
+  Focused regression tests exist and historical campaigns landed many fixes, but checked
+  implementation tasks and a 100/100 Acid script score <strong>do not establish current pixel
+  fidelity or broad standards conformance</strong>. The April 2026 HTML and CSS WPT result
+  snapshots have been retired — they were a point-in-time report, not reproducible current
+  evidence — so there is now no checked-in substitute for a fresh run.
+</p>
+
+<ul class="checklist">
+  <li>Capture fresh Acid1/Acid2/Acid3 viewport references and report script score, geometry, content and pixel metrics <em>separately</em>.</li>
+  <li>Add a local HTTP fixture for the remaining Acid3 status and content-type cases.</li>
+  <li>Rerun Google and the broader public-site corpus through the <a href="/conformance.html#real-world">real-world suite</a>, recording actual milestone measurements rather than inferring compliance from API presence.</li>
+  <li>Cross-check the golden-image suite against the engine-independent <a href="/conformance.html#reftests">reftest suite</a>. A test that fails the golden suite but passes there is evidence the golden, not the engine, is the outlier; the converse is a real defect the Chromium comparison masked.</li>
+  <li>Keep prioritized WPT failures in generated reports and component roadmaps — root tracking should cover only cross-component runner, timeout, reference and ownership problems.</li>
+</ul>
+
+<div class="callout callout-ember">
+  <p class="callout-title">Exit gate</p>
+  <p style="margin-bottom:0">
+    Every published claim names its corpus revision, environment, metric, tolerances, skips and
+    reproducible command; regressions are assigned to one owning component.
+  </p>
+</div>
+
+<h3 id="cleanup">Retire obsolete test suites and historical artifacts</h3>
+
+<p>
+  A focused audit found several kinds of test code that no longer protect a supported behaviour —
+  guards for a removed backend, reflection over assemblies that no longer exist, tests that assert
+  nothing, and production toggles whose only remaining consumers are the tests for them. The whole
+  production footprint of one such batch was <strong>four lines across two files</strong>.
+</p>
+
+<div class="callout callout-info">
+  <p class="callout-title">The cleanup is evidence-driven in both directions</p>
+  <p>
+    A filename containing <code>phase</code>, <code>migration</code>, <code>obsolete</code> or
+    <code>cutover</code> is <strong>not</strong> sufficient reason to delete a test; retained
+    cases are judged by the current behaviour or compatibility boundary they protect. The
+    converse also holds — two suites suspected of holding duplicate methods held none.
+  </p>
+  <p style="margin-bottom:0">
+    Already-red suites are recorded explicitly, or every later "matches the recorded baseline"
+    gate would be unfalsifiable.
+  </p>
+</div>
+
+<h2 id="webrtc">WebRTC browser capability</h2>
+
+<p>
+  <span class="pill pill-planned">Active design · implementation not started</span>
+</p>
+
+<p>
+  <strong>Current evidence:</strong> WebRTC, media devices, <code>getUserMedia</code>, peer
+  connections, data channels, ICE/STUN/TURN/DTLS/SRTP/SCTP/RTP and browser WebSocket are
+  <strong>absent</strong>. Windows has reusable camera and microphone providers and deterministic
+  fakes, but no browser composition, permission broker, live HTML media route or physical audio
+  output. The current bounded load window can dispose a settled JavaScript session before a late
+  RTC callback.
+</p>
+
+<p>The roadmap is explicit that this is an implementation plan, not a support claim:</p>
+
+<div class="callout callout-warn">
+  <p class="callout-title">Until the gate passes, the globals stay absent</p>
+  <p style="margin-bottom:0">
+    Broiler <strong>must not expose shape-compatible objects backed by no transport, capture or
+    media behaviour.</strong> This is also why html5test.com still reports one JavaScript
+    exception: that is the page's own WebRTC probe deliberately provoking a throw to detect the
+    absent feature, and it must not be suppressed.
+  </p>
+</div>
+
+<p><strong>The shortest credible route:</strong></p>
+<ol>
+  <li>Make a document's JavaScript realm and event loop survive beyond the current bounded page-load window.</li>
+  <li>Select and pin a maintained native WebRTC engine behind a Broiler-owned stable C ABI after a time-boxed evidence spike. <strong>Do not implement the protocol suite from scratch.</strong></li>
+  <li>Land neutral RTC contracts and deterministic fakes, then a data-channel vertical slice <em>before</em> device access.</li>
+  <li>Add a real pinned <code>wptserve</code>/HTTPS/testharness lane, a direct and TURN network lab, Chromium/Firefox interop, native fuzz and sanitizers, hardware, performance and soak, package, SBOM and rollback evidence.</li>
+  <li>Keep Linux and Android absent until their independent platform gates pass.</li>
+</ol>
+
+<h2 id="vm">Broiler.VM bytecode execution</h2>
+
+<p>
+  <a href="/components/vm.html">Broiler.VM</a> owns its own sequencing. The root item records only
+  the cross-component outcome: a NativeAOT-compatible execution host for verified bytecode, which
+  is a host for language profiles rather than a language. Its status ledger records every
+  milestone as <strong>unaccepted</strong>, because no relevant code unit yet carries a human
+  decision.
+</p>
+
+<h2 id="android">Android applications</h2>
+
+<p>
+  <span class="pill pill-preview">Emulator-verified preview</span>
+</p>
+
+<p>
+  Seven sub-items, A0 through A6: freeze the platform baseline, the graphics presentation backend,
+  real touch/pen/IME input, touch-first interaction in Broiler.UI, the Writer head, the Browser
+  head, and Android build/CI/delivery. The shared Activity/SurfaceView host, both applications,
+  hardware-accelerated Canvas presentation, the input bridge, system-bar insets, the
+  scoped-storage Writer flow and the workspaces all build and run on an API 36 x86_64 emulator.
+</p>
+
+<p><strong>Physical-device validation remains outstanding.</strong></p>
+
+<h2 id="linux">Linux application preview</h2>
+
+<ul class="checklist">
+  <li>Complete the supported graphics presentation path, input ownership migration, resize and device-loss handling, and deterministic fallback behaviour.</li>
+  <li>Run Browser and Writer smoke suites on the declared distro/driver matrix, including software rendering and permission-denied input cases.</li>
+  <li>Record package dependencies, evdev permissions, diagnostics, accessibility limitations and hardware evidence.</li>
+</ul>
+
+<div class="callout callout-ember">
+  <p class="callout-title">Exit gate</p>
+  <p style="margin-bottom:0">
+    Browser and Writer install and run on the declared Linux matrix, produce comparable
+    artifacts, shut down without leaked native resources, and publish an evidence-based preview
+    support statement.
+  </p>
+</div>
+
+<h2 id="pdf">PDF conversion decision</h2>
+
+<p>
+  The standalone process path is retired. Native PDF support is an explicitly composed, in-process
+  <code>Broiler.Documents.Pdf</code> codec, and any reusable graphics, media, document-model or
+  pagination work belongs in its neutral owner.
+</p>
+
+<p>
+  The base slice is implemented — syntax, cross-references, object streams, the
+  Flate/ASCIIHex/ASCII85/RunLength filters, logical text import and a deterministic PDF 1.7 writer
+  — built only from what the repository implements itself, with no third-party runtime dependency
+  and no bundled font or codec asset. Every remaining PDF technology is detected, skipped with its
+  own stable diagnostic, and reachable by composing a reviewed implementation.
+</p>
+
+<div class="callout callout-ember">
+  <p class="callout-title">Exit gate</p>
+  <p style="margin-bottom:0">
+    The obsolete CLI/process path stays absent; the codec stays unpacked and unregistered until
+    the read-preview and write-preview gates pass; and PDF behaviour is advertised only after the
+    implementation, corpus, security, interoperability and clearance gates pass. Enabling PDF in
+    an application head means building the shared contracts first, not referencing the package.
+  </p>
+</div>
+
+<h2 id="components">Component-owned roadmaps</h2>
+
+<p>
+  The component roadmaps are the source of truth for component-local work. A root document links
+  to them rather than copying their checklists.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Component</th><th>Roadmap focus</th></tr></thead>
+  <tbody>
+    <tr><td><a href="/components/css.html">Broiler.CSS</a></td><td>Device-pixel and high-DPI length handling; preview re-review</td></tr>
+    <tr><td><a href="/components/dom.html">Broiler.DOM</a></td><td>Spec-defined algorithms the bridge still implements because this component exposes no equivalent API</td></tr>
+    <tr><td><a href="/components/layout.html">Broiler.Layout</a></td><td>Resource hardening, absolute-position and self-alignment clusters, vertical grid, multi-column, <code>position-try</code></td></tr>
+    <tr><td><a href="/components/graphics.html">Broiler.Graphics</a></td><td>Linux backend validation and implementation</td></tr>
+    <tr><td><a href="/components/html.html">Broiler.HTML</a></td><td>Renderer work and the move into the <code>src/</code> layout</td></tr>
+    <tr><td><a href="/components/input.html">Broiler.Input</a></td><td>Provider coverage and hardware validation</td></tr>
+    <tr><td><a href="/components/media.html">Broiler.Media</a></td><td>Additional audio codecs and non-Media-Foundation video providers</td></tr>
+    <tr><td><a href="/components/documents.html">Broiler.Documents</a></td><td>Codec conformance and the PDF read/write preview gates</td></tr>
+    <tr><td><a href="/components/ui.html">Broiler.UI</a></td><td>Accessibility evidence, text/IME review, adversarial-tree hardening</td></tr>
+    <tr><td><a href="/components/js.html">Broiler.JS</a></td><td>Five indexed plans — modernization is the cross-track authority; measurement is the fail-closed gate every performance claim passes</td></tr>
+    <tr><td><a href="/applications/code.html">Broiler Code</a></td><td>MVP-0 and Phases 0–3 delivered; later phases toward multi-project editing, live diagnostics and .NET/Android/WebAssembly builds</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="maintenance">Maintenance policy</h2>
+
+<ul class="checklist neutral">
+  <li>Completed implementation records are removed once durable decisions and open work have moved to their owners.</li>
+  <li>A required submodule change must be merged and present in the pinned component commit. Blocked work is recorded once in its owning roadmap or status record, with a reopening condition.</li>
+  <li>Generated test reports and comparison images belong under <code>tests/</code> or the ignored <code>artifacts/</code> directory — never under <code>docs/</code>. A committed baseline that no harness compares against is a prose journal in a binary format.</li>
+</ul>
+
+<div class="pager">
+  <a href="/assurance.html"><span class="dir">Previous</span><span class="ttl">Assurance</span></a>
+  <a class="next" href="/packages.html"><span class="dir">Next</span><span class="ttl">Packages</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

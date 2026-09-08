@@ -1,0 +1,248 @@
+{"title": "Broiler.JS — Broiler Platform", "desc": "A modular JavaScript engine for .NET that compiles to IL at runtime. Layered assemblies, test262 conformance tooling, and an explicit statement that it is not a security sandbox.", "nav": "components"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Component · Web engine</span>
+    <h1>Broiler.JS</h1>
+    <p class="lede">
+      A modular JavaScript engine for .NET that compiles JavaScript to .NET IL at runtime,
+      with strong interop to C#. Validated against test262 — and explicit that conformance
+      evidence is not a security claim.
+    </p>
+    <div class="tag-row" style="margin-top:1.4rem">
+      <span class="pill pill-pending">HUMAN_REVIEW pending</span>
+      <span class="pill pill-plain">Apache-2.0</span>
+      <span class="pill pill-info">Derived from Yantra JS</span>
+      <span class="pill pill-risk">Not a sandbox</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<div class="callout callout-danger">
+  <p class="callout-title">Broiler.JS is not a security sandbox</p>
+  <p>
+    JavaScript host capabilities and CLR integration must be restricted by the embedding
+    application. Untrusted scripts must not be executed on the assumption that the engine
+    provides isolation. This component is <strong>not human-approved for preview use</strong>
+    while its <code>HUMAN_REVIEW.md</code> remains <code>PENDING</code>.
+  </p>
+</div>
+
+<h2 id="name">Where the name comes from</h2>
+
+<p>
+  Broiler is a backronym: <strong>B</strong>rowser <strong>I</strong>nfrastructure in
+  <strong>I</strong>ntermediate <strong>L</strong>anguage with <strong>E</strong>nhanced
+  <strong>R</strong>eliability. The intermediate language is the point — this engine's
+  execution strategy is to lower JavaScript into IL the CLR then JITs, rather than to
+  interpret it.
+</p>
+
+<h2 id="origins">Origins</h2>
+
+<p>
+  Broiler.JS began as a fork of <a href="https://github.com/yantrajs/yantra">Yantra JS</a>
+  (Apache-2.0), an open-source JavaScript engine for .NET. The original Yantra JS
+  architecture, parser and runtime design provided the foundation; Broiler.JS has since
+  diverged substantially to pursue near-complete ECMAScript conformance.
+</p>
+
+<p>
+  It is maintained independently and is not an official Yantra JS version, continuation or
+  release. The upstream authors have not reviewed or endorsed it; the name is used only for
+  accurate provenance.
+</p>
+
+<h2 id="layers">Architecture</h2>
+
+<p>
+  A layered architecture derived from earlier Yantra JS concepts, now split into explicit
+  assemblies with narrow module boundaries.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Layer</th><th>Assemblies</th></tr></thead>
+  <tbody>
+    <tr><td><strong>1 · Storage and AST foundations</strong></td><td><code>Broiler.JavaScript.Storage</code>, <code>Broiler.JavaScript.Ast</code> — reusable primitives with no dependency on concrete built-ins</td></tr>
+    <tr><td><strong>2 · Parsing and runtime model</strong></td><td><code>Broiler.JavaScript.Parser</code> turns source text into AST structures; <code>Broiler.JavaScript.Runtime</code> models values and arguments</td></tr>
+    <tr><td><strong>3 · Engine and compiler</strong></td><td><code>Broiler.JavaScript.Engine</code> hosts execution; <code>.Compiler</code> performs lowering; <code>.Expressions</code> owns the backend-neutral expression model; <code>.ExpressionCompiler</code> is the dynamic-IL emitter</td></tr>
+    <tr><td><strong>4 · Feature satellites</strong></td><td><code>.BuiltIns</code>, <code>.Globals</code>, <code>.Modules</code>, <code>.ModuleExtensions</code>, <code>.Clr</code>, <code>.Extensions</code> and optional host packages — added through explicit bootstrap, manifests, module initializers and registration delegates</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3 id="modularity">Modularity rules</h3>
+
+<ul class="checklist">
+  <li>Core engine projects must not reference feature satellites such as <code>.BuiltIns</code>.</li>
+  <li>Feature satellites register behaviour through documented delegates rather than editing core runtime types.</li>
+  <li>Compliance fixes land in the narrowest owning assembly, with tests in the matching <code>*.Tests</code> project.</li>
+  <li>Lower-level projects — <code>Storage</code>, <code>Ast</code>, <code>Parser</code>, <code>Runtime</code> — must not depend on higher-level feature assemblies.</li>
+</ul>
+
+<h2 id="profiles">Host profiles</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Profile / package</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td><code>JavaScriptBootstrapProfile.Full</code></td><td>The supported full host surface</td></tr>
+    <tr><td><code>FullEager</code></td><td>A comparison and compatibility mode</td></tr>
+    <tr><td><code>Minimal</code></td><td>Intentionally omits features — a documented, deliberately non-conformant profile</td></tr>
+    <tr><td><code>Broiler.JavaScript.Portable</code></td><td>A reflection-free interpreter for an <strong>explicitly limited portable numeric language</strong>. It is not the full engine and must not be presented as Native AOT support for general JavaScript.</td></tr>
+    <tr><td><code>Broiler.JavaScript.All</code></td><td>Aggregate convenience reference for the complete engine surface</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="nested">Three components ship inside it</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Component</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.DateTime</code></td><td>Date and time parsing and semantics behind the JavaScript <code>Date</code> surface. Approved for preview; residual risk is normal parser/date-time semantics and caller misuse in critical domains.</td></tr>
+    <tr><td><code>Broiler.Regex</code></td><td>ECMAScript-compatible regular expressions. Approved for preview, with resource-exhaustion risk from large or adversarial input remaining <em>despite</em> a step budget.</td></tr>
+    <tr><td><code>Broiler.Unicode</code></td><td>Unicode property data and algorithms. Runtime libraries use committed data; the developer-operated data tools download Unicode/CLDR data and require review for refreshes.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="conformance">test262 conformance</h2>
+
+<p>
+  Broiler.JS is validated against <a href="https://github.com/tc39/test262">test262</a>, the
+  official ECMAScript suite maintained by TC39. What is checked in is the
+  <em>evidence surface</em>, not a headline number — and the dashboard is deliberate about
+  the difference.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Area</th><th>Current evidence</th></tr></thead>
+  <tbody>
+    <tr><td>Full test262 script host</td><td>Manual sharded original-plus-minified runner (pinned Terser, or Closure Compiler at ADVANCED for ES2026), abnormal-shard retry, provenance-rich merged triage and an authoritative terminal verdict</td></tr>
+    <tr><td>Tracked failures</td><td>The generated path list <code>scripts/compliance/test262-failures.txt</code> is the source of truth; the documentation does not duplicate its changing count</td></tr>
+    <tr><td>Negative metadata</td><td>Opt-in with <code>--include-negative</code>; an uncaught error is reported by its JavaScript name, so a <code>phase: parse</code> SyntaxError is matched on the type it is</td></tr>
+    <tr><td><code>async</code> completion</td><td>A marker protocol — explicit success, explicit failure, or the runner's timeout. A test that never settles, settles twice, or reports failure <em>is</em> a failure</td></tr>
+    <tr><td>Async protocol self-check</td><td>Fixtures that must fail, run before every CI shard; any mismatch fails the job</td></tr>
+    <tr><td><code>$262</code> host hooks</td><td><code>global</code>, <code>createRealm</code>, <code>detachArrayBuffer</code>, <code>evalScript</code> and <code>gc</code> are defined; a test is excluded only for a hook it needs and does not have</td></tr>
+    <tr><td><code>module</code> / <code>raw</code></td><td>Both executed — <code>module</code> under <code>--module-host</code> with the harness preloaded as a script, <code>raw</code> as the file's own unmodified bytes. Per-mode totals ride on every report</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="callout callout-warn">
+  <p class="callout-title">No release totals are recorded</p>
+  <p>
+    The dashboard's release-evidence and comparative-engine tables both read
+    <em>"No current release-candidate run recorded."</em> A total belongs there only when it
+    links to raw artifacts from an exact Broiler commit and an exact upstream suite revision,
+    and a row may never claim "100% compliant" unless every supported host mode is green and
+    every excluded category is explicitly outside the product claim.
+  </p>
+</div>
+
+<h3 id="gaps">Representative open gaps</h3>
+
+<p>
+  The known-gaps document is unusually specific — each entry names the construct, the
+  measurement and the mechanism. Three examples:
+</p>
+
+<ul class="checklist">
+  <li><strong>Per-eval compilation cost.</strong> Every direct <code>eval</code> compiles a fresh <code>DynamicMethod</code>, and JITting it is nearly all the cost — about 21&nbsp;ms in Release for a body that is one call, where the same text parses in about 15&nbsp;µs. Three shapes now avoid it; everything else still pays per call.</li>
+  <li><strong>A <code>delete</code> of an eval-introduced <code>var</code>, read back through the closure that deleted it</strong>, throws a ReferenceError where the name should resolve outward to the global — the delete tears the binding down and a closure holds that cell directly rather than re-resolving.</li>
+  <li><strong>Symbol-keyed own properties enumerate in symbol creation order</strong> rather than property creation order.</li>
+</ul>
+
+<h2 id="build">Building and testing</h2>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">unit tests</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet test Broiler.JS.slnx</code></pre>
+</div>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">test262 for one assembly</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>python scripts/compliance/list_test262_assemblies.py \
+  --manifest scripts/compliance/test262-assemblies.json \
+  --paths-for parser --output /tmp/parser-paths.txt
+
+python scripts/compliance/run_test262.py \
+  --suite-root &lt;path-to-test262&gt; \
+  --broiler-dll &lt;path-to-BroilerJS.dll&gt; \
+  --path-file /tmp/parser-paths.txt \
+  --shard-count 1 --shard-index 0</code></pre>
+</div>
+
+<h2 id="ai">How this component is built</h2>
+
+<p>
+  Broiler.JS states its development model openly. Implementation work is done primarily by a
+  coding AI; the project reached the point where that was viable only after a substantial
+  manual refactor restructured the inherited Yantra JS codebase into the modular, IL-centric
+  architecture a coding AI can navigate reliably.
+</p>
+
+<p>
+  The maintainer directs the work, reviews changes, runs tests, drives refactors, manages
+  inference costs and keeps the project on track. The stated consequence is that
+  <strong>the bottleneck is maintenance bandwidth and inference cost, not coding hours</strong>
+  — which is why the repository asks for
+  <a href="https://github.com/sponsors/MaiRat">sponsorship</a> rather than for pull requests
+  first.
+</p>
+
+<p>
+  AI-generated or AI-modified implementation must receive source-level review from a real
+  developer before a release is described as reviewed. test262 results are valuable conformance
+  evidence, but they do not by themselves establish security or safety.
+  <a href="/assurance.html">More on how that is recorded →</a>
+</p>
+
+<h2 id="roadmaps">Roadmaps</h2>
+
+<p>
+  Broiler.JS owns more open plans than any other component. The sequencing authority is the
+  modernization roadmap; the delivery roadmap beneath it is explicitly <em>not</em> a
+  sequencing or state authority.
+</p>
+
+<ul class="checklist neutral">
+  <li><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/roadmap/Modernization.md">Modernization</a> — cross-track authority for performance, assembly/AOT boundaries, package decomposition, compile-ahead, context isolation, Workers and profile-led optimization</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/roadmap/Measurement.md">Measurement</a> — the fail-closed evidence-class, A/A, candidate/control, source-identity, resource and semantic gate every performance claim passes</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/roadmap/Concurrency.md">Concurrency</a> — compile-ahead, optimizer/cache ownership, independent contexts, Worker agents, resource caps</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/roadmap/Component.md">Component</a> — non-performance engine work</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/roadmap/Roadmap.md">Performance campaign crosswalk</a> — the IL campaign, Octane/probe history and optimization catalogue</li>
+</ul>
+
+<div class="callout callout-info">
+  <p class="callout-title">Relationship to Broiler.VM</p>
+  <p>
+    <code>Broiler.JS</code> is a <strong>legacy component</strong> in the platform's own
+    terminology — and the engine every current consumer uses.
+    <a href="/components/vm.html">Broiler.VM</a> does not depend on it, wrap it or replace it on
+    any published schedule, and no VM gate may cite its results as evidence. A future JavaScript
+    VM profile is expected to begin from a snapshot <em>copy</em> taken after this component's
+    in-flight fix programme lands — a fork used as a base, with no dependency edge in either
+    direction.
+  </p>
+</div>
+
+<div class="pager">
+  <a href="/components/html.html"><span class="dir">Previous</span><span class="ttl">Broiler.HTML</span></a>
+  <a class="next" href="/components/ui.html"><span class="dir">Next</span><span class="ttl">Broiler.UI</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

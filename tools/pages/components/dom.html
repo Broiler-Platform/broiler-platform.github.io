@@ -1,0 +1,136 @@
+{"title": "Broiler.DOM — Broiler Platform", "desc": "The canonical, dependency-free DOM and HTML parsing component for Broiler: nodes, mutation, ranges, traversal, tokenization, tree building and serialization on .NET 10.", "nav": "components"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Component · Web engine</span>
+    <h1>Broiler.DOM</h1>
+    <p class="lede">
+      The canonical, dependency-free DOM and HTML parsing component. It is the only mutable
+      tree in the platform, and it owns the engine-neutral DOM algorithms that everything else
+      builds on.
+    </p>
+    <div class="tag-row" style="margin-top:1.4rem">
+      <span class="pill pill-pending">HUMAN_REVIEW pending</span>
+      <span class="pill pill-plain">net10.0</span>
+      <span class="pill pill-plain">Apache-2.0</span>
+      <span class="pill pill-plain">2 assemblies</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="what">What it contains</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Assembly</th><th>Owns</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Dom</code></td><td>Document, node, element, attribute, mutation, range and traversal primitives. Depends on nothing but the BCL.</td></tr>
+    <tr><td><code>Broiler.Dom.Html</code></td><td>HTML tokenization, document and fragment parsing, tree building and serialization. References <code>Broiler.Dom</code> and nothing else.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Both constraints are asserted by tests in the aggregate repository —
+  <code>Future_Dom_Kernel_Project_Must_Remain_Dependency_Free</code> and
+  <code>Dom_Html_Depends_Only_On_The_Canonical_Dom_Component</code> — so the dependency-free
+  claim is checkable rather than aspirational.
+</p>
+
+<h2 id="ownership">Ownership boundary</h2>
+
+<p>
+  <code>Broiler.Dom</code> is the only mutable tree and owns engine-neutral DOM algorithms.
+  <code>Broiler.Dom.Html</code> owns parsing and serialization. Renderer geometry and
+  JavaScript wrappers stay in <a href="/architecture.html#htmlbridge">HtmlBridge</a>, because
+  they depend on computed style, layout or the script runtime.
+</p>
+
+<p>
+  The bridge's JavaScript wrappers are <strong>not</strong> a second DOM tree — they project
+  identity and behaviour over this one. That distinction is what stops the platform from
+  drifting into two trees that have to be kept in sync.
+</p>
+
+<h2 id="open">What is still open</h2>
+
+<p>
+  The extraction is complete: the old bridge-owned <code>DomElement</code> and
+  <code>HtmlTreeBuilder</code> compatibility surfaces have been removed from the main
+  pipeline. What remains is narrower — a set of specification-defined algorithms the bridge
+  still implements only because this component exposes no equivalent API yet.
+</p>
+
+<div class="callout callout-info">
+  <p class="callout-title">The size gap, and what it is not</p>
+  <p>
+    <code>Broiler.Dom</code> is about 2,473 lines and <code>Broiler.Dom.Html</code> about
+    1,180; the bridge assembly that adapts them is about 36,080. That gap is
+    <strong>not a size target</strong>. Closing the open items moves roughly 2,000 lines of
+    neutral algorithm into this component and lets the bridge delete roughly 500 lines of
+    compatibility shims outright — which is the actual goal.
+  </p>
+</div>
+
+<h3 id="admission">Admission rules</h3>
+
+<p>
+  An algorithm is admissible here only when every rule below holds. Anything that fails one
+  stays in the bridge or belongs to another component.
+</p>
+
+<ul class="checklist">
+  <li><code>Broiler.Dom</code> acquires no project or package dependency.</li>
+  <li><code>Broiler.Dom.Html</code> references <code>Broiler.Dom</code> and nothing else.</li>
+  <li>The API signature contains no JavaScript, style, layout, resource or host type, and takes no callback into bridge-owned mutable state — value and <code>DomNode</code> parameters only.</li>
+  <li>Failure is reported as a <code>DomException</code> carrying the spec error name, or as a return value. Callers marshal it into a <code>DOMException</code>; this component never constructs one.</li>
+  <li>Behaviour is pinned by owner-local tests before any consumer cuts over.</li>
+</ul>
+
+<p class="small">
+  The consumer-side cutover order, deletions and guard changes are sequenced by the aggregate
+  repository's root roadmap as waves 1–6, not by this component.
+</p>
+
+<h2 id="build">Build and test</h2>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">standalone</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet build Broiler.Dom.slnx
+dotnet test Broiler.Dom.slnx</code></pre>
+</div>
+
+<h2 id="status">Status and known issues</h2>
+
+<div class="callout callout-warn">
+  <p class="callout-title">Not approved for preview use</p>
+  <p>
+    This component's <code>HUMAN_REVIEW.md</code> is <code>PENDING</code>. A pending record is
+    not an approval, and no checkout of this component should be described as human-approved.
+    See <a href="/assurance.html">Assurance</a>.
+  </p>
+</div>
+
+<p>
+  One packaging defect is tracked openly by a consumer: the nested <code>Broiler.DOM</code>
+  checkout lists <code>Microsoft.SourceLink.GitHub</code> twice, so restore reports
+  <code>NU1504</code> for <code>Broiler.Dom</code> and <code>Broiler.Dom.Html</code>. The Writer
+  repository leaves that warning deliberately unsuppressed, because it is a real upstream
+  defect and the fix belongs here.
+</p>
+
+<div class="pager">
+  <a href="/components.html"><span class="dir">Up</span><span class="ttl">All components</span></a>
+  <a class="next" href="/components/css.html"><span class="dir">Next</span><span class="ttl">Broiler.CSS</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>
