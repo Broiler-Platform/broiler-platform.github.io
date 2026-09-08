@@ -1,0 +1,254 @@
+{"title": "Documentation index — Broiler Platform", "desc": "Every Broiler document worth reading, by topic: roadmaps, architecture records, ADRs, conformance statements, investigations and review records, linked to their source repositories."}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Documentation index</span>
+    <h1>Where everything is written down</h1>
+    <p class="lede">
+      Broiler's documentation lives beside the code it describes: cross-component work in the
+      aggregate repository, and design, API, conformance and implementation records with the
+      component that owns them. This index links the current ones.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<div class="callout callout-info">
+  <p class="callout-title">Two repositories, one rule</p>
+  <p>
+    The aggregate <a href="https://github.com/MaiRat/Broiler">MaiRat/Broiler</a> repository holds
+    cross-component architecture, integration contracts and work that must be coordinated across
+    more than one component. Everything else belongs to a component repository under
+    <a href="https://github.com/Broiler-Platform">Broiler-Platform</a>. A root document links to
+    a component record rather than copying its checklist.
+  </p>
+</div>
+
+<h2 id="start">Start here</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Document</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/README.md">Broiler README</a></td><td>What the platform contains, how to get and build it, provenance, and the first-preview limits</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/README.md">Documentation index</a></td><td>The authoritative in-repository index this page mirrors</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/ROADMAP.md">Root roadmap</a></td><td>The unfinished cross-repository work and its exit gates</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/HUMAN_REVIEW.md">Human review summary</a></td><td>Aggregated component review positions — explicitly a summary, not a root-level approval</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/CHANGELOG.md">CHANGELOG</a></td><td>Keep-a-Changelog record for the component packages, versioned in lockstep during the preview</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/THIRD_PARTY_NOTICES.md">Third-party notices</a></td><td>Complete provenance and license references</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="architecture">Architecture records</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Document</th><th>What it fixes</th></tr></thead>
+  <tbody>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/architecture/htmlbridge.md">HtmlBridge architecture</a></td><td>Bridge assemblies, ownership boundaries and public seams (<code>htmlbridge-public-surface/v2</code>)</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/architecture/browser-webassembly.md">Browser WebAssembly architecture</a></td><td>Browser-host, rendering, input and support decisions for running managed Broiler applications in a browser</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/architecture/android.md">Android application architecture</a></td><td>Host topology, platform baseline, ownership boundaries and the remaining device gates</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/architecture/multithreading.md">Multithreading analysis and roadmap</a></td><td>Cross-component integration and historical host measurements</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/architecture/multithreading-static-state.md">Multithreading and static state</a></td><td>Shared mutable state across the graph</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/architecture/browser-form-controls.md">Browser form controls</a></td><td>How HTML form controls are hosted</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="roadmaps">Roadmaps</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Roadmap</th><th>Owner</th></tr></thead>
+  <tbody>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/ROADMAP.md">Root roadmap</a></td><td>Cross-component and release work only</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/webrtc-roadmap.md">WebRTC implementation roadmap</a></td><td>Architecture, security boundary, native-backend decision, phased delivery, conformance, interoperability, platform and release gates</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.VM/blob/main/docs/roadmap.md">Broiler.VM roadmap</a> · <a href="https://github.com/Broiler-Platform/Broiler.VM/blob/main/docs/roadmap.status.md">status ledger</a></td><td>The bytecode execution core. The plan and the evidence ledger are deliberately separate files</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.Code/blob/main/docs/broiler-code-roadmap.md">Broiler Code roadmap</a></td><td>The phased plan for the IDE, multi-project editing, diagnostics and builds</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/roadmap/Modernization.md">JavaScript modernization</a></td><td><strong>Cross-track execution authority</strong> for performance, assembly/AOT boundaries, packaging, compile-ahead, context isolation and Workers</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/roadmap/ModernizationDelivery.md">JavaScript modernization delivery</a></td><td>A subordinate delivery view — <em>not</em> a sequencing or state authority</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/roadmap/Measurement.md">Performance measurement</a></td><td>The fail-closed evidence-class, A/A, candidate/control, source-identity, resource and semantic gate every performance claim passes</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/roadmap/Concurrency.md">JavaScript concurrency</a></td><td>Compile-ahead, optimizer/cache ownership, independent contexts, Worker agents, resource caps</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/pdf-support-roadmap.md">PDF support roadmap</a></td><td>Scope, phases, security gates, feature claims and legal review for the gated PDF codec</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="small">
+  Component-local roadmaps: <a href="https://github.com/Broiler-Platform/Broiler.CSS/blob/main/docs/roadmap.md">CSS</a> ·
+  <a href="https://github.com/Broiler-Platform/Broiler.DOM/blob/main/docs/roadmap.md">DOM</a> ·
+  <a href="https://github.com/Broiler-Platform/Broiler.Graphics/blob/main/docs/roadmap.md">Graphics</a> ·
+  <a href="https://github.com/Broiler-Platform/Broiler.HTML/blob/main/docs/roadmap.md">HTML</a> ·
+  <a href="https://github.com/Broiler-Platform/Broiler.Input/blob/main/docs/roadmap.md">Input</a> ·
+  <a href="https://github.com/Broiler-Platform/Broiler.Media/blob/main/docs/roadmap.md">Media</a> ·
+  <a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/roadmap.md">Documents</a> ·
+  <a href="https://github.com/Broiler-Platform/Broiler.UI/blob/main/docs/roadmap.md">UI</a>
+</p>
+
+<h2 id="evidence">Conformance and test evidence</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Document</th><th>What it records</th></tr></thead>
+  <tbody>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/wpt-rendering-gaps.md">WPT rendering gaps</a></td><td>The index — shared warnings, reproduction commands, and every test. Split by verdict into <a href="https://github.com/MaiRat/Broiler/blob/main/docs/wpt-rendering-gaps-open.md">not fixed</a>, <a href="https://github.com/MaiRat/Broiler/blob/main/docs/wpt-rendering-gaps-wont-fix.md">won't fix</a> and <a href="https://github.com/MaiRat/Broiler/blob/main/docs/wpt-rendering-gaps-fixed.md">fixed</a></td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/wpt-timeout-causes.md">WPT timeout causes</a></td><td>What the <code>Timeout</code> category actually turns out to be — the per-iteration full-document pass behind six of seven causes</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/wpt-reftests.md">WPT reftests</a></td><td>The second suite, which uses no other engine, and why its pass rate is not comparable to the golden-image one</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/real-world-render-tests.md">Real-world website render tests</a></td><td>The public-site corpus, its live and recorded-DOM lanes, metrics, CI workflow and reproducible command</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/privacy-test-pages.md">Privacy test pages</a></td><td>How a page's own <code>results</code> global is read back from both engines, what "carried out" means, and the tracked baseline</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/privacy-test-page-gaps.md">Privacy test page gaps</a></td><td>What the two-engine comparison found, grouped by the capability behind each gap</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/xunit-suite-status.md">xUnit suite status</a></td><td>What <code>dotnet test</code> reports, why the failures are there, and why nothing in CI runs it</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/compliance/dashboard.md">test262 dashboard</a> · <a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/compliance/known-gaps.md">known gaps</a> · <a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/compliance/process.md">process</a></td><td>The JavaScript evidence surface, its active failure clusters, and how runs are managed in CI</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.HTML/blob/main/docs/compliance.md">Broiler.HTML compliance</a></td><td>The generated HTML 5.2 suite dashboard, its clusters and its CI policy</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="investigations">Investigations</h2>
+
+<p>
+  Case studies of real pages that went wrong, written so the next person with the same symptom
+  does not repeat the diagnosis.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Investigation</th><th>Subject</th></tr></thead>
+  <tbody>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/mediawiki-vector-rendering.md">MediaWiki and the Vector 2022 skin</a></td><td>Twenty-odd engine defects behind a 38.9 % → 82.7 % pixel improvement, and what is left</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/html5test-exceptions.md">html5test.com exceptions</a></td><td>Four reported exceptions; three fixed, one that must not be suppressed</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/browser-load-window-pump.md">Browser load-window pump</a></td><td>Why the desktop browser hung on pages the CLI rendered</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/browser-connection-pool-aborts.md">Pooled-connection aborts</a></td><td>The <code>IOException</code> about a minute after a page loads, and what it costs</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/cli-capture-diagnostics.md">Capture diagnostics</a></td><td><code>--diagnostic-dir</code>: the JavaScript failure log, the resource archive, and the digest that ranks what failed</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/seven-zip-font-sizing-investigation.md">7-Zip font sizing</a></td><td>A font-metrics investigation on a real site</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/google-search-post-consent-challenge.md">Google Search post-consent challenge</a> · <a href="https://github.com/MaiRat/Broiler/blob/main/docs/google-about-current-script.md">currentScript on Google</a></td><td>What Google's pages ask for that Broiler does not yet give them</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/mediawiki-user-agent-403.md">MediaWiki user-agent 403</a></td><td>A loading failure that was not a rendering failure</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/app-vs-cli-rendering.md">App versus CLI rendering</a></td><td>Why the same page can differ between the two hosts</td></tr>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/highdpi-compatibility-roadmap.md">High-DPI compatibility</a></td><td>Where CSS-pixel to device-pixel conversion belongs</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="small">
+  The Broiler.JS gap series — <a href="https://github.com/MaiRat/Broiler/blob/main/docs/broiler-js-gaps-open.md">open</a>,
+  <a href="https://github.com/MaiRat/Broiler/blob/main/docs/broiler-js-gaps-in-progress.md">in progress</a>,
+  <a href="https://github.com/MaiRat/Broiler/blob/main/docs/broiler-js-gaps-closed.md">closed</a>,
+  <a href="https://github.com/MaiRat/Broiler/blob/main/docs/broiler-js-gaps-wont-fix.md">won't fix</a> and its
+  <a href="https://github.com/MaiRat/Broiler/blob/main/docs/broiler-js-gaps-roadmap.md">roadmap</a> — tracks
+  JavaScript-engine gaps found through browser use rather than through test262.
+</p>
+
+<h2 id="adrs">Architecture decision records</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Component</th><th>ADRs</th><th>Themes</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><a href="https://github.com/Broiler-Platform/Broiler.UI/blob/main/docs/adr/README.md">Broiler.UI</a></td>
+      <td class="num">26</td>
+      <td>Per-type assembly rule, logical versus native windows, graphics submission, reentrancy, layout protocol, accessibility bridge, rich-text model, clipboard sanitization, code-editor family, IME, host window breakout, owner-drawn chrome</td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/adr/README.md">Broiler.Documents</a></td>
+      <td class="num">12</td>
+      <td>Component topology, document-model ownership, codec contract and signature probe, read limits and RTF sanitization, and eight PDF decisions from scope through IP provenance</td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/Broiler-Platform/Broiler.VM/blob/main/docs/adr/README.md">Broiler.VM</a></td>
+      <td class="num">12</td>
+      <td>Dependency graph, profile identity and static catalog, core contract v1, lifecycle state machine, result envelope, verified-artifact ownership, resource authority, guest loads, external suspension, embedding, the source-level profile contract, security ownership</td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/Broiler-Platform/Broiler.Input/blob/main/docs/adr/README.md">Broiler.Input</a></td>
+      <td class="num">8</td>
+      <td>Assembly names and topology, abstract device hierarchy, Windows support matrix, event and stream delivery, buffer ownership, monotonic clock domain, Raw Input registration, media interop boundary</td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/Broiler-Platform/Broiler.Media/blob/main/docs/adr/README.md">Broiler.Media</a></td>
+      <td class="num">6</td>
+      <td>Component topology and consumption policy, buffer ownership and limits, pixel and alpha format, compatibility window, borrowed HWND, no graphics dependency</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="conformance-docs">Format conformance statements</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Format</th><th>Document</th></tr></thead>
+  <tbody>
+    <tr><td>RTF</td><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/rtf-conformance.md">rtf-conformance.md</a></td></tr>
+    <tr><td>DOCX</td><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/docx-conformance.md">docx-conformance.md</a></td></tr>
+    <tr><td>ODT</td><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/odt-conformance.md">odt-conformance.md</a></td></tr>
+    <tr><td>HTML</td><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/html-conformance.md">html-conformance.md</a></td></tr>
+    <tr><td>Markdown</td><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/markdown-conformance.md">markdown-conformance.md</a></td></tr>
+    <tr><td>PDF</td><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/pdf-feature-matrix.md">feature matrix</a> · <a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/pdf-construct-inventory.md">construct inventory</a> · <a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/pdf-extension-points.md">extension points</a> · <a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/pdf-ip-licensing-register.md">IP and licensing register</a></td></tr>
+    <tr><td>ECMAScript regex</td><td><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/Broiler.Regex/Broiler.Regex/docs/ecmascript-mapping.md">ecmascript-mapping.md</a></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="engine-internals">Engine internals</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Document</th><th>Subject</th></tr></thead>
+  <tbody>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/architecture/overview.md">Broiler.JS architecture overview</a></td><td>Engine layers and satellite assemblies</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/architecture/dependencies.md">Assembly boundaries</a></td><td>Dependency direction and supported cross-assembly seams</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/public-api.md">Public API reference</a></td><td>Supported packages, entry points and module boundaries</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/architecture/builtins-vs-clr-types.md">Why the built-ins are not .NET types</a></td><td>Why <code>JSArray</code>/<code>JSString</code> cannot derive from <code>System.Array</code>/<code>System.String</code></td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/architecture/contributing-builtins.md">Contributing built-ins</a></td><td>How to implement a new built-in object</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.HTML/blob/main/docs/architecture.md">Broiler.HTML architecture</a> · <a href="https://github.com/Broiler-Platform/Broiler.HTML/blob/main/docs/graphics-backend.md">graphics backend</a></td><td>Renderer assemblies, the public API, and backend selection and fallback</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.Code/blob/main/docs/architecture/broiler-code.md">Broiler Code architecture</a> · <a href="https://github.com/Broiler-Platform/Broiler.Code/blob/main/docs/architecture/broiler-code-budgets.md">budgets</a> · <a href="https://github.com/Broiler-Platform/Broiler.Code/blob/main/docs/architecture/broiler-code-review.md">review workspace</a> · <a href="https://github.com/Broiler-Platform/Broiler.Code/blob/main/docs/architecture/broiler-code-project-mutations.md">project mutations</a></td><td>Capability boundary, frozen performance budgets, the human review design, and which project constructs may be edited</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.Input/blob/main/docs/camera.md">Camera</a> · <a href="https://github.com/Broiler-Platform/Broiler.Input/blob/main/docs/microphone.md">microphone</a> · <a href="https://github.com/Broiler-Platform/Broiler.Input/blob/main/docs/hardware-validation.md">hardware validation</a></td><td>Capture contracts, provider behaviour and the opt-in device checks</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/cli.md">broilerdoc CLI guide</a></td><td>Full command reference, exit codes, the edit language, and what makes a render reproducible</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="review-docs">Review and assurance records</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Record</th><th>Scope</th></tr></thead>
+  <tbody>
+    <tr><td><a href="https://github.com/MaiRat/Broiler/blob/main/HUMAN_REVIEW.md">Aggregate summary</a></td><td>All component positions in one place — a summary, not an approval</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.Browser/blob/main/CODE-ASSURANCE.md">Platform code assurance</a></td><td>Per-component adoption and human-reviewed fractions, with an explicit statement of what the table is not</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.VM/blob/main/CODE-ASSURANCE.md">Broiler.VM code assurance</a></td><td>The generated per-unit report — the reference implementation of the system</td></tr>
+    <tr><td>Per-component <code>HUMAN_REVIEW.md</code></td><td>One per component repository, valid only for the exact commit a human named</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p><a href="/assurance.html">What each review status actually means →</a></p>
+
+<h2 id="deprecated">Retained for historical context</h2>
+
+<p>
+  A few documents are explicitly superseded and kept only so an old link does not dead-end. They
+  are not the current backlog.
+</p>
+
+<ul class="checklist neutral">
+  <li><a href="https://github.com/MaiRat/Broiler/blob/main/acid/acid2/acid2-compliance-roadmap.md">Acid2 compliance roadmap</a> — superseded by the root standards and test-infrastructure roadmap; last verified 2026-04-04</li>
+  <li>Completed migration plans, delivery logs and investigation journals remain available in Git history. Durable decisions and unresolved outcomes have been consolidated into the documents above or moved to the owning component.</li>
+</ul>
+
+<div class="pager">
+  <a href="/get-started.html"><span class="dir">Previous</span><span class="ttl">Get started</span></a>
+  <a class="next" href="/"><span class="dir">Next</span><span class="ttl">Overview</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

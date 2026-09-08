@@ -2,127 +2,102 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://broiler-platform.github.io/applications.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/applications/browser.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/applications/code.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/applications/writer.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/architecture.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/assurance.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/components.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/components/css.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/components/documents.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/components/dom.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/components/graphics.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/components/html.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/components/input.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/components/js.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/components/layout.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/components/media.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/components/ui.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/components/vm.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/conformance.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/docs.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/get-started.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/packages.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/roadmap.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://broiler-platform.github.io/security.html</loc>
-    <lastmod>2026-09-08</lastmod>
     <priority>0.8</priority>
   </url>
 </urlset>

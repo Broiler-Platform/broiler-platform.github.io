@@ -1,0 +1,278 @@
+{"title": "Packages — Broiler Platform", "desc": "Every Broiler NuGet package: Graphics, Media, Input, UI, Documents and Layout at 0.1.0-preview.1, the feeds they come from, and what is deliberately not published.", "nav": "packages"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Packages</span>
+    <h1>Take one component, not the platform</h1>
+    <p class="lede">
+      The reusable component libraries publish as NuGet packages, versioned in lockstep at
+      <code>0.1.0-preview.1</code> and licensed under Apache-2.0. There is no bundle of the whole
+      platform — an application takes the abstractions it needs plus exactly the implementations
+      it composes.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<div class="callout callout-warn">
+  <p class="callout-title">Prerelease, and gated on human review</p>
+  <p>
+    <code>0.1.0-preview.1</code> is a prerelease, so every install needs
+    <code>--prerelease</code>. Public APIs and behaviour are not frozen and may change before
+    <code>1.0</code>. <strong>Public release is gated on the per-component
+    <code>HUMAN_REVIEW.md</code> records</strong> — see <a href="/assurance.html">Assurance</a>
+    before depending on any of this in anything that matters.
+  </p>
+</div>
+
+<h2 id="quick">Quick install</h2>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">the common cases</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet add package Broiler.Layout --prerelease                  # the layout engine alone
+dotnet add package Broiler.UI.All --prerelease                  # the whole UI toolkit
+dotnet add package Broiler.Media.All --prerelease               # the cross-platform media stack
+dotnet add package Broiler.Input.All --prerelease               # the neutral input contracts
+dotnet add package Broiler.Graphics --prerelease                # the neutral rendering core
+dotnet add package Broiler.Graphics.Windows --prerelease        # + the Direct2D backend
+dotnet add package Broiler.Documents.Rtf --prerelease           # one document codec</code></pre>
+</div>
+
+<h2 id="graphics">Broiler.Graphics — 7 packages</h2>
+
+<p>
+  No meta-package: an application takes the core plus exactly the backends it presents with.
+  <a href="/components/graphics.html">Component page →</a>
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Package</th><th>Target</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Graphics</code></td><td><code>net10.0</code></td><td>Neutral core — bitmaps, canvas, geometry, colour, CPU raster, text and fonts, render lists</td></tr>
+    <tr><td><code>Broiler.Graphics.Windows</code></td><td><code>net10.0-windows</code></td><td>Direct2D/DirectWrite backend, window and input integration, HWND video target</td></tr>
+    <tr><td><code>Broiler.Graphics.Linux</code></td><td><code>net10.0</code></td><td>Shared Linux runtime support and diagnostics</td></tr>
+    <tr><td><code>Broiler.Graphics.Linux.OpenGL</code></td><td><code>net10.0</code></td><td>OpenGL/EGL presentation over Mesa</td></tr>
+    <tr><td><code>Broiler.Graphics.Linux.Vulkan</code></td><td><code>net10.0</code></td><td>Vulkan 1.2 loader/device path</td></tr>
+    <tr><td><code>Broiler.Graphics.Android</code></td><td><code>net10.0</code></td><td>EGL / OpenGL ES presentation via P/Invoke — no <code>Mono.Android</code>, no workload</td></tr>
+    <tr><td><code>Broiler.Graphics.WebAssembly</code></td><td><code>net10.0</code></td><td>Browser Canvas backend</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="media">Broiler.Media — 8 packages</h2>
+
+<p>
+  <code>Broiler.Media.All</code> is a dependencies-only meta-package over the six cross-platform
+  assemblies. The Windows-only video backend is <strong>not</strong> pulled in by it.
+  <a href="/components/media.html">Component page →</a>
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Package</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Media</code></td><td>Shared base — codec contract, immutable catalog, probing, input, limits, diagnostics</td></tr>
+    <tr><td><code>Broiler.Media.Image</code> / <code>.Image.Managed</code></td><td>Image abstraction / managed PNG, APNG, JPEG, BMP, GIF, WebP codecs</td></tr>
+    <tr><td><code>Broiler.Media.Audio</code> / <code>.Audio.Managed</code></td><td>Audio abstraction / RIFF-WAVE PCM decoders</td></tr>
+    <tr><td><code>Broiler.Media.Video</code></td><td>Video abstraction — codec, session, output, state and events</td></tr>
+    <tr><td><code>Broiler.Media.Video.MediaFoundation</code></td><td>Windows MP4 (H.264/AAC) via <code>IMFMediaEngine</code>. <code>net10.0-windows</code></td></tr>
+    <tr><td><code>Broiler.Media.All</code></td><td>Dependencies-only meta-package; no assembly</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="input">Broiler.Input — 25+ packages</h2>
+
+<p>
+  One package per assembly. <code>Broiler.Input.All</code> covers the neutral contracts; platform
+  backends stay separate so a consumer takes only the ones it runs on.
+  <a href="/components/input.html">Component page →</a>
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Package family</th><th>Contents</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Input</code></td><td>Device lifecycle, discovery, timing and delivery contracts</td></tr>
+    <tr><td><code>Broiler.Input.All</code></td><td>Meta-package over the neutral contracts</td></tr>
+    <tr><td><code>Broiler.Input.{Camera, Keyboard, Microphone, Mouse, Pen, Text, Touch}</code></td><td>Per-kind neutral abstractions</td></tr>
+    <tr><td><code>Broiler.Input.Windows</code> + <code>.&lt;Kind&gt;.Windows</code></td><td>Windows providers — Raw Input, QPC, WASAPI, Media Foundation. <code>net10.0-windows</code></td></tr>
+    <tr><td><code>Broiler.Input.Linux</code> + <code>.&lt;Kind&gt;.Linux</code></td><td>Linux evdev providers</td></tr>
+    <tr><td><code>Broiler.Input.Android</code> + <code>.&lt;Kind&gt;.Android</code></td><td>Android translation layer — plain <code>net10.0</code>, no Android SDK dependency</td></tr>
+    <tr><td><code>Broiler.Input.Legacy</code></td><td>Window-callback compatibility adapter for migration</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="small">
+  <code>Broiler.Input.Testing</code>, <code>Broiler.Input.Linux.Diagnostic</code> and the test
+  runners are development-only and are not published.
+</p>
+
+<h2 id="ui">Broiler.UI — 56 packages</h2>
+
+<p>
+  Every one is plain <code>net10.0</code>. Each control type ships as a contract package and a
+  <code>.Standard</code> implementation; an implementation depends on its own contract and on
+  <code>Broiler.UI.Standard</code>, so one <code>.Standard</code> reference pulls in everything
+  that control needs. <a href="/components/ui.html">Component page →</a>
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Family</th><th>Controls (each a contract + <code>.Standard</code> pair)</th></tr></thead>
+  <tbody>
+    <tr><td>Foundation</td><td><code>Broiler.UI</code>, <code>Broiler.UI.Standard</code>, <code>Broiler.UI.All</code></td></tr>
+    <tr><td>Shell</td><td><code>Window</code>, <code>Dialog</code>, <code>Tooltip</code>, <code>FileDialog</code>, <code>FontDialog</code></td></tr>
+    <tr><td>Layout</td><td><code>Panel</code>, <code>ScrollView</code>, <code>Splitter</code>, <code>TabView</code></td></tr>
+    <tr><td>Content</td><td><code>Label</code>, <code>ImageView</code>, <code>ProgressBar</code></td></tr>
+    <tr><td>Commands</td><td><code>Button</code>, <code>ToggleButton</code>, <code>Toolbar</code>, <code>Menu</code></td></tr>
+    <tr><td>Value and selection</td><td><code>CheckBox</code>, <code>RadioButton</code>, <code>Slider</code>, <code>ListView</code>, <code>ComboBox</code>, <code>TreeView</code></td></tr>
+    <tr><td>Text</td><td><code>Edit</code>, <code>CodeEditor</code>, <code>RichEdit</code>, <code>FormatCodeView</code></td></tr>
+    <tr><td>Integration</td><td><code>Broiler.UI.RichEdit.Rtf</code> — optional RTF load/save through <code>Broiler.Documents.Rtf</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="small">
+  The published UI packages depend on <code>Broiler.Graphics</code>, <code>Broiler.Input.*</code>
+  and — for the rich-text and formatting-code family — <code>Broiler.Documents.*</code>, all at
+  the same suite version, which have to be on the target feed for them to restore.
+</p>
+
+<h2 id="documents">Broiler.Documents — 8 packages</h2>
+
+<p>
+  No meta-package: add a package per format you actually read or write.
+  <a href="/components/documents.html">Component page →</a>
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Package</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Documents.Model</code></td><td>Platform-neutral rich-text document model</td></tr>
+    <tr><td><code>Broiler.Documents.FormatCodes</code></td><td>Deterministic, versioned Formatting Codes projection</td></tr>
+    <tr><td><code>Broiler.Documents</code></td><td>Codec contract, catalog, descriptors, options, limits, diagnostics, probe results</td></tr>
+    <tr><td><code>Broiler.Documents.Rtf</code></td><td>RTF reader and writer</td></tr>
+    <tr><td><code>Broiler.Documents.Docx</code></td><td>Open XML WordprocessingML subset</td></tr>
+    <tr><td><code>Broiler.Documents.Odt</code></td><td>OASIS OpenDocument text subset</td></tr>
+    <tr><td><code>Broiler.Documents.Html</code></td><td>HTML document/fragment codec over the canonical DOM</td></tr>
+    <tr><td><code>Broiler.Documents.Markdown</code></td><td>CommonMark-oriented subset</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="notpublished">What is deliberately not published</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Not published</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>The three applications</strong><br><span class="small">Browser, Writer, Code</span></td>
+      <td>They are products, not libraries. Their release workflows upload build artifacts for manual testing and create no GitHub release; store-ready signed preview packages come from the aggregate repository's packaging workflow, which owns the signing material.</td>
+    </tr>
+    <tr>
+      <td><strong><code>Broiler.Documents.Pdf</code></strong></td>
+      <td><code>IsPackable=false</code> and registered in no application catalog until the read-preview and write-preview gates pass. It builds and tests in the solution; a CLI that registered it would ship the capability the gates exist to hold back.</td>
+    </tr>
+    <tr>
+      <td><strong>Development-only assemblies</strong></td>
+      <td>Test runners, the Linux evdev diagnostic tool, the demo and sample hosts, and the input testing helpers never pack.</td>
+    </tr>
+    <tr>
+      <td><strong><code>Broiler.HTML</code> and <code>Broiler.JS</code></strong></td>
+      <td>Consumed as project references through the aggregate checkout rather than as packages.</td>
+    </tr>
+    <tr>
+      <td><strong><code>Broiler.VM</code></strong></td>
+      <td>Its release policy forbids publishing a package while any relevant code unit is <code>HUMAN_PENDING</code> — which all 720 of them currently are.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="feeds">Feeds and the package-source mapping</h2>
+
+<p>
+  Each component repository's <code>NuGet.config</code> pins two sources — nuget.org and the
+  Broiler-Platform GitHub Packages feed — and <strong>clears whatever the machine has
+  configured</strong>, so a restore resolves identically everywhere. Package source mapping sends
+  <code>Broiler.*</code> to either feed and everything else to nuget.org only.
+</p>
+
+<div class="callout callout-info">
+  <p class="callout-title">That mapping is load-bearing</p>
+  <p>
+    GitHub Packages requires authentication <strong>even for public packages</strong> and answers
+    <code>401</code> to an anonymous request. An unmapped source would therefore be queried for
+    every package and break the restore. Because the repositories take their Broiler dependencies
+    through submodules as project references, nothing queries that feed today and no credentials
+    are needed to build.
+  </p>
+</div>
+
+<p>
+  To actually pull <code>Broiler.*</code> from GitHub Packages you need a personal access token
+  with the <code>read:packages</code> scope. Put it in your <strong>user-level</strong> config,
+  never in the committed one:
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">user-level credentials</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet nuget update source broiler-github \
+  --username &lt;github-user&gt; --password &lt;pat&gt; \
+  --store-password-in-clear-text \
+  --configfile "$APPDATA/NuGet/NuGet.Config"</code></pre>
+</div>
+
+<p class="small">In GitHub Actions use <code>secrets.GITHUB_TOKEN</code> rather than a personal token.</p>
+
+<h2 id="quality">What every package ships with</h2>
+
+<ul class="checklist">
+  <li>XML documentation and a <code>.snupkg</code> symbol package.</li>
+  <li>A deterministic build with SourceLink.</li>
+  <li>A vendored <code>eng/Broiler.Packaging.props</code> — a copy of the suite-wide packaging metadata that holds the version. Edit the canonical file and re-run the sync script; never edit a copy.</li>
+  <li>Apache-2.0, except where a file or third-party notice says otherwise.</li>
+</ul>
+
+<h2 id="publishing">How publishing works</h2>
+
+<p>
+  Each component's <code>publish.yml</code> is manual by default and chooses a feed — GitHub
+  Packages or nuget.org. It <strong>defaults to a dry run</strong> that packs and attaches the
+  packages without pushing. Pushing a <code>v*</code> tag publishes to nuget.org, and the tag must
+  match the version in <code>eng/Broiler.Packaging.props</code>, which stays the source of truth
+  for the suite version.
+</p>
+
+<p>
+  Packing is per configuration where a component builds platform-specific assemblies. Graphics
+  needs three runs into one output directory; Input needs two, and because the builds are
+  deterministic the second reproduces the first byte for byte.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">packing the full graphics set</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet pack Broiler.Graphics.slnx -c Release         -o ./artifacts
+dotnet pack Broiler.Graphics.slnx -c Release-Windows -o ./artifacts
+dotnet pack Broiler.Graphics.slnx -c Release-Linux   -o ./artifacts</code></pre>
+</div>
+
+<div class="pager">
+  <a href="/roadmap.html"><span class="dir">Previous</span><span class="ttl">Roadmap</span></a>
+  <a class="next" href="/get-started.html"><span class="dir">Next</span><span class="ttl">Get started</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

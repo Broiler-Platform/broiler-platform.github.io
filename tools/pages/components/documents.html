@@ -1,0 +1,188 @@
+{"title": "Broiler.Documents — Broiler Platform", "desc": "Broiler's document-format codec component: a UI-free rich-text model plus RTF, DOCX, ODT, HTML, Markdown and a deliberately unpublished PDF codec, with a scriptable round-trip and compare CLI.", "nav": "components"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Component · Integration</span>
+    <h1>Broiler.Documents</h1>
+    <p class="lede">
+      Reads and writes rich-text interchange formats to and from a UI-free document model.
+      Applications compose a codec catalog explicitly, codecs probe bounded byte prefixes, and
+      a read returns a best-effort document <em>plus diagnostics</em> for everything it skipped
+      or approximated.
+    </p>
+    <div class="tag-row" style="margin-top:1.4rem">
+      <span class="pill pill-preview">0.1.0-preview.1</span>
+      <span class="pill pill-plain">8 packages</span>
+      <span class="pill pill-plain">Apache-2.0</span>
+      <span class="pill pill-risk">Untrusted document input</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="packages">Packages</h2>
+
+<p>
+  Eight packages ship. All target <code>net10.0</code>, ship XML documentation and a
+  <code>.snupkg</code>, and are built deterministically with SourceLink. There is
+  <strong>no meta-package</strong> — add a package per format you actually read or write.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Package</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Documents.Model</code></td><td>Platform-neutral rich-text document model, promoted out of <code>Broiler.UI.RichEdit</code>. Depends only on <a href="/components/graphics.html">Broiler.Graphics</a>.</td></tr>
+    <tr><td><code>Broiler.Documents.FormatCodes</code></td><td>Deterministic, versioned Formatting Codes projection: typed tokens, source mappings, diagnostics, resource policy. References only the model.</td></tr>
+    <tr><td><code>Broiler.Documents</code></td><td>Codec contract, catalog, descriptors, source hints, read/write options, limits, diagnostics, probe results.</td></tr>
+    <tr><td><code>Broiler.Documents.Rtf</code></td><td>RTF reader/writer for the documented first-release subset.</td></tr>
+    <tr><td><code>Broiler.Documents.Docx</code></td><td>DOCX reader/writer for a safe Open XML WordprocessingML subset.</td></tr>
+    <tr><td><code>Broiler.Documents.Odt</code></td><td>ODT reader/writer for a safe OASIS OpenDocument text subset.</td></tr>
+    <tr><td><code>Broiler.Documents.Html</code></td><td>HTML document/fragment codec over <code>Broiler.Dom</code> and <code>Broiler.Dom.Html</code>.</td></tr>
+    <tr><td><code>Broiler.Documents.Markdown</code></td><td>Markdown codec for a safe CommonMark-oriented subset.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="pdf">The PDF codec is built, tested — and deliberately not published</h2>
+
+<div class="callout callout-warn">
+  <p class="callout-title"><code>Broiler.Documents.Pdf</code> is <code>IsPackable=false</code> and registered in no application catalog</p>
+  <p>
+    It is a base PDF codec — logical text import from ISO 32000-1 files and a deterministic PDF
+    1.7 writer, built only from what this repository implements itself, with no third-party
+    runtime dependency and no bundled font or codec asset. Syntax, cross-references, object
+    streams and the Flate / ASCIIHex / ASCII85 / RunLength filters are implemented. Every
+    remaining PDF technology is <strong>detected, skipped with its own stable diagnostic, and
+    reachable by composing a reviewed implementation</strong> into <code>PdfCodecServices</code>.
+  </p>
+  <p style="margin-bottom:0">
+    It stays unpacked and unregistered until the roadmap's read-preview and write-preview gates
+    pass. The document CLI does not compose it either — a CLI that registered it would ship the
+    capability the gates exist to hold back. IP and licensing requirements in that roadmap are
+    engineering release controls, not a legal opinion; patent freedom-to-operate and
+    reciprocal-license decisions require approval by a qualified legal reviewer.
+  </p>
+</div>
+
+<h2 id="direction">Dependency direction</h2>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">codec graph</span></div>
+  <pre><code>Broiler.Documents.Rtf      -> Broiler.Documents -> Broiler.Documents.Model -> Broiler.Graphics
+Broiler.Documents.Docx     -> Broiler.Documents -> Broiler.Documents.Model
+Broiler.Documents.Odt      -> Broiler.Documents -> Broiler.Documents.Model
+Broiler.Documents.Markdown -> Broiler.Documents -> Broiler.Documents.Model
+Broiler.Documents.Html     -> Broiler.Documents -> Broiler.Documents.Model
+Broiler.Documents.Html     -> Broiler.Dom, Broiler.Dom.Html
+Broiler.Documents.FormatCodes                   -> Broiler.Documents.Model
+Broiler.Documents.Pdf      -> Broiler.Documents -> Broiler.Documents.Model   (not packed)</code></pre>
+</div>
+
+<h2 id="conformance">Per-format conformance is documented, not implied</h2>
+
+<p>
+  Each codec has a conformance document that is the authoritative statement of what it
+  honours, approximates, ignores and skips — with the tests that exercise each category
+  named. The RTF document, for example, tabulates the control words in each category and
+  states two properties outright: <strong>the reader is total (never throws on malformed
+  input) and safe by default.</strong>
+</p>
+
+<p>
+  The DOCX reader is a good illustration of what "best-effort plus diagnostics" means in
+  practice. Tables are walked recursively so their paragraphs are read rather than dropped,
+  then flattened into their cell paragraphs in row-major order with a
+  <code>docx.table.flattened</code> diagnostic — because <code>RichTextDocument</code> has no
+  table shape, and layout tables are how CV and letterhead templates hold their entire text.
+  Dropping them silently would lose the document; flattening them without saying so would be
+  a lie about fidelity.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Format</th><th>Conformance document</th></tr></thead>
+  <tbody>
+    <tr><td>RTF</td><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/rtf-conformance.md">rtf-conformance.md</a> — honoured, approximated, ignored and skipped control words; limits and security tests</td></tr>
+    <tr><td>DOCX</td><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/docx-conformance.md">docx-conformance.md</a> — package discovery, block containers, revisions, inline formatting</td></tr>
+    <tr><td>ODT</td><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/odt-conformance.md">odt-conformance.md</a></td></tr>
+    <tr><td>HTML</td><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/html-conformance.md">html-conformance.md</a></td></tr>
+    <tr><td>Markdown</td><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/markdown-conformance.md">markdown-conformance.md</a></td></tr>
+    <tr><td>PDF</td><td><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/pdf-feature-matrix.md">pdf-feature-matrix.md</a>, <a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/pdf-construct-inventory.md">construct inventory</a>, <a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/pdf-extension-points.md">extension points</a></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="cli">A CLI built to be driven by a test system</h2>
+
+<p>
+  <code>Broiler.Documents.Cli</code> creates, edits, converts, renders and compares documents.
+  Every command has a <code>--json</code> form, and the exit code is a documented contract.
+</p>
+
+<p>
+  The two commands the rest of it exists to support both answer the same question — where are
+  the gaps in these codecs — and both answer it structurally first, in pixels only when that is
+  what you actually need to know:
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">round-trip through every format</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>broilerdoc roundtrip report.docx --via docx --via odt --via rtf --via html --via markdown</code></pre>
+</div>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">compare two documents, structurally or as pixels</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>broilerdoc compare a.docx b.docx --render --continuous --diff diff.png --tolerance 2</code></pre>
+</div>
+
+<p><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/cli.md">Full command reference, exit codes and the edit language →</a></p>
+
+<h2 id="constraints">Component constraints</h2>
+
+<ul class="checklist">
+  <li>Target .NET 10 only.</li>
+  <li>No third-party runtime dependencies — including for PDF.</li>
+  <li>Abstraction assemblies stay platform-neutral, safe-code compatible, trimming-friendly and AOT-friendly.</li>
+  <li>No hidden global codec registration. There is no process-wide registry and no module initializer.</li>
+</ul>
+
+<h2 id="security">Security</h2>
+
+<div class="callout callout-danger">
+  <p class="callout-title">The codecs parse untrusted input</p>
+  <p>
+    RTF control words, Open XML and OpenDocument packages, HTML, and PDF object graphs all cross
+    a parser boundary and must be treated as security-sensitive. <strong>No fuzzing campaign,
+    dependency scan or independent security audit is recorded for this revision.</strong>
+    Read limits and RTF sanitization are specified in
+    <a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/adr/0004-document-read-limits-and-rtf-sanitization.md">ADR 0004</a>.
+  </p>
+</div>
+
+<h2 id="adrs">Twelve ADRs</h2>
+
+<p>
+  Eight of the twelve are PDF decisions — scope and delivery, request/result and commit
+  semantics, security and privacy, pagination units and fonts, standards and IP provenance, and
+  the base-implementation-plus-composed-extensions model. The other four fix component
+  topology, document-model ownership and promotion, the codec contract and signature probe, and
+  the RTF first-release subset.
+</p>
+
+<p><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/adr/README.md">ADR index →</a></p>
+
+<div class="pager">
+  <a href="/components/ui.html"><span class="dir">Previous</span><span class="ttl">Broiler.UI</span></a>
+  <a class="next" href="/components/vm.html"><span class="dir">Next</span><span class="ttl">Broiler.VM</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,157 @@
+{"title": "Broiler.Media — Broiler Platform", "desc": "Broiler's decode-first media component: image, audio and video decoding, probing and codec selection. PNG/APNG, JPEG, BMP, GIF, WebP, WAVE PCM and Windows MP4 through Media Foundation.", "nav": "components"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Component · Platform core</span>
+    <h1>Broiler.Media</h1>
+    <p class="lede">
+      Decode-first media: image, audio and video <em>decoding</em>, format <em>probing</em> and
+      codec <em>selection</em>, behind small abstraction assemblies with one concrete
+      implementation per media kind. Rendering, windowing, networking and HTML media-element
+      behaviour deliberately live outside it.
+    </p>
+    <div class="tag-row" style="margin-top:1.4rem">
+      <span class="pill pill-preview">0.1.0-preview.1</span>
+      <span class="pill pill-plain">8 packages</span>
+      <span class="pill pill-plain">Apache-2.0</span>
+      <span class="pill pill-risk">Untrusted binary input</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="formats">Supported formats</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Kind</th><th>Format</th><th class="center">Decode</th><th class="center">Encode</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Image</td><td>PNG / APNG</td><td class="center">✅</td><td class="center">✅</td><td>Animation — frame blend/dispose, loop</td></tr>
+    <tr><td>Image</td><td>JPEG</td><td class="center">✅</td><td class="center">✅</td><td>Baseline + progressive decode; baseline encode</td></tr>
+    <tr><td>Image</td><td>BMP</td><td class="center">✅</td><td class="center">✅</td><td>24/32-bit decode; 32-bit encode</td></tr>
+    <tr><td>Image</td><td>GIF</td><td class="center">✅</td><td class="center">✅</td><td>Animation</td></tr>
+    <tr><td>Image</td><td>WebP</td><td class="center">✅</td><td class="center">✅</td><td>Lossless + animation. Lossy VP8 decode needs the optional Windows WebP extension and reports a capability error without it</td></tr>
+    <tr><td>Audio</td><td>RIFF/WAVE PCM</td><td class="center">✅</td><td class="center">—</td><td>Streaming; 8/16/24/32-bit PCM + IEEE float</td></tr>
+    <tr><td>Video</td><td>MP4 (H.264/AAC)</td><td class="center">✅</td><td class="center">—</td><td>Windows only, direct <code>IMFMediaEngine</code> presentation to an HWND</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Additional audio codecs — MP3, AAC, Vorbis, Opus, FLAC — and non-Media-Foundation video
+  providers are future work. The stack reports a <strong>deterministic capability error</strong>
+  for a format it does not support, rather than a misleading placeholder.
+</p>
+
+<h2 id="assemblies">Assemblies and packages</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Assembly</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Media</code></td><td>Shared base: <code>MediaCodec</code>, the immutable <code>MediaCodecCatalog</code>, probing, <code>MediaInput</code>, limits, diagnostics, the base output lifecycle</td></tr>
+    <tr><td><code>Broiler.Media.Audio</code></td><td>Audio abstraction: <code>AudioCodec</code>, <code>AudioBuffer</code>, <code>AudioStreamInfo</code>, <code>IAudioOutput</code></td></tr>
+    <tr><td><code>Broiler.Media.Audio.Managed</code></td><td>Managed audio decoders (RIFF/WAVE PCM)</td></tr>
+    <tr><td><code>Broiler.Media.Video</code></td><td>Video abstraction: <code>VideoCodec</code>, <code>IVideoSession</code>, <code>IVideoOutput</code>, session state and events</td></tr>
+    <tr><td><code>Broiler.Media.Video.MediaFoundation</code></td><td>Windows-only video via <code>IMFMediaEngine</code>, presenting to an HWND owned by <code>Broiler.Graphics.Windows</code>. Targets <code>net10.0-windows</code></td></tr>
+    <tr><td><code>Broiler.Media.Image</code></td><td>Image abstraction: <code>ImageCodec</code>, <code>ImageBuffer</code>, <code>ImageFrame</code>, <code>ImageSequence</code></td></tr>
+    <tr><td><code>Broiler.Media.Image.Managed</code></td><td>Managed image codecs (PNG/APNG, JPEG, BMP, GIF, WebP)</td></tr>
+    <tr><td><code>Broiler.Media.All</code></td><td>Dependencies-only meta-package over the six cross-platform assemblies. <strong>Platform-native backends stay separate</strong> and are never pulled in by it.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="selection">Explicit codec selection, no hidden globals</h2>
+
+<p>
+  There is <strong>no</strong> process-wide mutable <code>Current</code> singleton and no
+  module-initializer side effect. The application composition root builds one immutable catalog
+  and reuses it. Selection is content-probe first: MIME type, file extension and URL are hints
+  only.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">selecting and using a codec</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>var catalog = new MediaCodecCatalog(ManagedImageCodecs.CreateCodecs());
+using var input = new MediaInput(stream, new MediaSourceHints(mimeType: "image/png"));
+
+MediaCodecMatch? match = await catalog.SelectAsync(MediaKind.Image, input);
+if (match?.Codec is ImageCodec codec)
+    ImageSequence decoded = await codec.DecodeAsync(input);</code></pre>
+</div>
+
+<p>
+  Graphics decodes images through an injected catalog via
+  <code>Broiler.Graphics.BImageCodecs.Use(...)</code> — Graphics references only
+  <code>Broiler.Media.Image</code>, never the implementation. Browser and application playback —
+  the <code>&lt;audio&gt;</code>/<code>&lt;video&gt;</code> playback clock, transport and element
+  state machine — lives in the HTML and application components, never here.
+</p>
+
+<h2 id="security">All media is untrusted input</h2>
+
+<div class="callout callout-danger">
+  <p class="callout-title">Bounded by contract, not by hope</p>
+  <p>
+    Decoders enforce configurable <code>MediaLimits</code> — encoded byte count, image and video
+    dimensions, pixel and frame counts, audio channels, sample rate and duration, probe bytes and
+    probe time, queued and decoded memory — and use checked arithmetic for dimensions, strides
+    and allocation sizes.
+  </p>
+  <p>
+    Malformed data produces a bounded <code>MediaException</code> carrying a
+    <code>MediaError</code> (codec id and byte offset where safe). Never unbounded allocation,
+    hangs, silent partial success, or arbitrary exception leakage.
+  </p>
+  <p style="margin-bottom:0">
+    That is a design contract, not an audit result: no fuzzing campaign, dependency scan or
+    independent security audit is recorded for this revision.
+  </p>
+</div>
+
+<h2 id="build">Building and testing</h2>
+
+<p>
+  <code>Broiler.Graphics</code> is a submodule here, but only
+  <code>Broiler.Media.Video.MediaFoundation</code> and its test runner reference it — so the
+  cross-platform build and all seven cross-platform packages work in a checkout without it.
+  Building the <code>-Windows</code> configurations does require it.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">build &amp; test</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>git clone --recurse-submodules https://github.com/Broiler-Platform/Broiler.Media.git
+dotnet build Broiler.Media.slnx -c Release-Linux
+./eng/run-tests.sh</code></pre>
+</div>
+
+<p class="small">
+  Tests are self-hosted console runners rather than a test framework, so there is nothing for
+  <code>dotnet test</code> to discover.
+</p>
+
+<h2 id="adrs">Architecture decision records</h2>
+
+<ul class="checklist neutral">
+  <li><a href="https://github.com/Broiler-Platform/Broiler.Media/blob/main/docs/adr/0001-component-topology-and-consumption-policy.md">0001 — Component topology and consumption policy</a></li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.Media/blob/main/docs/adr/0002-buffer-ownership-and-limits.md">0002 — Buffer ownership and limits</a></li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.Media/blob/main/docs/adr/0003-image-pixel-and-alpha-format.md">0003 — Image pixel and alpha format</a></li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.Media/blob/main/docs/adr/0004-compatibility-window.md">0004 — Compatibility window</a></li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.Media/blob/main/docs/adr/0005-windows-media-foundation-borrowed-hwnd.md">0005 — Windows Media Foundation borrowed HWND</a></li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.Media/blob/main/docs/adr/0006-no-graphics-dependency.md">0006 — No graphics dependency</a></li>
+</ul>
+
+<div class="pager">
+  <a href="/components/graphics.html"><span class="dir">Previous</span><span class="ttl">Broiler.Graphics</span></a>
+  <a class="next" href="/components/input.html"><span class="dir">Next</span><span class="ttl">Broiler.Input</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

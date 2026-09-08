@@ -1,0 +1,189 @@
+{"title": "Broiler.Input — Broiler Platform", "desc": "The platform-neutral device-input component family for .NET 10: keyboard, mouse, pen, touch, text, camera and microphone contracts with Windows, Linux evdev and Android providers.", "nav": "components"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Component · Platform core</span>
+    <h1>Broiler.Input</h1>
+    <p class="lede">
+      Device discovery, lifecycle, timing, bounded delivery, capture leases and diagnostics —
+      one neutral abstraction per device kind, one provider package per platform. Graphics, DOM
+      event construction, browser permissions, encoding and playback all stay outside.
+    </p>
+    <div class="tag-row" style="margin-top:1.4rem">
+      <span class="pill pill-preview">0.1.0-preview.1</span>
+      <span class="pill pill-plain">25+ packages</span>
+      <span class="pill pill-plain">Apache-2.0</span>
+      <span class="pill pill-info">Privacy-gated capture</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="packages">Packages</h2>
+
+<p>
+  One package per assembly, versioned in lockstep. <code>Broiler.Input.All</code> is a
+  dependencies-only meta-package over the neutral contracts; <strong>platform backends are
+  deliberately separate</strong>, so a consumer takes only the ones it runs on.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Package</th><th>Contents</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Input</code></td><td>Device lifecycle, discovery, timing and delivery contracts</td></tr>
+    <tr><td><code>Broiler.Input.All</code></td><td>Meta-package over the neutral contracts</td></tr>
+    <tr><td><code>Broiler.Input.Camera</code> · <code>.Keyboard</code> · <code>.Microphone</code> · <code>.Mouse</code> · <code>.Pen</code> · <code>.Text</code> · <code>.Touch</code></td><td>Per-kind neutral abstractions</td></tr>
+    <tr><td><code>Broiler.Input.Legacy</code></td><td>Window-callback compatibility adapter for migration</td></tr>
+    <tr><td><code>Broiler.Input.Windows</code> + <code>Broiler.Input.&lt;Kind&gt;.Windows</code></td><td>Windows providers (<code>net10.0-windows</code>)</td></tr>
+    <tr><td><code>Broiler.Input.Linux</code> + <code>Broiler.Input.&lt;Kind&gt;.Linux</code></td><td>Linux evdev providers</td></tr>
+    <tr><td><code>Broiler.Input.Android</code> + <code>Broiler.Input.&lt;Kind&gt;.Android</code></td><td>Android translation layer — no Android SDK dependency</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="small">
+  <code>Broiler.Input.Testing</code>, <code>Broiler.Input.Linux.Diagnostic</code> and the
+  <code>*.Tests</code> runners are development-only and are not published.
+</p>
+
+<h2 id="android">The Android providers need no Android SDK</h2>
+
+<p>
+  This is the component's most useful architectural decision, and it is deliberate rather than a
+  workaround. The Android providers target plain <code>net10.0</code> and take
+  <strong>primitive event data</strong> — the <code>int</code> and <code>float</code> values read
+  from <code>MotionEvent</code>, <code>KeyEvent</code> and <code>InputConnection</code> — rather
+  than referencing <code>Mono.Android</code>.
+</p>
+
+<p>
+  The host owns the <code>Activity</code> and the <code>View</code>, reads the real Android
+  objects, and forwards the primitives. That keeps <code>Android.Views</code> and
+  <code>Java.Lang</code> types out of the neutral contracts, and it makes the whole translation
+  layer <strong>buildable and testable with the <code>android</code> workload not
+  installed</strong>. A boundary test asserts the absence of those references.
+</p>
+
+<h2 id="direction">Dependency rules</h2>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">typed providers</span></div>
+  <pre><code>Broiler.Input.&lt;Kind&gt;.Windows -> Broiler.Input.&lt;Kind&gt; -> Broiler.Input
+Broiler.Input.&lt;Kind&gt;.Windows -> Broiler.Input.Windows -> Broiler.Input
+
+Broiler.Input.&lt;Kind&gt;.Linux   -> Broiler.Input.&lt;Kind&gt; -> Broiler.Input
+Broiler.Input.&lt;Kind&gt;.Linux   -> Broiler.Input.Linux   -> Broiler.Input
+
+Broiler.Input.&lt;Kind&gt;.Android -> Broiler.Input.&lt;Kind&gt; -> Broiler.Input
+Broiler.Input.&lt;Kind&gt;.Android -> Broiler.Input.Android -> Broiler.Input</code></pre>
+</div>
+
+<p>
+  Input assemblies do not reference Graphics, HTML, DOM, JavaScript, WPF, Windows Forms or
+  application projects. Camera and microphone capture own no codecs, no playback and no
+  preview UI.
+</p>
+
+<h2 id="native">Native boundaries and privacy</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Platform</th><th>Mechanism</th></tr></thead>
+  <tbody>
+    <tr><td>Windows</td><td>.NET runtime interop for Win32 Raw Input, QPC timing, WASAPI microphone capture and Media Foundation camera capture</td></tr>
+    <tr><td>Linux</td><td>libc <code>open</code>, <code>read</code>, <code>poll</code> and <code>ioctl</code> over <code>/dev/input/event*</code></td></tr>
+    <tr><td>Android</td><td>No native or Java calls at all — the host performs the Android API calls and forwards primitives</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="callout callout-info">
+  <p class="callout-title">What never crosses the boundary</p>
+  <p>
+    Native handles, pointers, endpoint IDs and device paths do not appear in platform-neutral
+    public payloads. Background Raw Input and evdev event streaming require
+    <strong>explicit acknowledgement</strong>. Diagnostics must not emit typed text, movement
+    timelines or native device paths by default — a keylogger-shaped diagnostic is not an
+    acceptable default even in a debug build.
+  </p>
+</div>
+
+<h2 id="capture">Camera and microphone</h2>
+
+<p>
+  The camera contract is representative of how capture is modelled throughout.
+  <code>CameraFrameLease</code> owns copied frame bytes and plane metadata, and disposing the
+  lease invalidates its memory — there is no borrowed pointer to outlive its owner.
+  <code>CameraSessionOptions</code> selects either bounded latest-frame preview or an explicit
+  loss-sensitive delivery policy:
+</p>
+
+<ul class="checklist">
+  <li><strong>Latest-frame mode</strong> disposes an older queued frame before accepting a newer one.</li>
+  <li><strong>Loss-sensitive mode</strong> uses the caller's queue capacity and overflow policy, and reports drops in <code>CameraCaptureStatistics</code>.</li>
+  <li><code>CameraLatestFramePreviewAdapter</code> keeps only the latest frame <em>without adding a Graphics dependency</em>.</li>
+</ul>
+
+<p>
+  Frames carry plane layout, rotation, colour space, timestamp and frame number. Neither
+  <code>Broiler.Input.Camera</code> nor its Windows provider depends on Graphics, UI, encoders,
+  playback or a third-party camera wrapper.
+</p>
+
+<h2 id="build">Build and validation</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Configuration</th><th>Builds</th></tr></thead>
+  <tbody>
+    <tr><td><code>Debug</code> / <code>Release</code></td><td>Neutral contracts, the Android backends and their tests</td></tr>
+    <tr><td><code>Debug-Windows</code> / <code>Release-Windows</code></td><td>The above plus the Windows providers and the contract tests</td></tr>
+    <tr><td><code>Debug-Linux</code> / <code>Release-Linux</code></td><td>The above plus the Linux providers, the evdev diagnostic tool and the Linux tests</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">build &amp; run the suites</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet build Broiler.Input.slnx -c Release-Windows --nologo
+bash ./eng/run-tests.sh Release-Windows</code></pre>
+</div>
+
+<p>
+  A plain <code>dotnet build</code> uses <code>Debug</code>, which deliberately skips every
+  Windows and Linux provider. The Android translation, provider lifecycle and boundary tests run
+  on any host — the runner is platform-neutral, so it uses the base <code>Release</code>
+  configuration even when the solution was built as <code>Release-Windows</code>.
+</p>
+
+<p>
+  The executable public API baseline lives at <code>docs/api-baseline.txt</code>; the
+  contract-test project copies it into its output and compares it against the runtime
+  assemblies, so an accidental public-surface change fails the run rather than shipping.
+</p>
+
+<h2 id="docs">Component documentation</h2>
+
+<ul class="checklist neutral">
+  <li><a href="https://github.com/Broiler-Platform/Broiler.Input/blob/main/docs/adr/README.md">Eight ADRs</a> — assembly names and topology, abstract device hierarchy, Windows support matrix, event and stream delivery, buffer ownership, monotonic clock domain, Raw Input registration ownership, media interop boundary</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.Input/blob/main/docs/camera.md">Camera contracts and Windows provider</a></li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.Input/blob/main/docs/microphone.md">Microphone contracts and capture</a></li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.Input/blob/main/docs/hardware-validation.md">Hardware validation</a> — opt-in device checks and privacy gates</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.Input/blob/main/docs/roadmap.md">Roadmap</a></li>
+</ul>
+
+<div class="pager">
+  <a href="/components/media.html"><span class="dir">Previous</span><span class="ttl">Broiler.Media</span></a>
+  <a class="next" href="/components/html.html"><span class="dir">Next</span><span class="ttl">Broiler.HTML</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

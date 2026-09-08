@@ -1,0 +1,124 @@
+{"title": "Broiler.CSS — Broiler Platform", "desc": "A dependency-free CSS component for .NET 10: syntax, rules, selectors, declarations, values and diagnostics, plus selector matching, cascade and computed values over the Broiler DOM.", "nav": "components"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Component · Web engine</span>
+    <h1>Broiler.CSS</h1>
+    <p class="lede">
+      CSS parsing and the cascade, split cleanly in two: a dependency-free syntax layer that
+      knows nothing about documents, and a DOM-facing layer that resolves selectors and
+      computed values over the canonical tree.
+    </p>
+    <div class="tag-row" style="margin-top:1.4rem">
+      <span class="pill pill-ok">Approved for first preview</span>
+      <span class="pill pill-plain">net10.0</span>
+      <span class="pill pill-plain">Apache-2.0</span>
+      <span class="pill pill-plain">2 assemblies</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="what">What it contains</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Assembly</th><th>Owns</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.CSS</code></td><td>CSS syntax, rules, selectors, declarations, values, diagnostics, parsing and serialization. No document dependency.</td></tr>
+    <tr><td><code>Broiler.CSS.Dom</code></td><td>Selector matching, cascade, computed values and DOM-facing style services over <a href="/components/dom.html">Broiler.DOM</a>.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="scope">Scope — and what belongs elsewhere</h2>
+
+<p>
+  This component owns CSS syntax, selectors, cascade, computed values, and the DOM-facing
+  style service. Everything downstream of a computed value belongs to its own owner:
+</p>
+
+<ul class="checklist neutral">
+  <li><strong>Layout</strong> — used values, box geometry, hit testing → <a href="/components/layout.html">Broiler.Layout</a></li>
+  <li><strong>Painting</strong> — how a computed value becomes pixels → <a href="/components/html.html">Broiler.HTML</a> and <a href="/components/graphics.html">Broiler.Graphics</a></li>
+  <li><strong>CSSOM JavaScript wrappers</strong> and live identity → <a href="/architecture.html#htmlbridge">HtmlBridge</a></li>
+  <li><strong>Browser timelines</strong> and animation scheduling → the browser host</li>
+</ul>
+
+<h2 id="open">What is still open</h2>
+
+<p>
+  The CSS extraction and the renderer/bridge cutover are both complete; their history lives in
+  Git rather than in the roadmap. Two items remain.
+</p>
+
+<h3 id="dpi">Device-pixel and high-DPI length handling</h3>
+
+<p>
+  <code>CssLengthParser.cs</code> still marks the <code>px</code> conversion path for high-DPI
+  follow-up. The open question is a layering one — which layer owns CSS-pixel-to-device-pixel
+  conversion — and the placeholder adjustment has to go with the answer.
+</p>
+
+<p><strong>Exit gate:</strong></p>
+<ul class="checklist">
+  <li>CSS parsing remains deterministic and platform-neutral.</li>
+  <li>Computed lengths are covered at more than one device scale.</li>
+  <li>Broiler.HTML consumes the result without applying the scale twice.</li>
+</ul>
+
+<h3 id="review">Preview review</h3>
+
+<p>
+  The recorded human review applies to a specific revision. Before a new preview claim, the
+  changes since that revision have to be reviewed and <code>HUMAN_REVIEW.md</code> updated with
+  the exact commit and scope. The current record approves the component for first preview, with
+  dead and transitional code and preview instability recorded as accepted limitations.
+</p>
+
+<h2 id="build">Build and test</h2>
+
+<p>
+  The repository carries a nested <code>Broiler.DOM</code> checkout so it builds standalone.
+  Initialise it first.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">standalone</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>git submodule update --init --recursive
+dotnet build Broiler.CSS.slnx
+dotnet test Broiler.CSS.slnx</code></pre>
+</div>
+
+<h2 id="notes">Notes</h2>
+
+<p>
+  Broiler.CSS is one of two components that already avoid the platform's duplicate-compilation
+  problem: it reaches its dependency through a <code>$(BroilerDomPath)</code> property hook
+  rather than a literal relative path, so a consumer can point it at the top-level checkout
+  instead of compiling the nested copy a second time. That hook is the pattern the other
+  components are expected to adopt — see
+  <a href="/architecture.html#nesting">repository topology</a>.
+</p>
+
+<p>
+  One CSS fix currently sits outside the pinned pointers as a pending change — resolving
+  absolute length units in <code>ParseToPixels</code>, which belongs to the
+  <a href="/conformance.html#reftests">reftest suite's</a> work rather than to the pixel-gap
+  documents.
+</p>
+
+<div class="pager">
+  <a href="/components/dom.html"><span class="dir">Previous</span><span class="ttl">Broiler.DOM</span></a>
+  <a class="next" href="/components/layout.html"><span class="dir">Next</span><span class="ttl">Broiler.Layout</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

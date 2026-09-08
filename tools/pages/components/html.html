@@ -1,0 +1,208 @@
+{"title": "Broiler.HTML — Broiler Platform", "desc": "Broiler's modular HTML/CSS renderer, split into parsing, CSS, DOM, orchestration, rendering, graphics and image assemblies. Derived in part from HTML Renderer, maintained independently.", "nav": "components"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Component · Web engine</span>
+    <h1>Broiler.HTML</h1>
+    <p class="lede">
+      The renderer: a modular .NET HTML/CSS engine split into focused assemblies for parsing,
+      CSS processing, layout integration, painting and image generation — plus a cross-platform
+      command-line renderer and the pixel-diff tooling that makes comparisons reproducible.
+    </p>
+    <div class="tag-row" style="margin-top:1.4rem">
+      <span class="pill pill-ok">Approved, conditions</span>
+      <span class="pill pill-plain">Apache-2.0 + BSD-3-Clause</span>
+      <span class="pill pill-info">Derived from HTML Renderer</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="origin">Origin and independence</h2>
+
+<p>
+  Broiler.HTML is derived in part from
+  <a href="https://github.com/ArthurHub/HTML-Renderer">HTML Renderer</a>, created by José Manuel
+  Menéndez Poo and developed by Arthur Teplitzki and other contributors. That project provided
+  the original renderer architecture and implementation from which Broiler.HTML evolved.
+  <strong>Inherited material remains subject to the BSD 3-Clause License and its retained
+  copyright notices.</strong>
+</p>
+
+<p>
+  It has since been reorganized into separate parsing, CSS, layout, graphics, image,
+  orchestration and platform assemblies, with substantial new and modified code — much of that
+  later work created with AI coding tools under maintainer direction.
+</p>
+
+<p>
+  Broiler.HTML is maintained independently. It is <strong>not</strong> an official version,
+  continuation or release of HTML Renderer, and the upstream authors have not reviewed or
+  endorsed it.
+</p>
+
+<h2 id="assemblies">Solution layout</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Assembly</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.HTML.Primitives</code></td><td>Shared primitive types</td></tr>
+    <tr><td><code>Broiler.HTML.Utils</code></td><td>Common utilities and resource helpers</td></tr>
+    <tr><td><code>Broiler.HTML.Adapters</code></td><td>Backend-neutral adapter abstractions</td></tr>
+    <tr><td><code>Broiler.HTML.Core</code></td><td>Core entities and deterministic IR helpers</td></tr>
+    <tr><td><code>Broiler.HTML.CSS</code></td><td>CSS parsing and stylesheet handling</td></tr>
+    <tr><td><code>Broiler.HTML.Dom</code></td><td>DOM and layout processing</td></tr>
+    <tr><td><code>Broiler.HTML.Orchestration</code></td><td>HTML parsing and renderer orchestration</td></tr>
+    <tr><td><code>Broiler.HTML.Rendering</code></td><td>Paint-time handlers and rendering logic</td></tr>
+    <tr><td><code>Broiler.HTML.Graphics</code></td><td><a href="/components/graphics.html">Broiler.Graphics</a> bitmap and render-list frontend</td></tr>
+    <tr><td><code>Broiler.HTML.Image</code> / <code>.Image.Compat</code></td><td>Image rendering, deterministic comparison, and the remaining backend-neutral compatibility seam</td></tr>
+    <tr><td><code>Broiler.HTML</code></td><td>Shared public surface used by platform adapters</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="api">Public API highlights</h2>
+
+<ul class="checklist">
+  <li><code>Broiler.HTML.Image.HtmlRender</code> — renders HTML to in-memory bitmaps, PNG bytes and files.</li>
+  <li><code>Broiler.HTML.Graphics.HtmlRender</code> — renders HTML to <code>BBitmap</code> instances, encoded bytes, files and renderer command lists.</li>
+  <li><code>Broiler.HTML.Tool</code> — a cross-platform command-line renderer plus image-diff reporting.</li>
+  <li><code>Broiler.HTML.Image.PixelDiffRunner</code> — compares rendered output to a baseline image.</li>
+  <li><code>Broiler.HTML.Image.MismatchClassifier</code> — classifies visual mismatches for compliance triage.</li>
+  <li><code>Broiler.HTML.Adapters.RAdapter</code> — the backend extension point for graphics, fonts, images, clipboard and context-menu services.</li>
+</ul>
+
+<h2 id="tool">The command-line renderer</h2>
+
+<p>
+  <code>Source/Broiler.HTML.Tool</code> renders HTML to PNG or JPEG from Windows, Linux or
+  macOS. For local HTML files the CLI automatically uses the source file as the base URL, so
+  relative stylesheets and images resolve consistently.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">render a page</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet run --project Source/Broiler.HTML.Tool -- \
+  --input ./page.html --output ./page.png --width 1280 --height 720
+
+dotnet run --project Source/Broiler.HTML.Tool -- \
+  --html "&lt;html&gt;&lt;body&gt;&lt;h1&gt;Hello&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;" \
+  --output ./hello.jpg --format jpeg --width 800 --height 600</code></pre>
+</div>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">compare against a reference screenshot</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet run --project Source/Broiler.HTML.Tool -- compare \
+  --actual ./broiler.png --baseline ./chromium.png \
+  --diff-output ./diff.png --json-output ./report.json</code></pre>
+</div>
+
+<p class="small">
+  Other arguments: <code>--auto-size</code> with <code>--max-width</code>/<code>--max-height</code>,
+  <code>--quality</code> for JPEG, <code>--base-url</code> for inline markup, and
+  <code>--font [Alias=]&lt;path&gt;</code> to register deterministic fixture fonts such as WPT Ahem.
+</p>
+
+<h2 id="wpt">A repository-local WPT runner</h2>
+
+<p>
+  Broiler.HTML carries its own Playwright-based runner for local
+  <a href="https://github.com/web-platform-tests/wpt">web-platform-tests</a> checkouts. It is
+  distinct from the aggregate repository's <a href="/conformance.html#wpt">two WPT suites</a> —
+  this one is scoped to the non-JavaScript corpus and lives with the renderer.
+</p>
+
+<ul class="checklist neutral">
+  <li>Discovers HTML/XHTML cases while skipping files that appear to depend on JavaScript</li>
+  <li>Can inventory the full non-JS corpus without rendering, via <code>--scan-only</code></li>
+  <li>Applies the checked-in exclusion manifest at <code>scripts/wpt/non-js-exclusions.json</code></li>
+  <li>Renders each case through the Broiler CLI and captures a Chromium reference with JavaScript disabled</li>
+  <li>Compares with <code>PixelDiffRunner</code> / <code>MismatchClassifier</code> and writes per-test diff artifacts plus <code>summary.json</code> and <code>summary.md</code></li>
+</ul>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">prepare and run</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>npm install
+npm run wpt:install-browsers
+npm run wpt:prepare -- --output ./artifacts/wpt-source
+
+npm run wpt:run -- --wpt-root ./artifacts/wpt-source \
+  --include css/CSS2 --include css/css-backgrounds --include html/rendering \
+  --limit-per-include 2 --width 800 --height 600</code></pre>
+</div>
+
+<p>
+  Each selected case gets a shared timeout budget across Broiler rendering, Chromium capture and
+  image comparison — 30,000&nbsp;ms by default, adjustable with <code>--test-timeout-ms</code>
+  or <code>BROILER_WPT_TEST_TIMEOUT_MS</code>. Timed-out cases are recorded as failures in the
+  summary rather than hanging the batch.
+</p>
+
+<h2 id="html52">The HTML 5.2 plain-HTML suite</h2>
+
+<p>
+  A second, repository-owned suite tracks plain-HTML conformance with a generated dashboard. At
+  the last regeneration it held <strong>167 active cases and zero quarantined</strong>, with 175
+  of 176 coverage items covered or classified and no uncovered CSS module rows.
+</p>
+
+<p><a href="/conformance.html#html52">Full cluster and expectation breakdown →</a></p>
+
+<h2 id="build">Build and validation</h2>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">build</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>cd Source
+dotnet build Broiler.HTML.slnx
+dotnet test  Broiler.HTML.slnx</code></pre>
+</div>
+
+<div class="callout callout-info">
+  <p class="callout-title">What <code>dotnet test</code> means here</p>
+  <p>
+    The solution contains no checked-in .NET test projects yet, so <code>dotnet test</code> acts
+    as a repository validation command rather than a substantive renderer test suite. The
+    checked-in automated tests are the Node ones under <code>scripts/wpt/*.test.mjs</code>, run
+    with <code>npm test</code>.
+  </p>
+</div>
+
+<h2 id="known">Known structural issue</h2>
+
+<div class="callout callout-warn">
+  <p class="callout-title">Broiler.HTML still uses the pre-<code>src/</code> layout</p>
+  <p>
+    It spells its top-level <code>Broiler.Media</code> and <code>Broiler.Graphics</code>
+    references in the flat layout those components used while they were vendored inside the
+    monorepo. Both now publish under <code>src/</code>, so the references as written resolve
+    nowhere, and consuming repositories carry a <code>Directory.Build.targets</code> that
+    rewrites exactly those two references onto the top-level checkouts. Those rewrites — and the
+    solution generator's <code>$staleLayoutMappings</code> table — drop out once this component
+    follows the others into <code>src/</code>.
+  </p>
+</div>
+
+<h2 id="status">Preview status</h2>
+
+<p>
+  The recorded review approves the component for first preview only, with conditions: renderer
+  paths are <strong>not hardened for hostile HTML/CSS</strong>, and obsolete and transitional
+  APIs remain. Passing tests or compliance cases does not replace source-level human review and
+  is not a security guarantee.
+</p>
+
+<div class="pager">
+  <a href="/components/input.html"><span class="dir">Previous</span><span class="ttl">Broiler.Input</span></a>
+  <a class="next" href="/components/js.html"><span class="dir">Next</span><span class="ttl">Broiler.JS</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>
