@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Packages — Broiler Platform</title>
+<meta name="description" content="Every Broiler NuGet package: Graphics, Media, Input, UI, Documents and Layout at 0.1.0-preview.1, the feeds they come from, and what is deliberately not published.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Packages — Broiler Platform">
+<meta property="og:description" content="Every Broiler NuGet package: Graphics, Media, Input, UI, Documents and Layout at 0.1.0-preview.1, the feeds they come from, and what is deliberately not published.">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a4d"/><stop offset="1" stop-color="#e0490d"/></linearGradient></defs><rect width="32" height="32" rx="8" fill="url(#bm)"/><g fill="#fff"><rect x="7" y="7.5" width="15" height="4.6" rx="2.3" opacity=".95"/><rect x="7" y="13.7" width="18" height="4.6" rx="2.3" opacity=".8"/><rect x="7" y="19.9" width="12" height="4.6" rx="2.3" opacity=".65"/></g></svg>
+      Broiler
+      <span class="brand-sub">Platform</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="/components.html">Components</a>
+      <a href="/applications.html">Applications</a>
+      <a href="/architecture.html">Architecture</a>
+      <a href="/conformance.html">Conformance</a>
+      <a href="/roadmap.html">Roadmap</a>
+      <a href="/assurance.html">Assurance</a>
+      <a href="/packages.html" aria-current="page">Packages</a>
+    </nav>
+    <button class="icon-btn" data-theme-toggle type="button" aria-label="Toggle colour theme" title="Toggle colour theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+    <a class="icon-btn" href="https://github.com/Broiler-Platform" aria-label="Broiler Platform on GitHub" title="GitHub">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.35-1.29-1.71-1.29-1.71-1.06-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.76.4-1.28.74-1.57-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.23 2.76.12 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.26 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+    </a>
+    <button class="icon-btn nav-toggle" data-nav-toggle type="button" aria-label="Toggle navigation" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Packages</span>
+    <h1>Take one component, not the platform</h1>
+    <p class="lede">
+      The reusable component libraries publish as NuGet packages, versioned in lockstep at
+      <code>0.1.0-preview.1</code> and licensed under Apache-2.0. There is no bundle of the whole
+      platform — an application takes the abstractions it needs plus exactly the implementations
+      it composes.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<div class="callout callout-warn">
+  <p class="callout-title">Prerelease, and gated on human review</p>
+  <p>
+    <code>0.1.0-preview.1</code> is a prerelease, so every install needs
+    <code>--prerelease</code>. Public APIs and behaviour are not frozen and may change before
+    <code>1.0</code>. <strong>Public release is gated on the per-component
+    <code>HUMAN_REVIEW.md</code> records</strong> — see <a href="/assurance.html">Assurance</a>
+    before depending on any of this in anything that matters.
+  </p>
+</div>
+
+<h2 id="quick">Quick install</h2>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">the common cases</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet add package Broiler.Layout --prerelease                  # the layout engine alone
+dotnet add package Broiler.UI.All --prerelease                  # the whole UI toolkit
+dotnet add package Broiler.Media.All --prerelease               # the cross-platform media stack
+dotnet add package Broiler.Input.All --prerelease               # the neutral input contracts
+dotnet add package Broiler.Graphics --prerelease                # the neutral rendering core
+dotnet add package Broiler.Graphics.Windows --prerelease        # + the Direct2D backend
+dotnet add package Broiler.Documents.Rtf --prerelease           # one document codec</code></pre>
+</div>
+
+<h2 id="graphics">Broiler.Graphics — 7 packages</h2>
+
+<p>
+  No meta-package: an application takes the core plus exactly the backends it presents with.
+  <a href="/components/graphics.html">Component page →</a>
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Package</th><th>Target</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Graphics</code></td><td><code>net10.0</code></td><td>Neutral core — bitmaps, canvas, geometry, colour, CPU raster, text and fonts, render lists</td></tr>
+    <tr><td><code>Broiler.Graphics.Windows</code></td><td><code>net10.0-windows</code></td><td>Direct2D/DirectWrite backend, window and input integration, HWND video target</td></tr>
+    <tr><td><code>Broiler.Graphics.Linux</code></td><td><code>net10.0</code></td><td>Shared Linux runtime support and diagnostics</td></tr>
+    <tr><td><code>Broiler.Graphics.Linux.OpenGL</code></td><td><code>net10.0</code></td><td>OpenGL/EGL presentation over Mesa</td></tr>
+    <tr><td><code>Broiler.Graphics.Linux.Vulkan</code></td><td><code>net10.0</code></td><td>Vulkan 1.2 loader/device path</td></tr>
+    <tr><td><code>Broiler.Graphics.Android</code></td><td><code>net10.0</code></td><td>EGL / OpenGL ES presentation via P/Invoke — no <code>Mono.Android</code>, no workload</td></tr>
+    <tr><td><code>Broiler.Graphics.WebAssembly</code></td><td><code>net10.0</code></td><td>Browser Canvas backend</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="media">Broiler.Media — 8 packages</h2>
+
+<p>
+  <code>Broiler.Media.All</code> is a dependencies-only meta-package over the six cross-platform
+  assemblies. The Windows-only video backend is <strong>not</strong> pulled in by it.
+  <a href="/components/media.html">Component page →</a>
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Package</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Media</code></td><td>Shared base — codec contract, immutable catalog, probing, input, limits, diagnostics</td></tr>
+    <tr><td><code>Broiler.Media.Image</code> / <code>.Image.Managed</code></td><td>Image abstraction / managed PNG, APNG, JPEG, BMP, GIF, WebP codecs</td></tr>
+    <tr><td><code>Broiler.Media.Audio</code> / <code>.Audio.Managed</code></td><td>Audio abstraction / RIFF-WAVE PCM decoders</td></tr>
+    <tr><td><code>Broiler.Media.Video</code></td><td>Video abstraction — codec, session, output, state and events</td></tr>
+    <tr><td><code>Broiler.Media.Video.MediaFoundation</code></td><td>Windows MP4 (H.264/AAC) via <code>IMFMediaEngine</code>. <code>net10.0-windows</code></td></tr>
+    <tr><td><code>Broiler.Media.All</code></td><td>Dependencies-only meta-package; no assembly</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="input">Broiler.Input — 25+ packages</h2>
+
+<p>
+  One package per assembly. <code>Broiler.Input.All</code> covers the neutral contracts; platform
+  backends stay separate so a consumer takes only the ones it runs on.
+  <a href="/components/input.html">Component page →</a>
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Package family</th><th>Contents</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Input</code></td><td>Device lifecycle, discovery, timing and delivery contracts</td></tr>
+    <tr><td><code>Broiler.Input.All</code></td><td>Meta-package over the neutral contracts</td></tr>
+    <tr><td><code>Broiler.Input.{Camera, Keyboard, Microphone, Mouse, Pen, Text, Touch}</code></td><td>Per-kind neutral abstractions</td></tr>
+    <tr><td><code>Broiler.Input.Windows</code> + <code>.&lt;Kind&gt;.Windows</code></td><td>Windows providers — Raw Input, QPC, WASAPI, Media Foundation. <code>net10.0-windows</code></td></tr>
+    <tr><td><code>Broiler.Input.Linux</code> + <code>.&lt;Kind&gt;.Linux</code></td><td>Linux evdev providers</td></tr>
+    <tr><td><code>Broiler.Input.Android</code> + <code>.&lt;Kind&gt;.Android</code></td><td>Android translation layer — plain <code>net10.0</code>, no Android SDK dependency</td></tr>
+    <tr><td><code>Broiler.Input.Legacy</code></td><td>Window-callback compatibility adapter for migration</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="small">
+  <code>Broiler.Input.Testing</code>, <code>Broiler.Input.Linux.Diagnostic</code> and the test
+  runners are development-only and are not published.
+</p>
+
+<h2 id="ui">Broiler.UI — 56 packages</h2>
+
+<p>
+  Every one is plain <code>net10.0</code>. Each control type ships as a contract package and a
+  <code>.Standard</code> implementation; an implementation depends on its own contract and on
+  <code>Broiler.UI.Standard</code>, so one <code>.Standard</code> reference pulls in everything
+  that control needs. <a href="/components/ui.html">Component page →</a>
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Family</th><th>Controls (each a contract + <code>.Standard</code> pair)</th></tr></thead>
+  <tbody>
+    <tr><td>Foundation</td><td><code>Broiler.UI</code>, <code>Broiler.UI.Standard</code>, <code>Broiler.UI.All</code></td></tr>
+    <tr><td>Shell</td><td><code>Window</code>, <code>Dialog</code>, <code>Tooltip</code>, <code>FileDialog</code>, <code>FontDialog</code></td></tr>
+    <tr><td>Layout</td><td><code>Panel</code>, <code>ScrollView</code>, <code>Splitter</code>, <code>TabView</code></td></tr>
+    <tr><td>Content</td><td><code>Label</code>, <code>ImageView</code>, <code>ProgressBar</code></td></tr>
+    <tr><td>Commands</td><td><code>Button</code>, <code>ToggleButton</code>, <code>Toolbar</code>, <code>Menu</code></td></tr>
+    <tr><td>Value and selection</td><td><code>CheckBox</code>, <code>RadioButton</code>, <code>Slider</code>, <code>ListView</code>, <code>ComboBox</code>, <code>TreeView</code></td></tr>
+    <tr><td>Text</td><td><code>Edit</code>, <code>CodeEditor</code>, <code>RichEdit</code>, <code>FormatCodeView</code></td></tr>
+    <tr><td>Integration</td><td><code>Broiler.UI.RichEdit.Rtf</code> — optional RTF load/save through <code>Broiler.Documents.Rtf</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="small">
+  The published UI packages depend on <code>Broiler.Graphics</code>, <code>Broiler.Input.*</code>
+  and — for the rich-text and formatting-code family — <code>Broiler.Documents.*</code>, all at
+  the same suite version, which have to be on the target feed for them to restore.
+</p>
+
+<h2 id="documents">Broiler.Documents — 8 packages</h2>
+
+<p>
+  No meta-package: add a package per format you actually read or write.
+  <a href="/components/documents.html">Component page →</a>
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Package</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Documents.Model</code></td><td>Platform-neutral rich-text document model</td></tr>
+    <tr><td><code>Broiler.Documents.FormatCodes</code></td><td>Deterministic, versioned Formatting Codes projection</td></tr>
+    <tr><td><code>Broiler.Documents</code></td><td>Codec contract, catalog, descriptors, options, limits, diagnostics, probe results</td></tr>
+    <tr><td><code>Broiler.Documents.Rtf</code></td><td>RTF reader and writer</td></tr>
+    <tr><td><code>Broiler.Documents.Docx</code></td><td>Open XML WordprocessingML subset</td></tr>
+    <tr><td><code>Broiler.Documents.Odt</code></td><td>OASIS OpenDocument text subset</td></tr>
+    <tr><td><code>Broiler.Documents.Html</code></td><td>HTML document/fragment codec over the canonical DOM</td></tr>
+    <tr><td><code>Broiler.Documents.Markdown</code></td><td>CommonMark-oriented subset</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="notpublished">What is deliberately not published</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Not published</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>The three applications</strong><br><span class="small">Browser, Writer, Code</span></td>
+      <td>They are products, not libraries. Their release workflows upload build artifacts for manual testing and create no GitHub release; store-ready signed preview packages come from the aggregate repository's packaging workflow, which owns the signing material.</td>
+    </tr>
+    <tr>
+      <td><strong><code>Broiler.Documents.Pdf</code></strong></td>
+      <td><code>IsPackable=false</code> and registered in no application catalog until the read-preview and write-preview gates pass. It builds and tests in the solution; a CLI that registered it would ship the capability the gates exist to hold back.</td>
+    </tr>
+    <tr>
+      <td><strong>Development-only assemblies</strong></td>
+      <td>Test runners, the Linux evdev diagnostic tool, the demo and sample hosts, and the input testing helpers never pack.</td>
+    </tr>
+    <tr>
+      <td><strong><code>Broiler.HTML</code> and <code>Broiler.JS</code></strong></td>
+      <td>Consumed as project references through the aggregate checkout rather than as packages.</td>
+    </tr>
+    <tr>
+      <td><strong><code>Broiler.VM</code></strong></td>
+      <td>Its release policy forbids publishing a package while any relevant code unit is <code>HUMAN_PENDING</code> — which all 720 of them currently are.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="feeds">Feeds and the package-source mapping</h2>
+
+<p>
+  Each component repository's <code>NuGet.config</code> pins two sources — nuget.org and the
+  Broiler-Platform GitHub Packages feed — and <strong>clears whatever the machine has
+  configured</strong>, so a restore resolves identically everywhere. Package source mapping sends
+  <code>Broiler.*</code> to either feed and everything else to nuget.org only.
+</p>
+
+<div class="callout callout-info">
+  <p class="callout-title">That mapping is load-bearing</p>
+  <p>
+    GitHub Packages requires authentication <strong>even for public packages</strong> and answers
+    <code>401</code> to an anonymous request. An unmapped source would therefore be queried for
+    every package and break the restore. Because the repositories take their Broiler dependencies
+    through submodules as project references, nothing queries that feed today and no credentials
+    are needed to build.
+  </p>
+</div>
+
+<p>
+  To actually pull <code>Broiler.*</code> from GitHub Packages you need a personal access token
+  with the <code>read:packages</code> scope. Put it in your <strong>user-level</strong> config,
+  never in the committed one:
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">user-level credentials</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet nuget update source broiler-github \
+  --username &lt;github-user&gt; --password &lt;pat&gt; \
+  --store-password-in-clear-text \
+  --configfile "$APPDATA/NuGet/NuGet.Config"</code></pre>
+</div>
+
+<p class="small">In GitHub Actions use <code>secrets.GITHUB_TOKEN</code> rather than a personal token.</p>
+
+<h2 id="quality">What every package ships with</h2>
+
+<ul class="checklist">
+  <li>XML documentation and a <code>.snupkg</code> symbol package.</li>
+  <li>A deterministic build with SourceLink.</li>
+  <li>A vendored <code>eng/Broiler.Packaging.props</code> — a copy of the suite-wide packaging metadata that holds the version. Edit the canonical file and re-run the sync script; never edit a copy.</li>
+  <li>Apache-2.0, except where a file or third-party notice says otherwise.</li>
+</ul>
+
+<h2 id="publishing">How publishing works</h2>
+
+<p>
+  Each component's <code>publish.yml</code> is manual by default and chooses a feed — GitHub
+  Packages or nuget.org. It <strong>defaults to a dry run</strong> that packs and attaches the
+  packages without pushing. Pushing a <code>v*</code> tag publishes to nuget.org, and the tag must
+  match the version in <code>eng/Broiler.Packaging.props</code>, which stays the source of truth
+  for the suite version.
+</p>
+
+<p>
+  Packing is per configuration where a component builds platform-specific assemblies. Graphics
+  needs three runs into one output directory; Input needs two, and because the builds are
+  deterministic the second reproduces the first byte for byte.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">packing the full graphics set</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet pack Broiler.Graphics.slnx -c Release         -o ./artifacts
+dotnet pack Broiler.Graphics.slnx -c Release-Windows -o ./artifacts
+dotnet pack Broiler.Graphics.slnx -c Release-Linux   -o ./artifacts</code></pre>
+</div>
+
+<div class="pager">
+  <a href="/roadmap.html"><span class="dir">Previous</span><span class="ttl">Roadmap</span></a>
+  <a class="next" href="/get-started.html"><span class="dir">Next</span><span class="ttl">Get started</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <a class="brand" href="/" style="margin-bottom:.8rem">
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="bf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a4d"/><stop offset="1" stop-color="#e0490d"/></linearGradient></defs><rect width="32" height="32" rx="8" fill="url(#bf)"/><g fill="#fff"><rect x="7" y="7.5" width="15" height="4.6" rx="2.3" opacity=".95"/><rect x="7" y="13.7" width="18" height="4.6" rx="2.3" opacity=".8"/><rect x="7" y="19.9" width="12" height="4.6" rx="2.3" opacity=".65"/></g></svg>
+          Broiler
+        </a>
+        <p>
+          An experimental managed-code browser stack for .NET 10, currently being prepared for
+          its first preview. Apache-2.0, with inherited material under its own terms.
+        </p>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="/components.html">Components</a></li>
+          <li><a href="/applications.html">Applications</a></li>
+          <li><a href="/architecture.html">Architecture</a></li>
+          <li><a href="/packages.html">Packages</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Evidence</h4>
+        <ul>
+          <li><a href="/conformance.html">Conformance</a></li>
+          <li><a href="/assurance.html">Assurance &amp; review</a></li>
+          <li><a href="/roadmap.html">Roadmap</a></li>
+          <li><a href="/security.html">Security &amp; limits</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Build</h4>
+        <ul>
+          <li><a href="/get-started.html">Get started</a></li>
+          <li><a href="/docs.html">Documentation index</a></li>
+          <li><a href="https://github.com/MaiRat/Broiler">Aggregate repo</a></li>
+          <li><a href="https://github.com/Broiler-Platform">Component repos</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>Apache License 2.0 · first preview · not for production use</span>
+      <span><a href="https://github.com/sponsors/MaiRat">Sponsor</a> · <a href="https://github.com/MaiRat/Broiler/blob/main/THIRD_PARTY_NOTICES.md">Third-party notices</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/js/site.js" defer></script>
+</body>
+</html>

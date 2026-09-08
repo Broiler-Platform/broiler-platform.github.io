@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Assurance & human review — Broiler Platform</title>
+<meta name="description" content="How Broiler records what a human has actually read: per-component review records, per-file content-hash reviews, the code assurance system, and the AI-assisted development disclosure.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Assurance & human review — Broiler Platform">
+<meta property="og:description" content="How Broiler records what a human has actually read: per-component review records, per-file content-hash reviews, the code assurance system, and the AI-assisted development disclosure.">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a4d"/><stop offset="1" stop-color="#e0490d"/></linearGradient></defs><rect width="32" height="32" rx="8" fill="url(#bm)"/><g fill="#fff"><rect x="7" y="7.5" width="15" height="4.6" rx="2.3" opacity=".95"/><rect x="7" y="13.7" width="18" height="4.6" rx="2.3" opacity=".8"/><rect x="7" y="19.9" width="12" height="4.6" rx="2.3" opacity=".65"/></g></svg>
+      Broiler
+      <span class="brand-sub">Platform</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="/components.html">Components</a>
+      <a href="/applications.html">Applications</a>
+      <a href="/architecture.html">Architecture</a>
+      <a href="/conformance.html">Conformance</a>
+      <a href="/roadmap.html">Roadmap</a>
+      <a href="/assurance.html" aria-current="page">Assurance</a>
+      <a href="/packages.html">Packages</a>
+    </nav>
+    <button class="icon-btn" data-theme-toggle type="button" aria-label="Toggle colour theme" title="Toggle colour theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+    <a class="icon-btn" href="https://github.com/Broiler-Platform" aria-label="Broiler Platform on GitHub" title="GitHub">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.35-1.29-1.71-1.29-1.71-1.06-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.76.4-1.28.74-1.57-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.23 2.76.12 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.26 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+    </a>
+    <button class="icon-btn nav-toggle" data-nav-toggle type="button" aria-label="Toggle navigation" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Assurance &amp; human review</span>
+    <h1>“Human reviewed” is a record, not a slogan</h1>
+    <p class="lede">
+      Substantial portions of Broiler were written by AI tools under maintainer direction. That
+      does not make the output trustworthy by default — so the platform spends real engineering
+      effort on making the claim <em>falsifiable</em>, and on reporting the absence of review as
+      precisely as its presence.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<div class="callout callout-danger">
+  <p class="callout-title">The headline position</p>
+  <p>
+    The repository is suitable only for <strong>first-preview, controlled development, testing
+    and evaluation</strong>. It must not be presented as production-ready, security-audited, or
+    free of defects or vulnerabilities. Several components are approved for first-preview use,
+    usually with conditions; several review records remain pending or explicitly state that they
+    are not approvals.
+  </p>
+</div>
+
+<h2 id="three">Three mechanisms, deliberately different</h2>
+
+<div class="grid grid-3">
+  <div class="card">
+    <span class="card-kicker">Per component</span>
+    <h3><code>HUMAN_REVIEW.md</code></h3>
+    <p>
+      One record per component, valid only for the exact commit a human named. It requires an
+      identity, an exact commit, test and analysis evidence, findings, an intended-use scope, a
+      decision and an attestation.
+    </p>
+    <p class="small"><strong>Weakness:</strong> it attests to a whole component at one commit, and goes out of date as the code moves.</p>
+  </div>
+  <div class="card">
+    <span class="card-kicker">Per file</span>
+    <h3><code>.broiler-review/</code></h3>
+    <p>
+      A review record per source file, committed beside the source: status, reviewer, date, the
+      hash of the reviewed content, provenance revision and notes. Staleness is decided by
+      content, not by commit.
+    </p>
+    <p class="small"><strong>Strength:</strong> a rebase does not expire a review, and a revert restores one.</p>
+  </div>
+  <div class="card">
+    <span class="card-kicker">Per code unit</span>
+    <h3><code>CODE-ASSURANCE.md</code></h3>
+    <p>
+      Generated per-unit metadata — review state, security risk, IP risk, resource impact —
+      fingerprinted against the version certified. One component has adopted it so far.
+    </p>
+    <p class="small"><strong>Strength:</strong> it measures the absence of review precisely, rather than leaving it blank.</p>
+  </div>
+</div>
+
+<h2 id="component-records">Component review records</h2>
+
+<p>
+  Every release-facing component has a record. <strong><code>PENDING</code> is not an
+  approval.</strong> The review files deliberately require a real developer to supply the
+  evidence and sign the decision; AI tools must not select or sign it.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Component</th><th>Recorded status</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.CSS</code></td><td><span class="pill pill-ok">Approved</span> for first preview. Dead/transitional code and preview instability are accepted limitations.</td></tr>
+    <tr><td><code>Broiler.DOM</code></td><td><span class="pill pill-pending">Pending</span> — not approved for preview use in that record.</td></tr>
+    <tr><td><code>Broiler.CSS/Broiler.DOM</code> <span class="small">(nested)</span></td><td><span class="pill pill-ok">Approved with conditions</span>. Parser/string-handling risks, dead code and cleanup follow-ups remain.</td></tr>
+    <tr><td><code>Broiler.Graphics</code></td><td><span class="pill pill-ok">Approved with conditions</span>. Image codecs, untrusted binary input, native Windows API usage and Direct2D/DirectWrite/DXGI/D3D interop are security-sensitive.</td></tr>
+    <tr><td><code>Broiler.HTML</code></td><td><span class="pill pill-ok">Approved with conditions</span>, first preview only. Renderer paths are not hardened for hostile HTML/CSS; obsolete and transitional APIs remain.</td></tr>
+    <tr><td><code>Broiler.HTML/Broiler.Graphics</code> <span class="small">(nested)</span></td><td><span class="pill pill-pending">Pending</span> — not approved in that nested record.</td></tr>
+    <tr><td><code>Broiler.JS</code></td><td><span class="pill pill-pending">Pending</span> final human review. Available only for first preview with safety warnings; execution and host integration are security-sensitive and are <strong>not a sandbox</strong>.</td></tr>
+    <tr><td><code>Broiler.DateTime</code></td><td><span class="pill pill-ok">Approved</span> for preview. Residual risk is normal parser/date-time semantics and caller misuse in critical domains.</td></tr>
+    <tr><td><code>Broiler.Regex</code></td><td><span class="pill pill-ok">Approved</span> for preview. Resource-exhaustion risk from large or adversarial input remains <em>despite</em> a step budget.</td></tr>
+    <tr><td><code>Broiler.Unicode</code></td><td><span class="pill pill-ok">Approved with conditions</span>. Runtime libraries use committed data; developer-operated tools download Unicode/CLDR data and require review for refreshes.</td></tr>
+    <tr><td><code>Broiler.Regex/Broiler.Unicode</code> <span class="small">(nested)</span></td><td><span class="pill pill-pending">Pending</span> — not approved in that nested record.</td></tr>
+    <tr><td><code>Broiler.Layout</code></td><td><span class="pill pill-pending">Approval is stale</span>. First-preview approval recorded against a 2026-07-01 commit; the component has changed substantially since, so it must not be treated as covering current source.</td></tr>
+    <tr><td><code>Broiler.UI</code></td><td><span class="pill pill-pending">Pending</span>. Text editing, IME, clipboard and privacy handling unreviewed; accessibility has no recorded evidence.</td></tr>
+    <tr><td><code>Broiler.Browser</code></td><td><span class="pill pill-pending">Pending</span> for the repository.</td></tr>
+    <tr><td><code>Broiler.Writer</code></td><td><span class="pill pill-risk">No record at all</span>. The repository carries no <code>HUMAN_REVIEW.md</code>, so no checkout should be described as human-approved.</td></tr>
+    <tr><td><code>Broiler.VM</code></td><td><span class="pill pill-pending">Pending</span>, generated. Every relevant code unit is <code>HUMAN_PENDING</code>.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="small">
+  The aggregate <code>HUMAN_REVIEW.md</code> at the repository root is explicitly a
+  <strong>summary only — not a root-level human approval</strong>. It does not replace the
+  individual component files, reviewer attestations, conditions or pending warnings.
+</p>
+
+<h2 id="per-file">Per-file review: the Human Review workspace</h2>
+
+<p>
+  A component record attests to a whole component at one commit, and goes out of date as the code
+  moves. <a href="/applications/code.html#review">Broiler Code's Human Review workspace</a>
+  records the same kind of attestation <strong>per source file, against a hash of the exact
+  content reviewed</strong>, so the state of every file is known at every revision.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">coverage over any repository</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet run --project Broiler.Code/src/Broiler.Code.Review.Cli -- coverage --root .</code></pre>
+</div>
+
+<p>
+  Records live in <code>.broiler-review/</code> beside the source and are committed, so human
+  review becomes part of the project's history — and a pull request can be told which reviews it
+  invalidated.
+</p>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h3>Staleness is decided by content</h3>
+    <p>
+      Not by commit. A rebase does not expire a review and a revert restores one — which is the
+      difference between a mechanism people will maintain and one they will route around.
+    </p>
+  </div>
+  <div class="card">
+    <h3>Coverage counts only what still holds</h3>
+    <p>
+      It counts files approved <em>and</em> unchanged since. A stale approval is reported
+      separately and <strong>never counts</strong>. The result is the counterpart to the
+      machine-checked numbers: test262 and WPT measure what a machine can prove; review coverage
+      measures what a human has actually read.
+    </p>
+  </div>
+  <div class="card">
+    <h3>Notes are anchored to the code</h3>
+    <p>
+      A review note follows the code it was written against through edits — and admits when it
+      cannot follow it any further, rather than silently pointing at the wrong lines.
+    </p>
+  </div>
+  <div class="card">
+    <h3>The editor and CI cannot disagree</h3>
+    <p>
+      <code>Broiler.Code.Review</code> has no UI reference at all, so the coverage number CI
+      publishes and the badge the editor draws are computed by the same code. A dirty document
+      cannot be marked reviewed, and a review cannot be recorded without a reviewer.
+    </p>
+  </div>
+</div>
+
+<h2 id="code-assurance">Code assurance: measuring the absence precisely</h2>
+
+<p>
+  The newest layer records assurance metadata per <em>code unit</em> — a review state, a security
+  risk, an IP risk and a resource impact — fingerprinted against the version a human certified.
+  Its aggregate table has two columns that say very different things:
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Column</th><th>What it means</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Adopted</strong></td><td>Whether the component carries per-unit assurance metadata at all. <strong>An empty row is not a good result.</strong></td></tr>
+    <tr><td><strong>Human reviewed</strong></td><td>The fraction of relevant code units a named human has approved <em>against the fingerprint of the version they approved</em>.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="callout callout-ember">
+  <p class="callout-title">A component that has not adopted the system is not at 0 %</p>
+  <p>
+    It is <strong>unmeasured</strong> — which is a weaker position, not a stronger one. One
+    component has adopted the system so far; the other nine, and the browser's own
+    <code>src/</code>, report nothing.
+  </p>
+</div>
+
+<h3 id="vm-numbers">The one adopted component, in full</h3>
+
+<div class="stats" style="margin:1.6rem 0">
+  <div class="stat"><span class="stat-num">47</span><span class="stat-label">Files scanned, all carrying an annotation</span></div>
+  <div class="stat"><span class="stat-num">720</span><span class="stat-label">Relevant code units, 100 % annotated (925 more exempt by predicate)</span></div>
+  <div class="stat"><span class="stat-num accent">0 %</span><span class="stat-label">Human reviewed — every relevant unit <code>HUMAN_PENDING</code></span></div>
+  <div class="stat"><span class="stat-num">47</span><span class="stat-label">Units at <em>High</em> security risk (273 Medium, 398 Low, 2 None)</span></div>
+</div>
+
+<p>
+  The high-risk list is not abstract: it is the bounded binary reader, the bounded allocator, the
+  verifier contracts, the profile-identity parser and the resource-limit precedence — exactly the
+  code that stands between a malformed artifact and the host.
+</p>
+
+<p>
+  The report is generated, not written. It is regenerated by the test run itself, which also
+  rewrites <code>HUMAN_REVIEW.md</code>, the manifest and every generated source header — so the
+  file and the code cannot drift apart.
+</p>
+
+<h3 id="policy">The release policy</h3>
+
+<div class="callout callout-warn">
+  <p class="callout-title">Development may proceed unreviewed; nothing ships unreviewed</p>
+  <p>
+    An official release fails on <strong>any</strong> unresolved assurance state —
+    <code>PENDING</code>, <code>STALE</code>, an unknown reviewer, a missing review, a fingerprint
+    mismatch, or an invalid review transition. Because every relevant unit in the adopted
+    component is <code>PENDING</code>, <strong>no component is currently eligible for an official
+    release</strong>, and the components that have not adopted the system cannot be assessed
+    against that gate at all.
+  </p>
+  <p style="margin-bottom:0">
+    Implementing, landing and evidencing a milestone may proceed without a review decision.
+    Publishing a package, claiming a runtime identifier, issuing a support table or moving a
+    milestone to <em>Accepted</em> may not.
+  </p>
+</div>
+
+<p>
+  The aggregate table is currently <strong>hand-maintained</strong> from the components'
+  generated reports, because a platform-wide tool every component could share does not exist yet.
+  That is exactly the kind of hand-maintained summary the policy warns against — and it is
+  recorded in the file rather than hidden.
+</p>
+
+<h2 id="ai">AI-assisted development</h2>
+
+<p>
+  AI coding tools have produced or modified substantial portions of Broiler. Maintainers direct
+  the work, run automated checks, and decide what to merge. The project's own framing is worth
+  quoting on its terms: <strong>that workflow can increase implementation throughput, but it does
+  not make AI output trustworthy by default.</strong>
+</p>
+
+<p>
+  Human reviewers are expected to read the relevant source and validate the exact release commit
+  — <em>not</em> to approve an AI-generated summary of it. Component READMEs disclose AI
+  assistance and link to commit-scoped review records.
+</p>
+
+<p>
+  <a href="/components/js.html#ai">Broiler.JS states its development model most explicitly</a>:
+  implementation is done primarily by a coding AI, and the maintainer directs, reviews, tests,
+  refactors and pays for inference. The stated consequence is that the bottleneck is maintenance
+  bandwidth and inference cost rather than coding hours.
+</p>
+
+<h2 id="risks">Shared safety risks</h2>
+
+<ul class="checklist">
+  <li><strong>Untrusted active content.</strong> Broiler.JS can parse, compile and execute JavaScript and can interact with .NET host capabilities. It is not a security sandbox — the embedding application must restrict CLR and host capabilities before running untrusted scripts.</li>
+  <li><strong>Complex parser and interop boundaries.</strong> HTML, CSS, JavaScript, font, image, document and Unicode-data inputs cross parser or native-interop boundaries that require focused security review.</li>
+  <li><strong>Tests are not proof.</strong> Passing unit, test262, WPT or visual-comparison tests is useful evidence but does not establish that a component is secure or defect-free.</li>
+  <li><strong>No warranty.</strong> Each applicable license supplies the covered software on an “AS IS” basis, without warranties or conditions.</li>
+</ul>
+
+<p>
+  The safe public position, because the preview combines all of these components: first-preview
+  only; controlled or non-hostile inputs unless the host provides isolation; no production or
+  security-sensitive use without further review; re-review required after source changes to
+  reviewed commits; and public preview notes must preserve the safety warnings from the component
+  reviews.
+</p>
+
+<p><a href="/security.html">Security posture and preview limits in full →</a></p>
+
+<div class="pager">
+  <a href="/conformance.html"><span class="dir">Previous</span><span class="ttl">Conformance</span></a>
+  <a class="next" href="/roadmap.html"><span class="dir">Next</span><span class="ttl">Roadmap</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <a class="brand" href="/" style="margin-bottom:.8rem">
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="bf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a4d"/><stop offset="1" stop-color="#e0490d"/></linearGradient></defs><rect width="32" height="32" rx="8" fill="url(#bf)"/><g fill="#fff"><rect x="7" y="7.5" width="15" height="4.6" rx="2.3" opacity=".95"/><rect x="7" y="13.7" width="18" height="4.6" rx="2.3" opacity=".8"/><rect x="7" y="19.9" width="12" height="4.6" rx="2.3" opacity=".65"/></g></svg>
+          Broiler
+        </a>
+        <p>
+          An experimental managed-code browser stack for .NET 10, currently being prepared for
+          its first preview. Apache-2.0, with inherited material under its own terms.
+        </p>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="/components.html">Components</a></li>
+          <li><a href="/applications.html">Applications</a></li>
+          <li><a href="/architecture.html">Architecture</a></li>
+          <li><a href="/packages.html">Packages</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Evidence</h4>
+        <ul>
+          <li><a href="/conformance.html">Conformance</a></li>
+          <li><a href="/assurance.html">Assurance &amp; review</a></li>
+          <li><a href="/roadmap.html">Roadmap</a></li>
+          <li><a href="/security.html">Security &amp; limits</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Build</h4>
+        <ul>
+          <li><a href="/get-started.html">Get started</a></li>
+          <li><a href="/docs.html">Documentation index</a></li>
+          <li><a href="https://github.com/MaiRat/Broiler">Aggregate repo</a></li>
+          <li><a href="https://github.com/Broiler-Platform">Component repos</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>Apache License 2.0 · first preview · not for production use</span>
+      <span><a href="https://github.com/sponsors/MaiRat">Sponsor</a> · <a href="https://github.com/MaiRat/Broiler/blob/main/THIRD_PARTY_NOTICES.md">Third-party notices</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/js/site.js" defer></script>
+</body>
+</html>
