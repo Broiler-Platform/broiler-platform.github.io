@@ -11,48 +11,52 @@ A tiny static site with one build step and no dependencies beyond Python 3.
 
 Every page shares a shell — the `<head>`, the sticky header with its nav, and the footer.
 That shell lives in **`tools/shell.html`** and exists exactly once. `tools/build.py` wraps
-each page body in it and writes the finished HTML to the site root, which is the branch
-GitHub Pages serves (`.nojekyll` is present, so the files are copied through untouched).
+each page body in it, writes the sitemap, copies the static files, and leaves a complete
+site in `_site/`. GitHub Actions builds that directory and publishes it, so **nothing
+generated is committed** and only the built site is served — `tools/` and the workflows
+never reach it.
 
 ```bash
-python tools/build.py                 # rebuild every page and the sitemap
-python tools/build.py components/js   # rebuild just those pages
-python tools/build.py --check         # fail if any output is stale, write nothing
-python tools/verify.py                # links, anchors, markup and page metadata
+python tools/build.py                 # build the whole site into _site/
+python tools/build.py --out dist      # somewhere else
+python tools/build.py components/js   # rebuild just those pages, in place
+python tools/verify.py                # links, anchors, markup and page metadata in _site/
 ```
 
-> **Edit `tools/pages/…`, not the HTML at the root.** The root files are build output.
-> A change made there is discarded by the next build — which is what
-> `tools/build.py --check` is for, and why CI runs it on every push and pull request.
+`tools/build.py` is the definition of what the site consists of: the pages under
+`tools/pages/`, the generated sitemap, and the `STATIC` list at the top of the script.
+Anything else in the repository is not part of the site.
 
 ## Layout
 
 ```text
 tools/shell.html          The shared shell — the only copy of the head, nav and footer
-tools/build.py            Wraps each page body in the shell; also writes sitemap.xml
-tools/verify.py           Checks the built site: links, anchors, markup, metadata
-tools/pages/              Page sources, mirroring their output paths
+tools/build.py            Wraps each page body in the shell; writes the sitemap; copies
+                          the static files; defines what the site consists of
+tools/verify.py           Checks a built site: links, anchors, markup, metadata
+tools/pages/              Page sources, mirroring their output paths:
 
-index.html                ── build output from here down ──
-architecture.html         Layering, canonical owners, HtmlBridge, submodule topology
-components.html           Component catalogue
-components/*.html         One page per component (DOM, CSS, Layout, Graphics, Media,
+  index.html              Overview — the stack, the applications, the preview position
+  architecture.html       Layering, canonical owners, HtmlBridge, submodule topology
+  components.html         Component catalogue
+  components/*.html       One page per component (DOM, CSS, Layout, Graphics, Media,
                           Input, HTML, JS, UI, Documents, VM)
-applications.html         Application catalogue
-applications/*.html       Browser, Writer, Code
-conformance.html          Every evidence suite: two WPT suites, test262, HTML 5.2,
+  applications.html       Application catalogue
+  applications/*.html     Browser, Writer, Code
+  conformance.html        Every evidence suite: two WPT suites, test262, HTML 5.2,
                           real-world renders, the privacy corpus, Acid, unit-test status
-assurance.html            Human review records, per-file review, code assurance
-roadmap.html              Cross-repository work and its exit gates
-packages.html             Every published NuGet package, and what is not published
-get-started.html          Prerequisites, the solution map, build and tooling commands
-security.html             Preview limits, parser boundaries, what is absent
-docs.html                 Index of every current document, linked to its owning repo
-404.html                  Not-found page (GitHub Pages serves this automatically)
-sitemap.xml               Generated
+  assurance.html          Human review records, per-file review, code assurance
+  roadmap.html            Cross-repository work and its exit gates
+  packages.html           Every published NuGet package, and what is not published
+  get-started.html        Prerequisites, the solution map, build and tooling commands
+  security.html           Preview limits, parser boundaries, what is absent
+  docs.html               Index of every current document, linked to its owning repo
+  404.html                Not-found page (GitHub Pages serves this automatically)
 
 assets/css/site.css       The whole stylesheet — token-driven, light and dark
 assets/js/site.js         Theme toggle, mobile nav, copy buttons, table of contents
+robots.txt                Copied into the site verbatim
+.github/workflows/        Build, check and publish
 ```
 
 ## Writing a page
@@ -113,11 +117,19 @@ stored, the site follows the operating system.
 
 ```bash
 python tools/build.py && python tools/verify.py
-python -m http.server 8777
+python -m http.server 8777 --directory _site
 ```
 
 Then open <http://127.0.0.1:8777/>. The site uses root-absolute paths (`/assets/…`), so
-opening the files directly with `file://` will not load the stylesheet.
+serving `_site` is necessary — opening the files directly with `file://` will not load the
+stylesheet.
+
+## Publishing
+
+`.github/workflows/pages.yml` builds the site and runs `tools/verify.py` on every push and
+pull request, and deploys to GitHub Pages from `main` only. Pages is configured to publish
+from the workflow rather than from the branch, so the served site contains exactly what
+`tools/build.py` produced.
 
 ## Accuracy
 

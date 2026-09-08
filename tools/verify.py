@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Check the built site: internal links, anchors and markup.
+"""Check a built site: internal links, anchors and markup.
 
-    python tools/verify.py
+    python tools/verify.py            # checks _site/
+    python tools/verify.py dist       # or wherever it was built
 
-Runs against the generated HTML at the site root — the files GitHub Pages
-actually serves — rather than against the sources, so it catches a bad link
-however it got there.
+Runs against the built HTML — the files GitHub Pages actually serves — rather
+than against the sources, so it catches a bad link however it got there.
 
 Checks:
 
@@ -24,7 +24,7 @@ import sys
 from html.parser import HTMLParser
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_ROOT = Path(__file__).resolve().parent.parent / "_site"
 VOID = {
     "area", "base", "br", "col", "embed", "hr", "img", "input",
     "link", "meta", "param", "source", "track", "wbr",
@@ -68,35 +68,37 @@ class Nesting(HTMLParser):
         return self.problems
 
 
-def pages() -> list[Path]:
+def pages(root: Path) -> list[Path]:
     """Every built page: the site root and one level below it."""
-    return sorted(
-        p for p in list(ROOT.glob("*.html")) + list(ROOT.glob("*/*.html"))
-        if ".github" not in p.parts and "tools" not in p.parts
-    )
+    return sorted(list(root.glob("*.html")) + list(root.glob("*/*.html")))
 
 
-def main() -> int:
-    found = pages()
+def main(argv: list[str]) -> int:
+    root = Path(argv[0]).resolve() if argv else DEFAULT_ROOT
+    if not root.is_dir():
+        print(f"{root} does not exist — run `python tools/build.py` first", file=sys.stderr)
+        return 1
+
+    found = pages(root)
     if not found:
-        print("no built pages found — run `python tools/build.py` first", file=sys.stderr)
+        print(f"no built pages under {root} — run `python tools/build.py` first", file=sys.stderr)
         return 1
 
     text = {p: p.read_text(encoding="utf-8") for p in found}
-    url_of = {"/" + p.relative_to(ROOT).as_posix() for p in found} | {"/"}
+    url_of = {"/" + p.relative_to(root).as_posix() for p in found} | {"/"}
     ids = {
-        "/" + p.relative_to(ROOT).as_posix(): set(re.findall(r'id="([^"]+)"', s))
+        "/" + p.relative_to(root).as_posix(): set(re.findall(r'id="([^"]+)"', s))
         for p, s in text.items()
     }
     problems: list[str] = []
 
     def note(page: Path, message: str) -> None:
-        problems.append(f"{page.relative_to(ROOT).as_posix()}: {message}")
+        problems.append(f"{page.relative_to(root).as_posix()}: {message}")
 
     for page, source in text.items():
         for target, fragment in re.findall(r'href="(/[^"#]*)(#[^"]*)?"', source):
             if target.startswith("/assets/"):
-                if not (ROOT / target.lstrip("/")).exists():
+                if not (root / target.lstrip("/")).exists():
                     note(page, f"link to missing asset {target}")
                 continue
             if target not in url_of:
@@ -106,7 +108,7 @@ def main() -> int:
                 if fragment[1:] not in ids.get(key, set()):
                     note(page, f"link to missing anchor {target}{fragment}")
 
-        own = ids["/" + page.relative_to(ROOT).as_posix()]
+        own = ids["/" + page.relative_to(root).as_posix()]
         for fragment in re.findall(r'href="#([^"]+)"', source):
             if fragment not in own:
                 note(page, f"link to missing local anchor #{fragment}")
@@ -134,4 +136,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))

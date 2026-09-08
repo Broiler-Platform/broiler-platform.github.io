@@ -1,8 +1,4 @@
 User-agent: *
 Allow: /
 
-# Page sources and build tooling. Pages serves this branch as-is, so these are
-# reachable, but they are the inputs to the site rather than part of it.
-Disallow: /tools/
-
 Sitemap: https://broiler-platform.github.io/sitemap.xml
