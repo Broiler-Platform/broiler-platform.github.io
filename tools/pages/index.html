@@ -1,269 +1,161 @@
-{"title": "Broiler Platform — a managed-code browser, writer and IDE stack for .NET", "desc": "Broiler is an experimental managed-code platform for .NET 10: a DOM, CSS, layout, graphics, media, input, UI and JavaScript stack, plus the browser, word processor and code editor composed from it. First preview — evaluation only.", "og_title": "Broiler Platform", "og_desc": "An experimental managed-code browser, word processor and IDE stack for .NET 10. First preview.", "og_url": "https://broiler-platform.github.io/"}
+{"title": "Broiler — a browser, a word processor and a code editor, built from scratch", "desc": "Broiler is an open-source browser, word processor and code editor for Windows, Linux and Android, built on one platform written from scratch in .NET. An early preview.", "og_title": "Broiler", "og_desc": "An open-source browser, word processor and code editor, built on one platform written from scratch in .NET. An early preview.", "og_url": "https://broiler-platform.github.io/"}
 ---
 <section class="hero">
   <div class="wrap">
-    <span class="eyebrow">Managed code · .NET 10 · Apache-2.0</span>
-    <h1>A browser engine, a word processor and an IDE — written in managed .NET.</h1>
+    <span class="eyebrow">Open source · Early preview</span>
+    <h1>Three everyday apps, built from scratch.</h1>
     <p class="lede">
-      Broiler is a stack of independently released .NET&nbsp;10 components — DOM, CSS,
-      layout, graphics, media, input, a retained-mode UI toolkit and a JavaScript engine
-      that compiles to IL — and the three applications composed from them. No native
-      engine is embedded, and no component pretends to be finished.
+      Broiler is a <strong>web browser</strong>, a <strong>word processor</strong> and a
+      <strong>code editor</strong> — all built on one platform written from the ground up in
+      .NET. Same look, same behaviour, whether you run them on Windows, Linux, Android or
+      inside another browser.
     </p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="/get-started.html">
-        Get started
+      <a class="btn btn-primary" href="/applications.html">
+        See the apps
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
-      <a class="btn" href="/components.html">Browse the components</a>
-      <a class="btn" href="/conformance.html">See the evidence</a>
-    </div>
-  </div>
-</section>
-
-<section class="section-tight">
-  <div class="wrap">
-    <div class="callout callout-warn">
-      <p class="callout-title">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
-        First preview — evaluation, testing and contribution only
-      </p>
-      <p>
-        Public APIs, repository layout and persisted formats are unstable and may change
-        without notice. Substantial portions of Broiler were developed with AI assistance.
-        <strong>No component is human-approved for preview use until its
-        <code>HUMAN_REVIEW.md</code> names a reviewer, a reviewed commit, evidence and a
-        decision</strong> — and most of those records are deliberately <code>PENDING</code>.
-        Broiler.JS is <strong>not a security sandbox</strong>. Do not use this preview for
-        production, security-critical or safety-critical work.
-        <a href="/assurance.html">How review status is recorded →</a>
-      </p>
+      <a class="btn" href="/about.html">What is Broiler?</a>
+      <a class="btn" href="/status.html">Can I use it yet?</a>
     </div>
   </div>
 </section>
 
 <section class="section">
   <div class="wrap">
-    <span class="eyebrow">The stack</span>
-    <h2 style="margin-top:0">Everything above the operating system is managed code</h2>
+    <span class="eyebrow">The apps</span>
+    <h2 style="margin-top:0">What you can actually run</h2>
     <p class="lede" style="margin-bottom:2rem">
-      Each tier depends only on the tier below it, and the direction is enforced by
-      architecture tests rather than convention. Applications compose the backends they
-      present with; abstractions never reference an implementation.
+      Three finished-shaped applications, not demos. They share one toolkit, one renderer and
+      one set of file handling — so a habit you learn in one carries into the next.
     </p>
 
-    <div class="stack">
-      <div class="stack-row">
-        <div class="stack-tier">Applications</div>
-        <div class="stack-items">
-          <a class="stack-item is-app" href="/applications/browser.html">Broiler.Browser<span>Windows · Linux · Android</span></a>
-          <a class="stack-item is-app" href="/applications/writer.html">Broiler.Writer<span>Windows · Linux · Android · WebAssembly</span></a>
-          <a class="stack-item is-app" href="/applications/code.html">Broiler.Code<span>Windows · Linux</span></a>
+    <div class="app-grid">
+      <a class="app-card" href="/applications/browser.html">
+        <img class="app-icon" src="/assets/img/app-browser.svg" alt="" width="56" height="56">
+        <h3>Broiler Browser</h3>
+        <p>
+          Browse the web: type an address, follow links, go back and forward, fill in forms,
+          keep favourites. It renders real pages — Wikipedia, GitHub, MDN — with its own
+          engine, not a copy of someone else's.
+        </p>
+        <div class="platforms">
+          <span class="plat on">Windows</span><span class="plat on">Linux</span><span class="plat on">Android</span>
         </div>
-      </div>
-      <div class="stack-row">
-        <div class="stack-tier">Integration</div>
-        <div class="stack-items">
-          <a class="stack-item" href="/architecture.html#htmlbridge">Broiler.HtmlBridge<span>DOM ↔ renderer ↔ JavaScript</span></a>
-          <a class="stack-item" href="/components/ui.html">Broiler.UI<span>Retained-mode toolkit</span></a>
-          <a class="stack-item" href="/components/documents.html">Broiler.Documents<span>RTF · DOCX · ODT · HTML · MD · PDF</span></a>
+      </a>
+
+      <a class="app-card" href="/applications/writer.html">
+        <img class="app-icon" src="/assets/img/app-writer.svg" alt="" width="56" height="56">
+        <h3>Broiler Writer</h3>
+        <p>
+          Write and format documents, and open the files you already have — Word documents,
+          RTF, HTML and Markdown, plus PDFs for reading. Includes a reveal-codes view that
+          shows exactly what formatting is where.
+        </p>
+        <div class="platforms">
+          <span class="plat on">Windows</span><span class="plat on">Linux</span><span class="plat on">Android</span><span class="plat on">In a browser</span>
         </div>
-      </div>
-      <div class="stack-row">
-        <div class="stack-tier">Web engine</div>
-        <div class="stack-items">
-          <a class="stack-item" href="/components/dom.html">Broiler.DOM<span>Parse · tree · serialize</span></a>
-          <a class="stack-item" href="/components/css.html">Broiler.CSS<span>Selectors · cascade</span></a>
-          <a class="stack-item" href="/components/layout.html">Broiler.Layout<span>CSS box model</span></a>
-          <a class="stack-item" href="/components/html.html">Broiler.HTML<span>Renderer</span></a>
-          <a class="stack-item" href="/components/js.html">Broiler.JS<span>JavaScript → IL</span></a>
+      </a>
+
+      <a class="app-card" href="/applications/code.html">
+        <img class="app-icon" src="/assets/img/app-code.svg" alt="" width="56" height="56">
+        <h3>Broiler Code</h3>
+        <p>
+          A C# editor with syntax colouring, live error checking and a build button. It also
+          carries a review workspace that tracks, file by file, what a person has actually
+          read.
+        </p>
+        <div class="platforms">
+          <span class="plat on">Windows</span><span class="plat on">Linux</span>
         </div>
-      </div>
-      <div class="stack-row">
-        <div class="stack-tier">Platform core</div>
-        <div class="stack-items">
-          <a class="stack-item" href="/components/graphics.html">Broiler.Graphics<span>Raster · text · backends</span></a>
-          <a class="stack-item" href="/components/media.html">Broiler.Media<span>Image · audio · video</span></a>
-          <a class="stack-item" href="/components/input.html">Broiler.Input<span>Keyboard · mouse · pen · touch</span></a>
-          <a class="stack-item is-plan" href="/components/vm.html">Broiler.VM<span>Bytecode profile host</span></a>
-        </div>
-      </div>
-      <div class="stack-row">
-        <div class="stack-tier">Runtime</div>
-        <div class="stack-items">
-          <span class="stack-item" style="cursor:default">.NET 10<span>Direct2D · OpenGL · Vulkan · EGL · Canvas · X11 · evdev · Win32</span></span>
-        </div>
-      </div>
+      </a>
     </div>
   </div>
 </section>
 
 <section class="section section-alt">
   <div class="wrap">
-    <span class="eyebrow">Applications</span>
-    <h2 style="margin-top:0">Three products, one component set</h2>
-    <p class="lede" style="margin-bottom:2rem">
-      Each application lives in its own repository with its own platform heads and CI, and
-      consumes the shared components as git submodules pinned to <code>main</code>.
-    </p>
-    <div class="grid grid-3">
-      <a class="card" href="/applications/browser.html">
-        <span class="card-kicker">Browser</span>
-        <h3>Broiler.Browser</h3>
-        <p>
-          Three platform heads over a shared <code>Broiler.Browser.Core</code> chrome, bound
-          to the engine by HtmlBridge: one page lifecycle across DOM, renderer and
-          JavaScript.
-        </p>
-        <div class="card-foot"><span>Windows</span><span>Linux</span><span>Android</span><span>80–81 projects/head</span></div>
-      </a>
-      <a class="card" href="/applications/writer.html">
-        <span class="card-kicker">Word processor</span>
-        <h3>Broiler.Writer</h3>
-        <p>
-          Four heads, reveal-codes editing, and RTF/DOCX/HTML/Markdown round-trips. The two
-          desktop heads publish with NativeAOT — a 9.2&nbsp;MB self-contained binary on
-          Windows, zero trim/AOT warnings.
-        </p>
-        <div class="card-foot"><span>Windows</span><span>Linux</span><span>Android</span><span>WebAssembly</span></div>
-      </a>
-      <a class="card" href="/applications/code.html">
-        <span class="card-kicker">Editor</span>
-        <h3>Broiler.Code</h3>
-        <p>
-          A C#/.NET editor with a portable classifier, an optional Roslyn language service —
-          and the Human Review workspace that makes the platform's own review claim
-          checkable, file by file.
-        </p>
-        <div class="card-foot"><span>Windows</span><span>Linux</span><span>Review coverage CLI</span></div>
-      </a>
-    </div>
-  </div>
-</section>
+    <span class="eyebrow">Where it stands</span>
+    <h2 style="margin-top:0">Honest answer: not ready for you yet</h2>
 
-<section class="section">
-  <div class="wrap">
-    <span class="eyebrow">Components</span>
-    <h2 style="margin-top:0">Eleven components, released independently</h2>
-    <p class="lede" style="margin-bottom:2rem">
-      Every reusable component is its own repository, its own solution, its own CI and its own
-      NuGet packages — versioned in lockstep at <code>0.1.0-preview.1</code> during the
-      preview. The applications are not published.
-    </p>
-    <div class="grid grid-3">
-      <a class="card" href="/components/dom.html"><h3>Broiler.DOM</h3><p>Dependency-free DOM plus HTML tokenization, tree building and serialization. The only mutable tree in the stack.</p></a>
-      <a class="card" href="/components/css.html"><h3>Broiler.CSS</h3><p>CSS syntax, selectors, declarations and diagnostics, plus selector matching, cascade and computed values over the DOM.</p></a>
-      <a class="card" href="/components/layout.html"><h3>Broiler.Layout</h3><p>Graphics-independent CSS box-model and layout engine. Ten friend assemblies, locked by an architecture test.</p></a>
-      <a class="card" href="/components/graphics.html"><h3>Broiler.Graphics</h3><p>Bitmaps, canvas, deterministic CPU raster, text and render lists — plus Direct2D, OpenGL, Vulkan, EGL and Canvas backends.</p></a>
-      <a class="card" href="/components/media.html"><h3>Broiler.Media</h3><p>Decode-first image, audio and video: PNG/APNG, JPEG, BMP, GIF, WebP, WAVE PCM, and Windows MP4 through Media Foundation.</p></a>
-      <a class="card" href="/components/input.html"><h3>Broiler.Input</h3><p>Device discovery, lifecycle, timing, bounded delivery and capture leases, with Windows, Linux evdev and Android providers.</p></a>
-      <a class="card" href="/components/html.html"><h3>Broiler.HTML</h3><p>The modular renderer, split into parsing, CSS, DOM, orchestration, rendering, graphics and image assemblies.</p></a>
-      <a class="card" href="/components/js.html"><h3>Broiler.JS</h3><p>JavaScript compiled to .NET IL at runtime, validated against test262. Carries DateTime, Regex and Unicode.</p></a>
-      <a class="card" href="/components/ui.html"><h3>Broiler.UI</h3><p>56 packages: one contract and one Standard implementation per control, with real break-out OS windows and owner-drawn chrome.</p></a>
-      <a class="card" href="/components/documents.html"><h3>Broiler.Documents</h3><p>A UI-free rich-text model and the RTF, DOCX, ODT, HTML, Markdown and (gated) PDF codecs, with a scriptable CLI.</p></a>
-      <a class="card" href="/components/vm.html"><h3>Broiler.VM</h3><p>A NativeAOT-compatible host for verified bytecode profiles. Implemented and evidenced; every milestone unaccepted until a human reads it.</p></a>
-      <a class="card" href="/components.html"><h3>All components →</h3><p>Package tables, dependency direction, supported surfaces and the roadmap each component owns.</p></a>
-    </div>
-  </div>
-</section>
-
-<section class="section section-alt">
-  <div class="wrap">
-    <span class="eyebrow">Evidence, not claims</span>
-    <h2 style="margin-top:0">Every number on this site names its corpus and its command</h2>
-    <p class="lede">
-      Broiler's documentation treats a passing test as evidence about one corpus at one
-      revision, never as a statement that a component is correct, secure or complete. The
-      figures below are the ones the repository actually records — including the
-      uncomfortable ones.
-    </p>
-
-    <div class="stats" style="margin: 2rem 0 1.6rem">
-      <div class="stat">
-        <span class="stat-num accent">51</span>
-        <span class="stat-label">WPT pixel gaps open, each with an owner and an exit gate — beside 50 fixed and 17 where the golden image, not Broiler, is wrong</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num accent">167</span>
-        <span class="stat-label">HTML 5.2 suite cases, 175 of 176 coverage items covered or classified, 0 quarantined</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num accent">47 / 116</span>
-        <span class="stat-label">Privacy-test-page probes Broiler answers where Chromium does — 69 measured platform gaps</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num accent">0 %</span>
-        <span class="stat-label">Code units certified by a named human in the one component that has adopted per-unit assurance</span>
-      </div>
-    </div>
-
-    <div class="grid grid-2">
-      <div class="card">
-        <h3>Two independent WPT suites</h3>
-        <p>
-          The golden-image suite scores Broiler against a Chromium screenshot; the reftest
-          suite renders both the test <em>and</em> the reference WPT declares, with no second
-          engine involved. Their pass rates are deliberately not comparable, and each is blind
-          to what the other catches.
-        </p>
-        <p><a href="/conformance.html#wpt">How the two suites differ →</a></p>
-      </div>
-      <div class="card">
-        <h3>Real pages, measured honestly</h3>
-        <p>
-          The real-world suite renders Google, Wikipedia, GitHub, MDN, heise, 7-Zip, Hacker
-          News and W3C three ways — Chromium, Broiler live, and Broiler replaying Chromium's
-          final DOM — so a bad result can be attributed to loading, scripting or painting.
-        </p>
-        <p><a href="/conformance.html#real-world">Read the MediaWiki case study →</a></p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="wrap">
-    <div class="split">
+    <div class="split" style="gap:2.5rem">
       <div>
-        <span class="eyebrow">Assurance</span>
-        <h2 style="margin-top:0">“Human reviewed” is a record you can check</h2>
         <p>
-          A component-level review record attests to a whole component at one commit, and goes
-          out of date the moment the code moves. Broiler Code's Human Review workspace records
-          the same attestation <strong>per source file, against a hash of the exact content
-          reviewed</strong>, so a rebase does not expire a review and a revert restores one.
+          Broiler is an <strong>early preview</strong>. The apps run, and they do real work —
+          but there is <strong>no download to click yet</strong>. Nothing has been packaged,
+          signed and released for people to install, and nothing here has been through the
+          safety review the project requires before it says otherwise.
         </p>
         <p>
-          Coverage counts only files approved <em>and</em> unchanged since. A stale approval is
-          reported separately and never counts. The number sits beside test262 and WPT as the
-          measure of what a person has actually read.
+          If you are a developer, you can build and run all three today.
+          If you are not, the useful thing to do is watch the project — or help fund it.
         </p>
-        <div class="code">
-          <div class="code-head"><span class="code-title">review coverage</span><button class="copy-btn" type="button">Copy</button></div>
-          <pre><code>dotnet run --project Broiler.Code/src/Broiler.Code.Review.Cli -- coverage --root .</code></pre>
-        </div>
-        <p><a href="/assurance.html">Review status for every component →</a></p>
+        <p>
+          <a class="btn" href="/status.html">What works, what doesn't
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </p>
       </div>
       <div>
-        <span class="eyebrow">Provenance</span>
-        <h2 style="margin-top:0">Two upstream projects made this possible</h2>
+        <div class="progress-row" style="grid-template-columns:1fr;margin-top:0">
+          <div class="stage done"><b>Done</b><span>Three apps that build and run on their supported systems</span></div>
+          <div class="stage now"><b>Now</b><span>Human review of the code, and getting the first signed preview packaged</span></div>
+          <div class="stage"><b>Next</b><span>A preview you can download and install</span></div>
+          <div class="stage"><b>Later</b><span>Automatic updates, and a stable 1.0</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <span class="eyebrow">Why bother</span>
+    <h2 style="margin-top:0">Why build all this from scratch?</h2>
+
+    <div class="features">
+      <div class="feature">
+        <h3>No borrowed engine inside</h3>
         <p>
-          Broiler's rendering lineage comes from
-          <a href="https://github.com/ArthurHub/HTML-Renderer">HTML&nbsp;Renderer</a> and its
-          JavaScript-engine lineage from
-          <a href="https://github.com/yantrajs/yantra">Yantra&nbsp;JS</a>. Inherited HTML
-          Renderer material remains under the BSD 3-Clause License with its copyright notices
-          retained; Yantra JS material remains under Apache-2.0 with upstream history intact.
+          Most alternative browsers are a shell around Chromium. Broiler's page engine, layout,
+          text rendering and JavaScript are its own code — so it is genuinely a different
+          implementation, not a reskin.
         </p>
+      </div>
+      <div class="feature">
+        <h3>One app, many machines</h3>
         <p>
-          Broiler has diverged substantially and is maintained independently. It is
-          <strong>not</strong> a continuation, official edition or release of either project,
-          and neither upstream team is affiliated with it or endorses it.
+          The same application code runs on Windows, Linux, Android and inside a web browser.
+          Only a thin layer at the bottom changes, so behaviour does not drift between them.
         </p>
-        <p class="small">
-          Unicode-provided data retains its own terms. See
-          <a href="https://github.com/MaiRat/Broiler/blob/main/THIRD_PARTY_NOTICES.md">THIRD_PARTY_NOTICES.md</a>
-          for complete provenance and license references.
+      </div>
+      <div class="feature">
+        <h3>Small and self-contained</h3>
+        <p>
+          The desktop Writer compiles to a single 9.2&nbsp;MB file that runs with nothing else
+          installed — no runtime to download first, no folder of 162 files.
+        </p>
+      </div>
+      <div class="feature">
+        <h3>Readable, checkable code</h3>
+        <p>
+          It is written in managed .NET rather than C++, and every safety-relevant boundary is
+          written down. The project publishes what it has <em>not</em> verified as plainly as
+          what it has.
+        </p>
+      </div>
+      <div class="feature">
+        <h3>Free, and free to fork</h3>
+        <p>
+          Apache-2.0. Every part of it is public, including the parts that are unfinished, the
+          failing tests and the open bugs.
+        </p>
+      </div>
+      <div class="feature">
+        <h3>Your files stay yours</h3>
+        <p>
+          Documents open and save in the formats you already use. There is no account, no
+          cloud, and no sign-in anywhere in any of the three apps.
         </p>
       </div>
     </div>
@@ -271,34 +163,123 @@
 </section>
 
 <section class="section section-alt">
+  <div class="wrap">
+    <span class="eyebrow">Under the hood</span>
+    <h2 style="margin-top:0">Built out of parts, each of which does one job</h2>
+    <p class="lede" style="margin-bottom:2rem">
+      The apps are assembled from a set of independent building blocks. You never need to think
+      about them — but they are why one browser, one word processor and one editor can share so
+      much. (Yes, the project's mascot is a chicken. A broiler is a chicken.)
+    </p>
+
+    <div class="art-grid">
+      <a class="art-tile" href="/components/graphics.html">
+        <img src="/assets/img/component-graphics.png" alt="" width="72" height="72" loading="lazy">
+        <b>Graphics</b><span>Draws everything you see</span>
+      </a>
+      <a class="art-tile" href="/components/ui.html">
+        <img src="/assets/img/component-ui.png" alt="" width="72" height="72" loading="lazy">
+        <b>UI</b><span>Buttons, menus, windows</span>
+      </a>
+      <a class="art-tile" href="/components/media.html">
+        <img src="/assets/img/component-media.png" alt="" width="72" height="72" loading="lazy">
+        <b>Media</b><span>Pictures, sound and video</span>
+      </a>
+      <a class="art-tile" href="/components/documents.html">
+        <img src="/assets/img/component-documents.png" alt="" width="72" height="72" loading="lazy">
+        <b>Documents</b><span>Reads and writes your files</span>
+      </a>
+      <a class="art-tile" href="/components/input.html">
+        <img src="/assets/img/component-input.png" alt="" width="72" height="72" loading="lazy">
+        <b>Input</b><span>Keyboard, mouse, pen, touch</span>
+      </a>
+      <a class="art-tile" href="/components.html">
+        <img src="/assets/img/broiler-mark.png" alt="" width="72" height="72" loading="lazy">
+        <b>All eleven</b><span>The full list, for developers</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
   <div class="wrap wrap-narrow">
-    <span class="eyebrow">Start here</span>
-    <h2 style="margin-top:0">Clone it, or take one component</h2>
-    <p>
-      The aggregate repository composes everything through recursive submodules. If you only
-      want a piece — the layout engine, the UI toolkit, the image codecs — take the package
-      instead.
-    </p>
+    <span class="eyebrow">Questions</span>
+    <h2 style="margin-top:0">The things people ask first</h2>
 
-    <div class="code">
-      <div class="code-head"><span class="code-title">the whole platform</span><button class="copy-btn" type="button">Copy</button></div>
-      <pre><code>git clone --recurse-submodules https://github.com/MaiRat/Broiler.git
-cd Broiler
-dotnet build Broiler.Browser/Broiler.Windows.Browser.slnx</code></pre>
+    <div class="faq">
+      <details>
+        <summary>Is it free?</summary>
+        <p>
+          Yes, and it always will be. Broiler is open source under the Apache&nbsp;2.0 licence.
+          There is no paid edition, no subscription and no account.
+        </p>
+      </details>
+      <details>
+        <summary>Can I install it today?</summary>
+        <p>
+          Not yet. There is no released, signed installer — the project has not finished the
+          review and packaging work that has to come first, and it would rather say so than
+          hand out something unreviewed. <a href="/status.html">Where it stands →</a>
+        </p>
+      </details>
+      <details>
+        <summary>Will it replace Chrome or Word?</summary>
+        <p>
+          Not today, and that is not a near-term goal. Broiler renders many real websites well
+          and opens most everyday documents, but a mature browser and a mature word processor
+          represent decades of work. This is a preview of a genuine alternative
+          implementation, not a finished product.
+        </p>
+      </details>
+      <details>
+        <summary>Does it send anything anywhere?</summary>
+        <p>
+          The apps have no accounts, no telemetry and no sign-in. The browser obviously
+          fetches the pages you ask it for. On Android, only the Browser is allowed to use the
+          network at all, and unencrypted connections are switched off in both apps.
+        </p>
+      </details>
+      <details>
+        <summary>Who makes it?</summary>
+        <p>
+          A small project run by one maintainer, with a lot of the code written by AI tools
+          under their direction — which the project states openly, and backs with a review
+          system that records what a human has actually read.
+          <a href="/about.html#how">How it is made →</a>
+        </p>
+      </details>
+      <details>
+        <summary>How can I help?</summary>
+        <p>
+          Try building it and report what breaks, or
+          <a href="https://github.com/sponsors/MaiRat">sponsor the project</a> — the
+          maintainer pays for the AI inference and the testing time personally, so funding
+          directly moves it along.
+        </p>
+      </details>
     </div>
+  </div>
+</section>
 
-    <div class="code">
-      <div class="code-head"><span class="code-title">one component</span><button class="copy-btn" type="button">Copy</button></div>
-      <pre><code>dotnet add package Broiler.Layout --prerelease
-dotnet add package Broiler.UI.All --prerelease      # the whole UI toolkit
-dotnet add package Broiler.Media.Image.Managed --prerelease</code></pre>
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="dev-strip" style="margin-top:0">
+      <div class="dev-text">
+        <h3>
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+          Are you a developer?
+        </h3>
+        <p>
+          Everything is on GitHub, and the platform ships as reusable .NET packages: a layout
+          engine, a UI toolkit, image codecs, document codecs, a JavaScript engine. Start with
+          the developer overview — it maps the whole thing in one page.
+        </p>
+      </div>
+      <div class="dev-links">
+        <a class="btn btn-primary" href="/developers.html">Developer overview</a>
+        <a class="btn" href="/get-started.html">Build it</a>
+        <a class="btn" href="https://github.com/MaiRat/Broiler">GitHub</a>
+      </div>
     </div>
-
-    <p style="margin-top:1.6rem">
-      <a class="btn btn-primary" href="/get-started.html">Full build &amp; test guide
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-      <a class="btn" href="/packages.html" style="margin-left:.5rem">Package index</a>
-    </p>
   </div>
 </section>

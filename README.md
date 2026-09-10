@@ -1,9 +1,25 @@
 # broiler-platform.github.io
 
-The public website for the [Broiler](https://github.com/MaiRat/Broiler) platform — an
-experimental managed-code browser, word processor and IDE stack for .NET 10.
+The public website for [Broiler](https://github.com/MaiRat/Broiler) — an open-source
+browser, word processor and code editor built on one platform written from scratch in .NET.
 
 Live at **<https://broiler-platform.github.io/>**.
+
+## Who the site is for
+
+**End users first.** The top-level pages — the home page, the apps, About and Status — are
+written for someone who has never heard of the project and wants to know what it is, whether
+it is any good, and whether they can install it. They avoid jargon, and they lead with what
+the apps do rather than how they are built.
+
+**Developers second, but properly.** `/developers.html` is the entry point to the technical
+material, and everything under it stays as detailed as it always was. Every developer page
+carries a breadcrumb back to it. Keep the two audiences separated: if a paragraph would only
+make sense to someone who already knows what a retained-mode UI toolkit is, it belongs on the
+developer side.
+
+The one thing both halves share is the honesty rule below — a friendlier tone must not turn
+"no signed release exists" into "coming soon!".
 
 ## How it is built
 
@@ -36,13 +52,21 @@ tools/build.py            Wraps each page body in the shell; writes the sitemap;
 tools/verify.py           Checks a built site: links, anchors, markup, metadata
 tools/pages/              Page sources, mirroring their output paths:
 
-  index.html              Overview — the stack, the applications, the preview position
+  === for everyone ===
+  index.html              What Broiler is, the three apps, the honest status, FAQ
+  applications.html       The apps, side by side
+  applications/*.html     Browser, Writer, Code — what each one does for a user
+  about.html              Why it exists, how it is made, where it came from
+  status.html             What works, what doesn't, why there is no download yet
+  404.html                Not-found page (GitHub Pages serves this automatically)
+
+  === for developers ===
+  developers.html         The entry point: component map, rules, packages, evidence
+  developers/*.html       Browser, Writer, Code — repository and build detail
   architecture.html       Layering, canonical owners, HtmlBridge, submodule topology
   components.html         Component catalogue
   components/*.html       One page per component (DOM, CSS, Layout, Graphics, Media,
                           Input, HTML, JS, UI, Documents, VM)
-  applications.html       Application catalogue
-  applications/*.html     Browser, Writer, Code
   conformance.html        Every evidence suite: two WPT suites, test262, HTML 5.2,
                           real-world renders, the privacy corpus, Acid, unit-test status
   assurance.html          Human review records, per-file review, code assurance
@@ -51,10 +75,10 @@ tools/pages/              Page sources, mirroring their output paths:
   get-started.html        Prerequisites, the solution map, build and tooling commands
   security.html           Preview limits, parser boundaries, what is absent
   docs.html               Index of every current document, linked to its owning repo
-  404.html                Not-found page (GitHub Pages serves this automatically)
 
 assets/css/site.css       The whole stylesheet — token-driven, light and dark
 assets/js/site.js         Theme toggle, mobile nav, copy buttons, table of contents
+assets/img/               Artwork — see below
 robots.txt                Copied into the site verbatim
 .github/workflows/        Build, check and publish
 ```
@@ -95,13 +119,34 @@ a source file — nothing else is registered anywhere.
 
 ### Content components
 
-`.callout` (with `-warn`, `-danger`, `-info`, `-ember` variants), `.card` with
+Shared: `.callout` (with `-warn`, `-danger`, `-info`, `-ember` variants), `.card` with
 `.grid-2/3/4`, `.stat` tiles, `.table-wrap` around every `<table>`, `.code` blocks with a
-copy button, `.pill` badges, `.stack` (the layer diagram on the home page), `.checklist`,
-`.split`, and `.pager` for previous/next links.
+copy button, `.pill` badges, `.checklist`, `.split`, and `.pager` for previous/next links.
+
+User-facing: `.app-grid` / `.app-card` with `.app-icon` and `.platforms`, `.plat` chips,
+`.app-head` for an app page header, `.features` / `.feature`, `.does` (a tick list; add
+`.no` to an item for a dash instead), `.art-grid` / `.art-tile` for the component artwork,
+`.status-band`, `.progress-row` / `.stage` (add `.now` or `.done`), `.faq`, and `.pullout`.
+
+Developer-facing: `.stack` (the layer diagram), `.dev-strip` (the "are you a developer?"
+band that ends most user pages), and `.crumb` (the breadcrumb every developer page carries).
 
 Wide content must sit inside its own scrolling container — `.table-wrap` for tables,
 `.code` for code — because the page body must never scroll horizontally.
+
+## Artwork
+
+`assets/img/` holds artwork taken from the Broiler repositories themselves:
+
+| File | Source |
+|---|---|
+| `component-*.png` | The NuGet package icons from each component's `eng/icon.png` — the cartoon chickens. A broiler is a chicken; the project runs with the joke. |
+| `broiler-mark.png` | The shared component package icon, the orange "B". |
+| `app-browser.svg`, `app-writer.svg` | Converted from the Android app icons (`Resources/drawable/appicon.xml`) in the Browser and Writer repositories, path for path. |
+| `app-code.svg` | **Not from the project.** Broiler Code has no icon of its own, so this one was drawn to match the other two — same blue, same flat style. Replace it if the project gains a real one. |
+
+All of it is Apache-2.0, from the same organisation as the site. The site's own header mark is
+an inline SVG in `tools/shell.html` that matches `broiler-mark.png`.
 
 ## Colour and theme
 
@@ -142,6 +187,11 @@ In particular, keep the preview and human-review warnings intact. The component 
 records require them to be preserved in any public preview notes, and several of the
 numbers on this site — `PENDING` review records, 0 % assurance coverage, failing test
 counts — are deliberately unflattering.
+
+This matters more now that the site talks to end users. Plain language is not permission to
+round anything up. "Emulator-tested" must not become "runs on Android"; "no signed release
+exists" must not become "coming soon"; and the pages that say what the apps *cannot* do are
+load-bearing, not filler.
 
 ## License
 

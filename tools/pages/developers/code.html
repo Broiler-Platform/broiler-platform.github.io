@@ -1,0 +1,250 @@
+{"title": "Broiler.Code — technical detail", "desc": "The Broiler Code repository: the asserted layering, the capability matrix, frozen performance budgets, the Human Review workspace, solutions and CI.", "nav": "developers"}
+---
+<section class="page-head">
+  <div class="wrap">
+<p class="crumb"><a href="/developers.html">For developers</a> · <a href="/applications/code.html">the app itself</a></p>
+    <span class="eyebrow">Application · developer detail</span>
+    <h1>Broiler.Code</h1>
+    <p class="lede">
+      The code editor: two desktop heads, a shared shell, the workspace and text layer beneath
+      it, C# language services — and the Human Review workspace that turns "somebody read this"
+      into a checkable record.
+    </p>
+    <div class="tag-row" style="margin-top:1.4rem">
+      <span class="pill pill-preview">MVP-0 + Phases 0–3 delivered</span>
+      <span class="pill pill-plain">2 heads</span>
+      <span class="pill pill-plain">4 submodules</span>
+      <span class="pill pill-plain">Apache-2.0</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="review">MVP-0 — the Human Review workspace</h2>
+
+<p>
+  Broiler Code's first useful release was not an IDE feature. It is the tool that makes the
+  platform's own claim about itself checkable.
+</p>
+
+<p>
+  The claim <em>"AI-generated code is human reviewed"</em> was a sentence in a README backed by
+  twelve component <code>HUMAN_REVIEW.md</code> files, each attesting to a whole component at one
+  commit and going quietly out of date as the code moved. MVP-0 replaces it with something
+  falsifiable: <strong>every source file has a known review state relative to a concrete revision
+  of its content.</strong>
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>What shipped</th><th>Where</th></tr></thead>
+  <tbody>
+    <tr><td>A review record per source file — status, reviewer, date, reviewed content hash, provenance revision and notes — committed beside the source in <code>.broiler-review/</code></td><td><code>Broiler.Code.Review</code></td></tr>
+    <tr><td>Staleness decided by <em>content</em>, so a rebase does not expire a review and a revert restores one</td><td><code>ReviewContentHash</code>, <code>ReviewStateEvaluator</code></td></tr>
+    <tr><td>Notes anchored to the code they were written against, following it through edits and admitting when they cannot</td><td><code>NoteAnchoring</code></td></tr>
+    <tr><td>A third pane beside the editor, a review badge on every explorer row, and a Review menu</td><td><code>Broiler.Code.Core/Review</code>, <code>CodeShell</code></td></tr>
+    <tr><td>A coverage number that excludes stale approvals, published beside the test262 and WPT rates</td><td><code>ReviewCoverage</code>, <code>Broiler.Code.Review.Cli</code></td></tr>
+    <tr><td>A pull-request check that annotates the reviews a change invalidated</td><td><code>.github/workflows/human-review.yml</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">coverage, anywhere there is no display</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet run --project src/Broiler.Code.Review.Cli -- coverage --root .</code></pre>
+</div>
+
+<p>
+  In the editor, <strong>File ▸ Open Folder…</strong> grants a directory and fills the Solution
+  Explorer with the sources under it, so a component can be read and marked file by file. It is
+  the folder tree rather than the solution's own list that carries them: an SDK-style project
+  declares no compile items, and the declared model does not evaluate the implicit globs that
+  would invent them.
+</p>
+
+<p>
+  Exit gates, all met: the review model depends on nothing but the workspace (asserted by
+  <code>CodeEditorArchitectureTests.The_Review_Model_Depends_Only_On_The_Workspace</code>); a
+  dirty document cannot be marked reviewed; a review cannot be recorded without a reviewer; and
+  the editor and CI compute the same state from the same code.
+</p>
+
+<h2 id="architecture">The layering is asserted, not just documented</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Assembly</th><th>Depends on</th><th>Deliberately does <em>not</em> depend on</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Code.Workspaces</code></td><td>nothing</td><td>Broiler.UI, Roslyn, any platform</td></tr>
+    <tr><td><code>Broiler.Code.Review</code></td><td><code>Broiler.Code.Workspaces</code></td><td>Broiler.UI, Roslyn, git</td></tr>
+    <tr><td><code>Broiler.Code.Language.CSharp.Syntax</code></td><td><code>Broiler.UI.CodeEditor</code></td><td>Roslyn</td></tr>
+    <tr><td><code>Broiler.Code.Language.CSharp.Roslyn</code></td><td><code>Broiler.UI.CodeEditor</code>, workspaces, Roslyn</td><td>—</td></tr>
+    <tr><td><code>Broiler.Code.Core</code></td><td>workspaces, review, Broiler.UI <strong>abstractions</strong>, Broiler.Input, Broiler.Graphics</td><td>Roslyn, any Broiler.UI implementation</td></tr>
+    <tr><td><code>Broiler.Code.Windows</code> / <code>.Linux</code></td><td><code>Broiler.Code.Core</code> plus the standard controls and one graphics/input backend</td><td>shell or workspace logic of its own</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Keeping Roslyn out of <code>Broiler.Code.Core</code>'s closure is what lets a browser or Android
+  host compose the portable classifier alone — the decision the Phase 0 payload probes measured.
+  <code>Broiler.Code.Review</code> has no UI reference for a related reason: <strong>the coverage
+  number CI publishes and the badge the editor draws are computed by the same code, so they
+  cannot disagree.</strong>
+</p>
+
+<h2 id="capability">Two capabilities, presented separately</h2>
+
+<p>
+  "Runs Broiler Code" and "builds a target" are separate capabilities, and the product makes the
+  matrix visible rather than silently changing behaviour by platform. A host reports
+  <strong>classification-only mode</strong> whenever it has the portable classifier but not the
+  complete semantic stack — a visible state in the status UI, not an absence of one.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Host</th><th>Editing &amp; highlighting</th><th>Live C# diagnostics</th><th>Authoritative build</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Windows / Linux</td><td>Local</td><td>Local Roslyn service</td>
+      <td>Trusted local out-of-process worker; optional remote worker</td>
+    </tr>
+    <tr>
+      <td>Android</td><td>Local portable classifier</td>
+      <td>Local Roslyn only if the measured footprint and target-evaluated graph delivery pass; otherwise diagnostics update after a remote build</td>
+      <td>Remote isolated worker</td>
+    </tr>
+    <tr>
+      <td>Browser WebAssembly</td><td>Local portable classifier</td>
+      <td>Local Roslyn only if payload/memory/trimming gates pass; otherwise diagnostics update after a remote build</td>
+      <td>Remote isolated worker</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Offline behaviour is stated honestly: desktop builds work offline once the SDK, workloads and
+  restored packages are present; Android and browser clients keep editing and portable syntax
+  colouring, but compiler diagnostics and authoritative builds are unavailable when the selected
+  remote worker cannot be reached.
+</p>
+
+<div class="callout callout-info">
+  <p class="callout-title">Standard project files stay canonical</p>
+  <p>
+    The initial language scope is <strong>C# on .NET 10 using SDK-style projects</strong>.
+    <code>.slnx</code>, <code>.sln</code> and <code>.csproj</code> files are canonical: Broiler
+    Code does not invent a second project format and does not write Broiler-specific metadata
+    into a user's project. The editor, workspace, diagnostic and build contracts stay
+    language-neutral, but a plug-in language marketplace and a general multi-language IDE are not
+    in scope for the first release.
+  </p>
+</div>
+
+<h2 id="budgets">Performance budgets are frozen against named traces</h2>
+
+<p>
+  Every number in the budgets document comes from a committed harness and a named trace, so a
+  regression is <strong>a figure moving on a fixed input</strong> rather than a disagreement
+  about whether a new measurement was fair. Producing the successor snapshot and analysing it are
+  timed separately, because they have different owners and different fixes.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Baseline property</th><th>Value</th></tr></thead>
+  <tbody>
+    <tr><td>Machine</td><td>AMD Ryzen 7 5800X, 8 cores / 16 threads, 32 GiB RAM, x64</td></tr>
+    <tr><td>Operating system</td><td>Windows 11 (10.0.26200)</td></tr>
+    <tr><td>SDK / runtime</td><td>.NET 10.0.302 / 10.0.10</td></tr>
+    <tr><td>Language-service Roslyn</td><td><code>Microsoft.CodeAnalysis.CSharp</code> 5.3.0</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="small">
+  This is one desktop machine, not a CI fleet. Timing figures are specific to it; the
+  machine-independent figures — lines relexed, span counts, payload bytes, reference counts — are
+  the ones a test may assert on any host. <strong>The CI baseline row of every table is
+  unrecorded and is owed before Phase 1 exits</strong>, and the Android and browser rows are owed
+  before any local-semantic claim is made for those hosts.
+</p>
+
+<h2 id="start">Getting started</h2>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">clone, build, run</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>git clone --recurse-submodules https://github.com/Broiler-Platform/Broiler.Code.git
+cd Broiler.Code
+
+dotnet build Broiler.Windows.Code.slnx -c Release
+dotnet run --project src/Broiler.Code.Windows/Broiler.Code.Windows.csproj -c Release
+dotnet test  Broiler.Code.Tests.slnx -c Release</code></pre>
+</div>
+
+<h2 id="solutions">Solutions</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Solution</th><th>Entry point</th><th class="num">Projects</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Windows.Code.slnx</code></td><td><code>src/Broiler.Code.Windows</code></td><td class="num">38</td></tr>
+    <tr><td><code>Broiler.Linux.Code.slnx</code></td><td><code>src/Broiler.Code.Linux</code></td><td class="num">40</td></tr>
+    <tr><td><code>Broiler.Code.Tests.slnx</code></td><td>the four test projects</td><td class="num">41</td></tr>
+    <tr><td><code>Broiler.Code.Phase0.slnx</code></td><td>the three Phase 0 harnesses</td><td class="num">3</td></tr>
+    <tr><td><code>Broiler.WebAssembly.Code.slnx</code></td><td>the two payload probes</td><td class="num">2</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="small">
+  The <code>SampleReports</code> fixture is deliberately in <em>no</em> solution: it fails to
+  compile by design — that is what the build-worker harness measures — and including it would
+  break build verification.
+</p>
+
+<h2 id="warnings">No suppression list, deliberately</h2>
+
+<p>
+  <code>Directory.Build.props</code> carries no <code>NoWarn</code> list. A clean rebuild of all
+  five solutions emits one <code>CS8602</code> in <code>Broiler.Graphics.Linux.OpenGL</code> and
+  three <code>xUnit1031</code> in <code>Broiler.Code.Core.Tests</code>, and nothing else — every
+  <code>Broiler.Code.*</code> project sets <code>TreatWarningsAsErrors</code> and compiles clean.
+</p>
+
+<p>
+  Both are left visible: the first is a real upstream defect, the second is fixable here. The
+  repository is explicit that a suppression list must not be imported from a consumer repository
+  — those were measured against a much larger graph and would hide the next real warning.
+</p>
+
+<p>
+  <code>Directory.Build.targets</code> exists only to be <em>found</em>: it stops the aggregate
+  monorepo's root targets, and the reference redirects they import, from reaching these projects
+  when the repository is checked out as a submodule there. The file itself is empty.
+</p>
+
+<h2 id="ci">Continuous integration</h2>
+
+<ul class="checklist neutral">
+  <li><strong>Solution manifest</strong>, <strong>build</strong> and <strong>tests</strong> on both hosts, as in the other applications.</li>
+  <li><strong>Phase 0 harnesses and payload probes</strong> — built, not run. The prototype, the Roslyn measurement and the two browser payloads are benchmarks whose numbers belong to a recorded baseline on a known machine, not to a shared runner. What CI protects is that they still compile.</li>
+  <li><strong>Human review</strong> — coverage over this repository, reported to the run summary. The job <em>reports</em> rather than gates, by design.</li>
+</ul>
+
+<div class="pager">
+  <a href="/developers/writer.html"><span class="dir">Previous</span><span class="ttl">Broiler.Writer</span></a>
+  <a class="next" href="/assurance.html"><span class="dir">Next</span><span class="ttl">Assurance &amp; review</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

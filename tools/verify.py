@@ -10,7 +10,9 @@ than against the sources, so it catches a bad link however it got there.
 Checks:
 
   * every root-absolute link (`/…`) resolves to a page or an asset that exists;
+  * every root-absolute `src` (images, scripts) resolves to a file that exists;
   * every fragment (`#…`) resolves to an `id` on the page it points at;
+  * every <img> carries an `alt` attribute, even an empty one;
   * tags are balanced and correctly nested;
   * every page has a non-empty <title> and meta description.
 
@@ -107,6 +109,14 @@ def main(argv: list[str]) -> int:
                 key = "/index.html" if target == "/" else target
                 if fragment[1:] not in ids.get(key, set()):
                     note(page, f"link to missing anchor {target}{fragment}")
+
+        for src in re.findall(r'src="(/[^"]*)"', source):
+            if not (root / src.lstrip("/")).exists():
+                note(page, f"src points at a missing file: {src}")
+
+        for tag in re.findall(r"<img\b[^>]*>", source):
+            if 'alt=' not in tag:
+                note(page, f"<img> without an alt attribute: {tag[:70]}")
 
         own = ids["/" + page.relative_to(root).as_posix()]
         for fragment in re.findall(r'href="#([^"]+)"', source):

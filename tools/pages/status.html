@@ -1,0 +1,229 @@
+{"title": "Where Broiler stands — what works and what doesn't", "desc": "An honest account of the Broiler preview: what the three apps can do today, what they can't, why there is no download yet, and what has to happen before there is one.", "nav": "status"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">Status</span>
+    <h1>Where Broiler actually stands</h1>
+    <p class="lede">
+      Early preview. The apps run and do real work; there is nothing to download yet, and
+      nothing here should be trusted with anything that matters. This page says why, in
+      detail, without the usual softening.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="download">Can I download it?</h2>
+
+<div class="status-band">
+  <h3>Not yet — and that is deliberate.</h3>
+  <p>
+    Every push builds all three apps, and the project can produce installable files on demand.
+    What it will not do is publish them: there is <strong>no released, signed installer</strong>,
+    because the checks that ought to happen before handing software to the public have not
+    finished.
+  </p>
+  <p style="margin-bottom:0">
+    Anyone can build Broiler from source today. If you would rather wait for something you can
+    install and trust, the honest answer is: watch the repository, and check back.
+  </p>
+</div>
+
+<div class="progress-row">
+  <div class="stage done"><b>Done</b><span>Three apps that build and run on their supported systems, with continuous testing</span></div>
+  <div class="stage now"><b>In progress</b><span>Human review of the code; packaging and signing the first preview</span></div>
+  <div class="stage"><b>Next</b><span>A downloadable, signed preview release</span></div>
+  <div class="stage"><b>Later</b><span>Automatic updates, native installers, a stable 1.0</span></div>
+</div>
+
+<h2 id="works">What works today</h2>
+
+<div class="split">
+  <div>
+    <h3 style="margin-top:0">
+      <img src="/assets/img/app-browser.svg" alt="" width="22" height="22" style="vertical-align:-4px;margin-right:.4rem">
+      Browser
+    </h3>
+    <ul class="does" style="grid-template-columns:1fr">
+      <li>Loads real websites and renders them with its own engine</li>
+      <li>Address bar, back, forward, reload, stop, home</li>
+      <li>Favourites</li>
+      <li>Forms — text fields, checkboxes, radio buttons, drop-downs, file pickers</li>
+      <li>Runs the page's JavaScript</li>
+      <li>Images, and video on Windows</li>
+      <li class="no">No tabs, extensions, sync, bookmarks import or password manager</li>
+      <li class="no">No video calling, WebRTC or WebSockets</li>
+    </ul>
+  </div>
+  <div>
+    <h3 style="margin-top:0">
+      <img src="/assets/img/app-writer.svg" alt="" width="22" height="22" style="vertical-align:-4px;margin-right:.4rem">
+      Writer
+    </h3>
+    <ul class="does" style="grid-template-columns:1fr">
+      <li>Open, edit and save Word (.docx), RTF, HTML and Markdown</li>
+      <li>Open PDFs for reading, on Windows and Linux</li>
+      <li>Bold, italic, underline, strikethrough, fonts, colours</li>
+      <li>Alignment, bullet and numbered lists, indenting</li>
+      <li>Insert pictures</li>
+      <li>Reveal-codes view showing exactly what formatting is where</li>
+      <li>Undo, redo, cut, copy, paste, find your way around</li>
+      <li class="no">No tables, footnotes, track changes, spell check or mail merge</li>
+    </ul>
+  </div>
+  <div>
+    <h3 style="margin-top:0">
+      <img src="/assets/img/app-code.svg" alt="" width="22" height="22" style="vertical-align:-4px;margin-right:.4rem">
+      Code
+    </h3>
+    <ul class="does" style="grid-template-columns:1fr">
+      <li>Open a folder or solution; browse and edit files</li>
+      <li>C# syntax colouring, and live errors and warnings</li>
+      <li>A Problems list you can click through</li>
+      <li>Build, rebuild, publish, cancel</li>
+      <li>A review pane that records what has been read, per file</li>
+      <li class="no">C# only — no other languages, no extensions marketplace</li>
+      <li class="no">No debugger</li>
+    </ul>
+  </div>
+</div>
+
+<h2 id="quality">How good is the browser, really?</h2>
+
+<p>
+  Better than you would guess and worse than a shipping browser — and unusually, the project
+  measures it rather than asserting it.
+</p>
+
+<p>
+  It renders Wikipedia, GitHub, MDN, Hacker News, heise and W3C at a fixed window size and
+  compares every pixel against Chrome. One worked example: <code>mediawiki.org</code> started
+  at <strong>38.9%</strong> of pixels matching Chrome and, after fixing roughly twenty
+  underlying engine bugs found that way, reached <strong>82.7%</strong>. That is a real
+  measurement of a real page, not a marketing number — and the remaining 17% is written up
+  too.
+</p>
+
+<p>
+  Against the web's official test suites the picture is the same shape: a lot passing, a
+  documented tail that is not. There are 51 known rendering gaps still open, each with an
+  owner and a description of what is missing.
+</p>
+
+<div class="callout callout-info">
+  <p class="callout-title">Expect broken pages</p>
+  <p style="margin-bottom:0">
+    Sites that lean hard on very recent CSS, on video calling, or on aggressive bot detection
+    will misbehave or fail outright. That is expected at this stage.
+  </p>
+</div>
+
+<h2 id="safe">Is it safe to use?</h2>
+
+<p>
+  Treat it as a preview, not as a browser for your bank.
+</p>
+
+<ul class="checklist">
+  <li><strong>No security audit has been done.</strong> No fuzzing campaign, no dependency scan, no independent review is recorded for any component.</li>
+  <li><strong>The JavaScript engine is not a sandbox.</strong> It does not claim to isolate a hostile web page from the machine the way a mature browser does.</li>
+  <li><strong>Most of the code has not been read by a person yet.</strong> The project tracks this precisely, and the number is currently very low.</li>
+  <li><strong>There is no privacy problem in the sense of data collection</strong> — no accounts, no telemetry, no sign-in — but that is not the same as being hardened against hostile websites.</li>
+</ul>
+
+<p>
+  Practical advice: browse ordinary public pages with it, open your own documents in it, and do
+  not use it for anything sensitive. <a href="/security.html">The full safety statement →</a>
+</p>
+
+<h2 id="platforms">Platform by platform</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Platform</th><th>State</th><th>Caveats</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Windows</strong></td>
+      <td><span class="pill pill-ok">Most complete</span></td>
+      <td>The best-developed path. Hardware-accelerated drawing, real system windows for dialogs, video playback.</td>
+    </tr>
+    <tr>
+      <td><strong>Linux</strong></td>
+      <td><span class="pill pill-preview">Working preview</span></td>
+      <td>Runs, but much of the drawing still goes through the processor rather than the graphics card, so it is slower. Dialogs stay inside the main window.</td>
+    </tr>
+    <tr>
+      <td><strong>Android</strong></td>
+      <td><span class="pill pill-pending">Emulator only</span></td>
+      <td>Browser and Writer build and run on an emulated Android 16 device. <strong>Nobody has verified them on a physical phone yet.</strong></td>
+    </tr>
+    <tr>
+      <td><strong>In a web browser</strong></td>
+      <td><span class="pill pill-preview">Writer only</span></td>
+      <td>The Writer runs inside another browser as a web app. The Broiler Browser does not — running a browser engine inside a browser is a separate project.</td>
+    </tr>
+    <tr>
+      <td><strong>macOS</strong></td>
+      <td><span class="pill pill-planned">Not started</span></td>
+      <td>Needs native windowing, graphics, input, signing and notarization work first.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="next">What has to happen before there's a download</h2>
+
+<ol>
+  <li><strong>Human review of the release code.</strong> The project's own rule is that nothing ships while any part of it is unreviewed — and that gate is currently red on purpose.</li>
+  <li><strong>Reproducible packaging.</strong> Building the exact reviewed version twice has to produce byte-identical packages, and installing them on a clean machine has to work.</li>
+  <li><strong>Signing.</strong> Release keys, a signed manifest format, and a documented owner for updates on each platform.</li>
+  <li><strong>A published smoke test.</strong> Proof that the thing you downloaded actually starts and works on the systems it claims.</li>
+</ol>
+
+<p>
+  Only after that does an installer appear, and automatic updates come later still — the
+  project's stated order is signed portable releases first, an updater afterwards.
+  <a href="/roadmap.html">The full roadmap, with exit conditions →</a>
+</p>
+
+<h2 id="follow">How to follow along, or help</h2>
+
+<div class="features">
+  <div class="feature">
+    <h3>Watch the repository</h3>
+    <p>
+      Releases and progress land on GitHub first.
+      <a href="https://github.com/MaiRat/Broiler">MaiRat/Broiler</a> is the main one.
+    </p>
+  </div>
+  <div class="feature">
+    <h3>Build it and break it</h3>
+    <p>
+      If you can run a build, you can run all three apps today, and bug reports from real use
+      are worth a lot. <a href="/get-started.html">How to build →</a>
+    </p>
+  </div>
+  <div class="feature">
+    <h3>Fund it</h3>
+    <p>
+      The bottleneck is one person's time and the cost of AI inference, both paid personally.
+      <a href="https://github.com/sponsors/MaiRat">Sponsoring</a> moves the date forward more
+      directly than anything else.
+    </p>
+  </div>
+</div>
+
+<div class="pager">
+  <a href="/about.html"><span class="dir">Previous</span><span class="ttl">About Broiler</span></a>
+  <a class="next" href="/developers.html"><span class="dir">Next</span><span class="ttl">For developers</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>
