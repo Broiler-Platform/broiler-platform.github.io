@@ -1,20 +1,24 @@
-{"title": "Broiler.Writer — Broiler Platform", "desc": "The word processor of the Broiler stack: four platform heads including WebAssembly, reveal-codes editing, RTF/DOCX/HTML/Markdown round-trips and NativeAOT desktop publishes.", "nav": "applications"}
+{"title": "Broiler Writer — a word processor that opens the files you already have", "desc": "Broiler Writer writes and formats documents and opens Word, RTF, HTML and Markdown files, with a reveal-codes view. Runs on Windows, Linux, Android and inside a web browser.", "nav": "apps"}
 ---
-<section class="page-head">
+<section class="app-head">
   <div class="wrap">
-    <span class="eyebrow">Application</span>
-    <h1>Broiler.Writer</h1>
-    <p class="lede">
-      Four platform heads — Windows, Linux, Android and WebAssembly — over a shared
-      <code>Broiler.Writer.Core</code>, plus <code>Broiler.Writer.FormatCodes</code>, the
-      reveal-codes layer that keeps a structured view of the document in sync with the editing
-      surface.
-    </p>
-    <div class="tag-row" style="margin-top:1.4rem">
-      <span class="pill pill-risk">No HUMAN_REVIEW record</span>
-      <span class="pill pill-plain">4 heads</span>
-      <span class="pill pill-plain">6 submodules</span>
-      <span class="pill pill-plain">Apache-2.0</span>
+    <div class="app-head-row">
+      <img class="app-icon" src="/assets/img/app-writer.svg" alt="" width="76" height="76">
+      <div style="flex:1 1 320px">
+        <span class="eyebrow">App</span>
+        <h1>Broiler Writer</h1>
+        <p class="lede">
+          A word processor that opens the documents you already have, formats them the way you
+          expect, and can show you exactly what formatting is where.
+        </p>
+        <div class="tag-row" style="margin-top:1.2rem;margin-bottom:0">
+          <span class="plat on">Windows</span>
+          <span class="plat on">Linux</span>
+          <span class="plat on">Android · emulator-tested</span>
+          <span class="plat on">In a browser</span>
+          <span class="pill pill-preview">Early preview</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -24,192 +28,158 @@
     <div class="doc">
       <div class="doc-body">
 
-<div class="callout callout-danger">
-  <p class="callout-title">Preview release — <code>0.1.0-preview.1</code></p>
-  <p>
-    Public APIs, repository layout and persisted behaviour are not frozen and may change before
-    <code>1.0</code>. The document codecs parse untrusted input — RTF control words, Open XML
-    packages, HTML and PDF object graphs — and must be treated as security-sensitive; no fuzzing
-    campaign, dependency scan or independent security audit is recorded for this revision.
-    Substantial implementation work was AI-assisted, and <strong>this repository carries no
-    <code>HUMAN_REVIEW.md</code> yet</strong>, so no checkout of it should be described as
-    human-approved.
-  </p>
-</div>
-
-<h2 id="start">Getting started</h2>
-
-<div class="code">
-  <div class="code-head"><span class="code-title">clone, build, run</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>git clone --recurse-submodules https://github.com/Broiler-Platform/Broiler.Writer.git
-cd Broiler.Writer
-
-dotnet build Broiler.Windows.Writer.slnx -c Release
-dotnet run --project src/Broiler.Writer.Windows/Broiler.Writer.Windows.csproj -c Release
-dotnet test  Broiler.Writer.Tests.slnx -c Release</code></pre>
-</div>
-
-<h2 id="formats">Document formats</h2>
-
-<p>
-  <code>Broiler.Writer.Core</code> registers the RTF, DOCX, HTML and Markdown codecs for both
-  opening and saving.
-</p>
-
-<div class="callout callout-info">
-  <p class="callout-title">PDF is deliberately not part of the shared set</p>
-  <p>
-    The Windows and Linux heads register <code>Broiler.Documents.Pdf</code> themselves, for
-    <strong>opening only</strong>, so that no head acquires the codec transitively.
-    <code>Broiler.Writer.FormatCodes.Tests</code> asserts that this separation holds — the policy
-    is a test, not a convention.
-  </p>
-</div>
-
-<h2 id="dialogs">Dialogs are real OS windows</h2>
-
-<p>
-  Open, Save As, Insert Picture and Font are <strong>real top-level OS windows</strong> on the
-  Windows head. Each can be moved onto another monitor, is ordered by the window manager, and
-  carries the one title bar Broiler.UI draws for it rather than a second native caption.
-</p>
-
-<p>
-  <a href="/components/ui.html#windows">Broiler.UI calls this breaking out</a> and makes it the
-  default for every owned window and dialog. The Windows head supplies the
-  <code>IUiWindowHost</code> capability that makes it possible, in
-  <code>WriterWindowsUiHost</code>, and each broken-out dialog gets its own
-  <code>WriterHostWindow</code> — a second Direct2D window that <em>does not own the message
-  loop</em>, so closing a dialog never quits the Writer.
-</p>
-
-<p>
-  The Linux, Android and WebAssembly heads do not offer the capability, so their dialogs stay
-  logical subwindows rendered inside the main viewport. That is the documented fallback rather
-  than a failure.
-</p>
-
-<h2 id="aot">NativeAOT on both desktop heads</h2>
-
-<p>
-  The <code>win-x64</code> and <code>linux-x64</code> artifacts are <strong>a single
-  self-contained native binary that runs with no .NET runtime installed</strong> —
-  <strong>9.2&nbsp;MB</strong> for the Windows head, against a 162-file framework-dependent drop.
-</p>
-
-<div class="stats" style="margin:1.5rem 0">
-  <div class="stat"><span class="stat-num accent">9.2 MB</span><span class="stat-label">Windows head, single self-contained native binary</span></div>
-  <div class="stat"><span class="stat-num accent">162 → 1</span><span class="stat-label">Files, against the framework-dependent drop</span></div>
-  <div class="stat"><span class="stat-num accent">0</span><span class="stat-label"><code>IL2xxx</code>/<code>IL3xxx</code> warnings on an AOT publish</span></div>
-</div>
-
-<p>
-  This works because nothing in the Writer's closure needs the reflection AOT cannot see through.
-  In particular the Direct2D backend dispatches COM through manual vtable offsets and
-  <code>delegate* unmanaged</code> function pointers rather than <code>ComImport</code>
-  interfaces — which is the one pattern that would otherwise rule it out. The Linux head reports
-  zero warnings under the trim, AOT and single-file analyzers.
-</p>
-
-<div class="callout callout-warn">
-  <p class="callout-title">Keeping it that way is a maintenance rule</p>
-  <p>
-    Reflection, <code>Activator.CreateInstance</code>, and reflection-based serialization in a
-    head or in <code>Broiler.Writer.Core</code> will break the AOT publish <em>while leaving an
-    ordinary build green</em>. CI publishes both desktop heads with AOT for exactly that reason.
-  </p>
-</div>
-
-<p>
-  The other two heads are deliberately excluded. <strong>Android</strong> — the SDK raises
-  <code>XA1040</code> ("the NativeAOT runtime on Android is an experimental feature and not yet
-  suitable for production use"), and it collides with that head's
-  <code>PublishTrimmed=false</code> since native compilation implies trimming.
-  <strong>WebAssembly</strong> — NativeAOT emits a native binary for a desktop OS and does not
-  apply; the wasm analogue is mono's own <code>RunAOTCompilation</code>, a separate feature that
-  is not enabled.
-</p>
-
-<h2 id="solutions">Solutions</h2>
+<h2 id="formats">The files it opens</h2>
 
 <div class="table-wrap">
 <table>
-  <thead><tr><th>Solution</th><th>Entry point</th><th class="num">Projects</th></tr></thead>
+  <thead><tr><th>Format</th><th class="center">Open</th><th class="center">Save</th><th></th></tr></thead>
   <tbody>
-    <tr><td><code>Broiler.Windows.Writer.slnx</code></td><td><code>src/Broiler.Writer.Windows</code></td><td class="num">54</td></tr>
-    <tr><td><code>Broiler.Linux.Writer.slnx</code></td><td><code>src/Broiler.Writer.Linux</code></td><td class="num">57</td></tr>
-    <tr><td><code>Broiler.Android.Writer.slnx</code></td><td><code>src/Broiler.Writer.Android</code></td><td class="num">56</td></tr>
-    <tr><td><code>Broiler.WebAssembly.Writer.slnx</code></td><td><code>src/Broiler.Writer.WebAssembly</code></td><td class="num">49</td></tr>
-    <tr><td><code>Broiler.Writer.Tests.slnx</code></td><td><code>src/Broiler.Writer.FormatCodes.Tests</code></td><td class="num">52</td></tr>
+    <tr><td><strong>Word document</strong> <code>.docx</code></td><td class="center">Yes</td><td class="center">Yes</td><td>Text, formatting and lists. Tables are read and their text kept, but flattened into paragraphs — the app tells you when that happens rather than losing them quietly.</td></tr>
+    <tr><td><strong>Rich Text</strong> <code>.rtf</code></td><td class="center">Yes</td><td class="center">Yes</td><td>The best-documented format here; the reader never fails on a malformed file.</td></tr>
+    <tr><td><strong>HTML</strong></td><td class="center">Yes</td><td class="center">Yes</td><td>Uses the same HTML engine as the browser.</td></tr>
+    <tr><td><strong>Markdown</strong></td><td class="center">Yes</td><td class="center">Yes</td><td>A safe CommonMark-style subset.</td></tr>
+    <tr><td><strong>PDF</strong></td><td class="center">Read only</td><td class="center">—</td><td>Windows and Linux only, and text only. Deliberately switched off elsewhere until it has been reviewed further.</td></tr>
+    <tr><td><strong>OpenDocument</strong> <code>.odt</code></td><td class="center">—</td><td class="center">—</td><td>The platform can read and write it, but the Writer does not register it yet.</td></tr>
   </tbody>
 </table>
 </div>
 
-<h2 id="prereq">Prerequisites</h2>
+<h2 id="does">What it does</h2>
+
+<ul class="does">
+  <li>New, open, save and save-as</li>
+  <li>Bold, italic, underline, strikethrough</li>
+  <li>Choose fonts and sizes through a font dialog</li>
+  <li>Text and background colour</li>
+  <li>Align left, centre, right</li>
+  <li>Bullet and numbered lists</li>
+  <li>Indent and outdent</li>
+  <li>Clear formatting</li>
+  <li>Insert pictures</li>
+  <li>Undo and redo</li>
+  <li>Cut, copy, paste, select all</li>
+  <li>A document toolbar and a status line</li>
+</ul>
+
+<h2 id="codes">Reveal codes</h2>
+
+<p>
+  The feature old WordPerfect users still miss. Turn on <strong>Formatting Codes</strong> and a
+  second pane shows the document as a stream of tokens — where bold starts and stops, where a
+  paragraph break really is, which tab is doing the indenting — kept in sync with the page as
+  you type.
+</p>
+
+<p class="pullout">
+  When a document formats strangely, this is the difference between guessing and looking.
+</p>
+
+<p>
+  You can select a code and delete it, which is often the fastest way to fix a document that
+  came from somewhere else and behaves oddly.
+</p>
+
+<h2 id="dialogs">Dialogs that behave like real windows</h2>
+
+<p>
+  On Windows, Open, Save As, Insert Picture and Font are <strong>genuine top-level
+  windows</strong>. You can drag one onto a second monitor, the window manager orders it like
+  any other window, and closing a dialog never closes the Writer.
+</p>
+
+<p>
+  On Linux, Android and in the browser they stay inside the main window instead. That is the
+  documented fallback, not a bug: the app asks the system whether it can have a real window,
+  and does the sensible thing when it can't.
+</p>
+
+<h2 id="doesnt">What it doesn't do yet</h2>
+
+<ul class="does">
+  <li class="no">Tables — text inside them is read, but you cannot create or edit one</li>
+  <li class="no">Footnotes, endnotes, headers and footers</li>
+  <li class="no">Track changes or comments</li>
+  <li class="no">Spell check or grammar check</li>
+  <li class="no">Mail merge</li>
+  <li class="no">Styles as a managed, reusable set</li>
+  <li class="no">Printing</li>
+  <li class="no">Saving to PDF</li>
+</ul>
+
+<h2 id="platforms">On each platform</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Platform</th><th>What you get</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Windows</strong></td>
+      <td>The most complete version: hardware-accelerated drawing, real system windows for dialogs, and PDF reading. Compiles to <strong>a single 9.2&nbsp;MB file</strong> that runs with no .NET installed.</td>
+    </tr>
+    <tr>
+      <td><strong>Linux</strong></td>
+      <td>Same features, with PDF reading, on X11. Also a single self-contained binary. Dialogs stay inside the main window.</td>
+    </tr>
+    <tr>
+      <td><strong>Android</strong></td>
+      <td>Touch, pen, on-screen keyboard and international text input, and it uses Android's own file picker so it can open documents from wherever you keep them. <strong>Emulator-verified only.</strong> No PDF reading.</td>
+    </tr>
+    <tr>
+      <td><strong>In a web browser</strong></td>
+      <td>The whole Writer runs as a web page — editing, formatting, undo, clipboard where the browser allows it, and opening and saving through the browser's own file picker and downloads. No PDF reading.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="safety">Your documents</h2>
 
 <ul class="checklist">
-  <li><strong>.NET SDK 10.0</strong> or later — developed against 10.0.400.</li>
-  <li><strong>Windows head</strong> — <code>net10.0-windows</code>, Direct2D.</li>
-  <li><strong>Linux head</strong> — <code>net10.0</code>, X11 clipboard and input coordination.</li>
-  <li><strong>Android head</strong> — the <code>android</code> workload; <code>net10.0-android36.0</code>, minimum SDK 24, <code>android-arm64</code> plus <code>android-x64</code>.</li>
-  <li><strong>WebAssembly head</strong> — the <code>wasm-tools</code> workload. It publishes <strong>trimmed on every publish path</strong>; publishing this app untrimmed crashes the mono runtime at boot.</li>
+  <li>No account, no cloud, no sign-in. Files stay where you put them.</li>
+  <li>Documents are saved in ordinary formats other software can open.</li>
+  <li>No telemetry.</li>
 </ul>
 
-<h2 id="layout">Repository layout</h2>
-
-<div class="table-wrap">
-<table>
-  <thead><tr><th>Path</th><th>Contents</th></tr></thead>
-  <tbody>
-    <tr><td><code>src/Broiler.Writer</code></td><td>Shared application (<code>Broiler.Writer.Core</code>) — window, menu, toolbar, RichEdit surface, palette, format registry</td></tr>
-    <tr><td><code>src/Broiler.Writer.FormatCodes</code></td><td>Reveal-codes synchronization, structured editing and host policy</td></tr>
-    <tr><td><code>src/Broiler.Writer.FormatCodes.Tests</code></td><td>xUnit suite — format codes, document load, image render, PDF policy, desktop host smoke</td></tr>
-    <tr><td><code>src/Broiler.Writer.Windows</code></td><td>Windows head — <code>WinExe</code>, Direct2D, Win32 clipboard, and the break-out host that gives each dialog its own OS window</td></tr>
-    <tr><td><code>src/Broiler.Writer.Linux</code></td><td>Linux head — X11 clipboard and input coordination</td></tr>
-    <tr><td><code>src/Broiler.Writer.Android</code></td><td>Android head — activity, manifest, resources</td></tr>
-    <tr><td><code>src/Broiler.Writer.WebAssembly</code></td><td>Browser head — direct-Canvas 2D backend, browser file picker and download</td></tr>
-  </tbody>
-</table>
+<div class="callout callout-warn">
+  <p class="callout-title">Keep a copy of anything important</p>
+  <p style="margin-bottom:0">
+    This is preview software. It reads formats it does not fully support and will tell you what
+    it approximated, but a round-trip through any editor can lose detail — and the file-reading
+    code has not had a security review. Work on copies, not originals.
+  </p>
 </div>
 
-<h2 id="warnings">The suppression list was measured, not inherited</h2>
+<h2 id="get">Getting it</h2>
 
-<p>
-  <code>Directory.Build.props</code> carries the suppressed-warning list with a documented reason
-  for every code. That list was measured against a clean rebuild of all five solutions rather
-  than copied from elsewhere, and <strong>nothing in it is authored in this
-  repository</strong> — the nullable warnings come from component submodules and from vendored
-  Android glue, and <code>CA1416</code> is a false positive against runtime
-  <code>Build.VERSION.SdkInt</code> guards the analyzer cannot see through.
-</p>
+<div class="status-band">
+  <h3>No download yet</h3>
+  <p style="margin-bottom:0">
+    The Writer builds on every change for all four platforms, but nothing has been signed and
+    published to install. You can build it from source today.
+    <a href="/get-started.html">How to build →</a>
+  </p>
+</div>
 
-<p>
-  <code>NU1504</code> is deliberately left visible: the nested <code>Broiler.DOM</code> checkout
-  lists <code>Microsoft.SourceLink.GitHub</code> twice, which is a real upstream defect whose fix
-  belongs in <a href="/components/dom.html">Broiler.DOM</a>. It is the only warning a clean build
-  still emits.
-</p>
-
-<h2 id="known">Known issues</h2>
-
-<ul class="checklist neutral">
-  <li><strong>Some components compile more than once.</strong> <code>Broiler.Media</code> and <code>Broiler.Media.Image</code> five times in a desktop head, <code>Broiler.Graphics</code> four times, and <code>Broiler.Input</code>, <code>Broiler.Documents.Model</code> and <code>Broiler.Documents.FormatCodes</code> twice. Assembly-identical, so no reference conflict — but wasted work.</li>
-  <li><strong>The nested <code>Broiler.DOM</code> gitlink is not on <code>main</code>.</strong> <code>Broiler.Documents</code> pins its own checkout at a commit off a tokenizer fix branch, while the top-level submodule is on <code>main</code>. Both are checked out, so <code>Broiler.Dom</code> compiles from the older revision when reached through <code>Broiler.Documents.Html</code>. Resolving it means bumping the gitlink upstream.</li>
-</ul>
-
-<h2 id="ci">Continuous integration</h2>
-
-<p>
-  Alongside the shared conventions, the WebAssembly job <strong>publishes as well as
-  builds</strong> — this app must publish trimmed, and only a publish exercises that. The
-  dispatch-only release workflow uploads <code>win-x64</code>, <code>linux-x64</code>, a
-  debug-signed <code>android-arm64</code> APK and the <code>browser-wasm</code> static site.
-  Pass <code>native-aot: false</code> when dispatching to get framework-dependent output instead.
-</p>
+<div class="dev-strip">
+  <div class="dev-text">
+    <h3>
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+      For developers
+    </h3>
+    <p>
+      Four heads over a shared core, NativeAOT desktop publishes with zero trim warnings, a
+      codec policy asserted by tests, and generated per-platform solutions.
+    </p>
+  </div>
+  <div class="dev-links">
+    <a class="btn" href="/developers/writer.html">Technical detail</a>
+    <a class="btn" href="https://github.com/Broiler-Platform/Broiler.Writer">Repository</a>
+  </div>
+</div>
 
 <div class="pager">
-  <a href="/applications/browser.html"><span class="dir">Previous</span><span class="ttl">Broiler.Browser</span></a>
-  <a class="next" href="/applications/code.html"><span class="dir">Next</span><span class="ttl">Broiler.Code</span></a>
+  <a href="/applications/browser.html"><span class="dir">Previous</span><span class="ttl">Broiler Browser</span></a>
+  <a class="next" href="/applications/code.html"><span class="dir">Next</span><span class="ttl">Broiler Code</span></a>
 </div>
 
       </div>

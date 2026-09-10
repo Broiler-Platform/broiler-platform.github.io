@@ -1,19 +1,23 @@
-{"title": "Broiler.Browser — Broiler Platform", "desc": "The browser application of the Broiler managed-code stack: Windows, Linux and Android heads, a shared chrome, and the HtmlBridge layer binding DOM, renderer and JavaScript into one page lifecycle.", "nav": "applications"}
+{"title": "Broiler Browser — a web browser with no Chromium inside", "desc": "Broiler Browser renders real websites with an engine written from scratch in .NET. What it does today, what it can't do yet, and how well it actually renders the web.", "nav": "apps"}
 ---
-<section class="page-head">
+<section class="app-head">
   <div class="wrap">
-    <span class="eyebrow">Application</span>
-    <h1>Broiler.Browser</h1>
-    <p class="lede">
-      Three platform heads — Windows, Linux and Android — over the shared
-      <code>Broiler.Browser.Core</code> chrome, plus the <code>Broiler.HtmlBridge</code> layer
-      that binds the DOM, the renderer and the JavaScript engine into one page lifecycle.
-    </p>
-    <div class="tag-row" style="margin-top:1.4rem">
-      <span class="pill pill-pending">HUMAN_REVIEW pending</span>
-      <span class="pill pill-plain">3 heads</span>
-      <span class="pill pill-plain">8 submodules</span>
-      <span class="pill pill-plain">Apache-2.0</span>
+    <div class="app-head-row">
+      <img class="app-icon" src="/assets/img/app-browser.svg" alt="" width="76" height="76">
+      <div style="flex:1 1 320px">
+        <span class="eyebrow">App</span>
+        <h1>Broiler Browser</h1>
+        <p class="lede">
+          A web browser whose engine is its own code, top to bottom — the HTML parser, the
+          layout, the text rendering and the JavaScript. Not a shell around somebody else's.
+        </p>
+        <div class="tag-row" style="margin-top:1.2rem;margin-bottom:0">
+          <span class="plat on">Windows</span>
+          <span class="plat on">Linux</span>
+          <span class="plat on">Android · emulator-tested</span>
+          <span class="pill pill-preview">Early preview</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -23,204 +27,154 @@
     <div class="doc">
       <div class="doc-body">
 
-<div class="callout callout-danger">
-  <p class="callout-title">Preview — evaluation, testing and contribution only</p>
-  <p>
-    APIs, repository layout and persisted formats are unstable and may change without notice.
-    Substantial portions were developed with AI assistance, and no component is human-approved
-    for preview use until its <code>HUMAN_REVIEW.md</code> names a reviewer, a reviewed commit,
-    evidence and a decision. <strong>Broiler.JS is not a security sandbox</strong>: CLR and host
-    capabilities must be restricted by the embedding application before running untrusted
-    scripts. Not for production, security-critical or safety-critical use.
+<h2 id="does">What it does</h2>
+
+<ul class="does">
+  <li>Type an address and load a page</li>
+  <li>Follow links, go back and forward</li>
+  <li>Reload, stop, and a home button</li>
+  <li>Keep favourites</li>
+  <li>See loading progress, and a clear error page when a site fails</li>
+  <li>Fill in forms — text fields, checkboxes, radio buttons, drop-downs</li>
+  <li>Upload files through a page's file picker</li>
+  <li>Confirmation before re-submitting a form</li>
+  <li>Runs the page's JavaScript</li>
+  <li>Shows images; plays video on Windows</li>
+  <li>Copy and paste to and from other apps</li>
+  <li>Keyboard, mouse and — on Android — touch</li>
+</ul>
+
+<h2 id="doesnt">What it doesn't do yet</h2>
+
+<ul class="does">
+  <li class="no">Tabs</li>
+  <li class="no">Extensions or add-ons</li>
+  <li class="no">A password manager or autofill</li>
+  <li class="no">Sync, profiles or a sign-in of any kind</li>
+  <li class="no">History search, or importing bookmarks</li>
+  <li class="no">Video calls, screen sharing or WebRTC</li>
+  <li class="no">WebSockets</li>
+  <li class="no">Private browsing as a separate mode</li>
+</ul>
+
+<div class="callout callout-info">
+  <p class="callout-title">One consequence you may notice</p>
+  <p style="margin-bottom:0">
+    Some pages deliberately test for video-calling support and print an error to the console
+    when it is missing. That is the page detecting an absent feature and handling it — not the
+    browser crashing. The project has an implementation plan for it and, until that lands,
+    <strong>refuses to fake the feature by exposing an API that does nothing</strong>.
   </p>
 </div>
 
-<h2 id="start">Getting started</h2>
+<h2 id="howgood">How well does it render the web?</h2>
 
-<div class="code">
-  <div class="code-head"><span class="code-title">clone, build, run</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>git clone --recurse-submodules https://github.com/Broiler-Platform/Broiler.Browser.git
-cd Broiler.Browser
+<p>
+  Better than you would expect, and the project measures it rather than claiming it. Every
+  week it renders Wikipedia, GitHub, MDN, Hacker News, heise, 7-Zip, W3C and MediaWiki at a
+  fixed window size and compares the result with Chrome, pixel by pixel.
+</p>
 
-dotnet build Broiler.Windows.Browser.slnx -c Release
-dotnet run --project src/Broiler.Browser.Windows/Broiler.Browser.Windows.csproj -c Release
-dotnet test  Broiler.Browser.Tests.slnx -c Release</code></pre>
+<div class="stats" style="margin:1.6rem 0">
+  <div class="stat">
+    <span class="stat-num accent">38.9 → 82.7 %</span>
+    <span class="stat-label">Pixels matching Chrome on <code>mediawiki.org</code>, before and after fixing the twenty-odd engine bugs that comparison exposed</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">51</span>
+    <span class="stat-label">Known rendering gaps still open, each written up with what is missing and who owns it</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">167</span>
+    <span class="stat-label">HTML conformance cases in the project's own suite, none quarantined</span>
+  </div>
 </div>
 
-<h3 id="prereq">Prerequisites</h3>
+<p>
+  That MediaWiki number is worth explaining, because it is typical of how this engine improves.
+  The page looked wrong; comparing it with Chrome turned up a <code>calc()</code> bug that
+  broke 25 stylesheet rules at once, floated items escaping their layout, a margin counted
+  twice, and bold and italic text falling back to the regular font. Each fix was a general
+  engine fix, not a patch for that site.
+</p>
+
+<p>
+  <strong>Expect breakage</strong> on sites that lean on very new CSS, on video calling, or on
+  aggressive bot detection. <a href="/conformance.html">How it is all measured →</a>
+</p>
+
+<h2 id="platforms">On each platform</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Platform</th><th>What you get</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Windows</strong></td>
+      <td>The most complete version. Hardware-accelerated drawing through Direct2D, native text rendering, and video playback.</td>
+    </tr>
+    <tr>
+      <td><strong>Linux</strong></td>
+      <td>Runs on X11 with clipboard and input support. Much of the drawing still goes through the processor rather than the graphics card, so it is slower than the Windows build. No video playback.</td>
+    </tr>
+    <tr>
+      <td><strong>Android</strong></td>
+      <td>One full-screen surface with touch, pen, keyboard and international text input, and correct spacing around the system bars. <strong>Verified on an emulator only — not yet on a physical phone.</strong></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="privacy">Privacy</h2>
 
 <ul class="checklist">
-  <li><strong>.NET SDK 10.0</strong> or later — the repository is developed against 10.0.400.</li>
-  <li><strong>Windows head</strong> — builds on Windows; targets <code>net10.0-windows</code> and renders through the Direct2D backend.</li>
-  <li><strong>Linux head</strong> — targets <code>net10.0</code>. <code>Debug-Linux</code>/<code>Release-Linux</code> pin <code>linux-x64</code>; plain <code>Debug</code>/<code>Release</code> build framework-dependent.</li>
-  <li><strong>Android head</strong> — needs the <code>android</code> workload. Targets <code>net10.0-android36.0</code> with a minimum SDK of 24, builds <code>android-arm64</code> and <code>android-x64</code>, and produces an <code>.aab</code> in <code>Release</code> and an <code>.apk</code> otherwise. Override <code>BroilerAndroidAbis</code> to package a single ABI.</li>
+  <li>No account, no profile, no sign-in.</li>
+  <li>No telemetry or usage reporting of any kind.</li>
+  <li>On Android, unencrypted <code>http://</code> traffic is switched off.</li>
+  <li>Favourites are stored on your machine.</li>
 </ul>
 
-<h2 id="solutions">Solutions</h2>
+<p>
+  That is data collection, though, not hardening. A browser also has to defend you
+  <em>from</em> hostile pages, and this one has had no security audit — no fuzzing, no
+  dependency scan, no independent review. Its JavaScript engine explicitly does not claim to
+  be a sandbox. Do not use this preview for banking or anything sensitive.
+  <a href="/security.html">The full safety statement →</a>
+</p>
 
-<div class="table-wrap">
-<table>
-  <thead><tr><th>Solution</th><th>Entry point</th><th class="num">Projects</th></tr></thead>
-  <tbody>
-    <tr><td><code>Broiler.Windows.Browser.slnx</code></td><td><code>src/Broiler.Browser.Windows</code></td><td class="num">80</td></tr>
-    <tr><td><code>Broiler.Linux.Browser.slnx</code></td><td><code>src/Broiler.Browser.Linux</code></td><td class="num">80</td></tr>
-    <tr><td><code>Broiler.Android.Browser.slnx</code></td><td><code>src/Broiler.Browser.Android</code></td><td class="num">81</td></tr>
-    <tr><td><code>Broiler.Browser.Tests.slnx</code></td><td><code>src/Broiler.Browser.Core.Tests</code></td><td class="num">75</td></tr>
-  </tbody>
-</table>
+<h2 id="get">Getting it</h2>
+
+<div class="status-band">
+  <h3>No download yet</h3>
+  <p style="margin-bottom:0">
+    The browser builds on every change and can be packaged on demand, but nothing has been
+    signed and published for people to install. Until then you can build it from source —
+    which takes a .NET 10 SDK and one command.
+    <a href="/get-started.html">How to build →</a>
+  </p>
 </div>
 
-<h2 id="layout">Repository layout</h2>
-
-<div class="table-wrap">
-<table>
-  <thead><tr><th>Path</th><th>Contents</th></tr></thead>
-  <tbody>
-    <tr><td><code>src/Broiler.Browser.Windows</code></td><td>Windows head — <code>WinExe</code>, Direct2D, Win32 input</td></tr>
-    <tr><td><code>src/Broiler.Browser.Linux</code></td><td>Linux head — X11 clipboard and input coordination</td></tr>
-    <tr><td><code>src/Broiler.Browser.Android</code></td><td>Android head — activity, manifest, resources</td></tr>
-    <tr><td><code>src/Broiler.Browser.Core</code></td><td>Shared browser chrome, palette, HTML form hosting</td></tr>
-    <tr><td><code>src/Broiler.App</code></td><td>Source-only directory shared by the heads — rendering pipeline, page loader, favourites, per-platform clipboards. No project of its own; each head links the files it needs.</td></tr>
-    <tr><td><code>src/Broiler.App.Android</code></td><td>Android view, canvas renderer, input connection</td></tr>
-    <tr><td><code>src/Broiler.HtmlBridge.Core</code></td><td>Bridge models, logging, CSP and script-extraction support</td></tr>
-    <tr><td><code>src/Broiler.HtmlBridge.Dom</code></td><td>DOM bridge, tree building, JavaScript DOM objects</td></tr>
-    <tr><td><code>src/Broiler.HtmlBridge.Scripting</code></td><td>JavaScript execution integration</td></tr>
-    <tr><td><code>Broiler.Layout</code></td><td>Vendored layout engine — see below</td></tr>
-  </tbody>
-</table>
-</div>
-
-<h2 id="dependencies">Dependencies</h2>
-
-<p>Eight components are submodules, pinned to <code>main</code>:</p>
-
-<div class="table-wrap">
-<table>
-  <thead><tr><th>Component</th><th>Purpose</th></tr></thead>
-  <tbody>
-    <tr><td><a href="/components/dom.html"><code>Broiler.DOM</code></a></td><td>Canonical DOM, HTML tokenization, parsing, traversal, serialization</td></tr>
-    <tr><td><a href="/components/css.html"><code>Broiler.CSS</code></a></td><td>CSS parsing, selectors, cascade, computed values</td></tr>
-    <tr><td><a href="/components/graphics.html"><code>Broiler.Graphics</code></a></td><td>Managed bitmap/codec/raster core plus platform backends</td></tr>
-    <tr><td><a href="/components/media.html"><code>Broiler.Media</code></a></td><td>Image, audio and video abstractions and managed codecs</td></tr>
-    <tr><td><a href="/components/input.html"><code>Broiler.Input</code></a></td><td>Keyboard, mouse, pen, touch and text input abstractions</td></tr>
-    <tr><td><a href="/components/ui.html"><code>Broiler.UI</code></a></td><td>Platform-neutral retained-mode UI toolkit</td></tr>
-    <tr><td><a href="/components/html.html"><code>Broiler.HTML</code></a></td><td>Modular HTML/CSS renderer</td></tr>
-    <tr><td><a href="/components/js.html"><code>Broiler.JS</code></a></td><td>JavaScript parser, compiler, runtime and built-ins</td></tr>
-  </tbody>
-</table>
-</div>
-
-<p class="small">
-  <code>Broiler.JS</code> carries <code>Broiler.DateTime</code>, <code>Broiler.Regex</code> and
-  <code>Broiler.Unicode</code> as its own nested submodules.
-</p>
-
-<h3 id="vendored">Broiler.Layout is vendored, not a submodule</h3>
-
-<p>
-  The graphics-independent layout engine has <strong>no standalone repository</strong>. It exists
-  only as a directory inside the aggregate <code>Broiler</code> monorepo, and both
-  <code>Broiler.HTML.Core</code> and <code>Broiler.HtmlBridge.Core</code> need it — so it is
-  checked in here as ordinary tracked files. Should the component ever be published, this
-  directory can be replaced by a submodule at the same path with <strong>no reference
-  changes</strong>: <code>Broiler.HTML.Core</code> already reaches it as
-  <code>..\..\..\Broiler.Layout\</code>, which resolves to the repository root either way.
-</p>
-
-<h2 id="known">Known issues</h2>
-
-<p>Two consequences of composing independently released components, worth knowing before filing a bug.</p>
-
-<h3 id="stale-paths">Broiler.HTML still uses the pre-<code>src/</code> paths</h3>
-
-<p>
-  It spells its top-level <code>Broiler.Media</code> and <code>Broiler.Graphics</code> references
-  in the flat layout those components used while they were vendored inside the monorepo. Both now
-  publish under <code>src/</code>, so the references as written resolve nowhere.
-  <code>Directory.Build.targets</code> rewrites exactly those two references onto the top-level
-  checkouts, and both blocks are marked for deletion once Broiler.HTML follows the components
-  into <code>src/</code>.
-</p>
-
-<h3 id="duplicates">Some components compile more than once</h3>
-
-<p>
-  Each component repository carries nested checkouts of its own dependencies so it still builds
-  standalone, and references them by literal relative path. Composed here that means
-  <code>Broiler.Media</code> is compiled three times and <code>Broiler.Graphics</code> and
-  <code>Broiler.Input</code> twice. Every nested gitlink points at the same commit as the
-  top-level one, so the duplicates are assembly-identical and no reference conflict is reported —
-  but it is wasted work, and it violates the one-project-per-assembly-identity rule.
-  <code>Broiler.CSS</code> and <code>Broiler.HTML</code> already avoid it with a
-  <code>$(BroilerDomPath)</code>/<code>$(BroilerGraphicsPath)</code> property hook; the fix is to
-  give the rest the same hook upstream. The solution generator already folds nested paths onto the
-  top-level ones, so each <code>.slnx</code> lists an assembly once.
-</p>
-
-<h2 id="ci">Continuous integration</h2>
-
-<p><code>ci.yml</code> runs on every push to <code>main</code> and every pull request:</p>
-
-<ul class="checklist neutral">
-  <li><strong>Solution manifest</strong> — <code>scripts/update-solutions.ps1 -Verify</code>, which fails if a checked-in <code>.slnx</code> no longer matches the reference graph. This is what catches a new <code>ProjectReference</code> that was never folded into a solution.</li>
-  <li><strong>Build</strong> — the Windows head on <code>windows-latest</code>, the Linux head on <code>ubuntu-latest</code>.</li>
-  <li><strong>Tests</strong> — the suite on <em>both</em> hosts, because the shared chrome does clipboard and file-dialog work that is easy to make accidentally platform-specific.</li>
-  <li><strong>Android head</strong> — a separate job, since it pays for the <code>android</code> workload.</li>
-  <li><strong>Publish</strong> — <code>Release-Windows</code> and <code>Release-Linux</code>. These are project-level builds by necessity: the solutions declare only <code>Debug</code> and <code>Release</code>, so a solution-level build with either fails <code>MSB4126</code>.</li>
-</ul>
-
-<h2 id="tools">Diagnosing a page</h2>
-
-<p>
-  The aggregate repository's <code>Broiler.Cli</code> is the tool for understanding why a page
-  misbehaves. <code>--diagnostic-dir</code> writes every JavaScript failure to a
-  <em>streamed</em> log — so a hang or timeout still leaves one — archives every page, script,
-  stylesheet, <code>fetch</code>/XHR response and sub-document the run touched, and produces a
-  <code>summary.md</code> ranking the distinct failures and the platform features the page asked
-  for and did not get.
-</p>
-
-<div class="code">
-  <div class="code-head"><span class="code-title">capture with diagnostics</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>dotnet run --project src/Broiler.Cli -- \
-  --capture-image https://example.com/ --output page.png \
-  --diagnostic-dir ./diagnostics</code></pre>
-</div>
-
-<h2 id="cases">Investigations worth reading</h2>
-
-<p>
-  The aggregate repository keeps case studies of real pages that went wrong, written to be read
-  by whoever hits the same symptom next.
-</p>
-
-<div class="table-wrap">
-<table>
-  <thead><tr><th>Case</th><th>What it turned out to be</th></tr></thead>
-  <tbody>
-    <tr>
-      <td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/browser-load-window-pump.md">The browser hung on pages the CLI rendered fine</a></td>
-      <td>The render pump asked "are any timers queued" — never false on a page holding an interval — where the drains ask "is anything due in the load window". It also re-parsed the whole document per tick, on the UI thread.</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/browser-connection-pool-aborts.md">IOException about a minute after a page loads</a></td>
-      <td>Pooled-connection aborts (Windows 995). Costs nothing — but an <code>HttpClient</code>-per-navigation bug used to add one per load.</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/html5test-exceptions.md">html5test.com's four JavaScript exceptions</a></td>
-      <td>Three were real and fixed. The remaining one is html5test's own WebRTC probe deliberately provoking a throw to detect an absent feature — <strong>it must not be suppressed</strong>; it disappears when WebRTC ships.</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/mediawiki-vector-rendering.md">mediawiki.org did not look like the reference</a></td>
-      <td>Twenty-odd general engine defects: a <code>calc()</code> breakpoint that made 25 <code>@media</code> blocks malformed, floated flex items taken out of flow, a margin collapse spent twice, bold and italic resolving to the regular face. 38.9% → 82.7% of pixels.</td>
-    </tr>
-  </tbody>
-</table>
+<div class="dev-strip">
+  <div class="dev-text">
+    <h3>
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+      For developers
+    </h3>
+    <p>
+      Three platform heads over a shared chrome, with the HtmlBridge layer binding the DOM,
+      the renderer and the JavaScript engine into one page lifecycle. 80 projects per head,
+      eight component submodules, generated solutions.
+    </p>
+  </div>
+  <div class="dev-links">
+    <a class="btn" href="/developers/browser.html">Technical detail</a>
+    <a class="btn" href="https://github.com/Broiler-Platform/Broiler.Browser">Repository</a>
+  </div>
 </div>
 
 <div class="pager">
-  <a href="/applications.html"><span class="dir">Up</span><span class="ttl">Applications</span></a>
-  <a class="next" href="/applications/writer.html"><span class="dir">Next</span><span class="ttl">Broiler.Writer</span></a>
+  <a href="/applications.html"><span class="dir">Up</span><span class="ttl">All apps</span></a>
+  <a class="next" href="/applications/writer.html"><span class="dir">Next</span><span class="ttl">Broiler Writer</span></a>
 </div>
 
       </div>

@@ -1,0 +1,286 @@
+{"title": "For developers — Broiler Platform", "desc": "The developer entry point to Broiler: the component map, dependency rules, NuGet packages, conformance evidence, review records and build instructions, in one page.", "nav": "developers"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">For developers</span>
+    <h1>Start here</h1>
+    <p class="lede">
+      Broiler is one dependency graph split across more than a dozen repositories, published
+      as reusable .NET&nbsp;10 packages. This page maps it in one screen; everything below
+      goes deeper. The source is the real documentation — this site indexes it.
+    </p>
+    <div class="hero-actions" style="margin-top:1.6rem">
+      <a class="btn btn-primary" href="https://github.com/MaiRat/Broiler">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.35-1.29-1.71-1.29-1.71-1.06-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.76.4-1.28.74-1.57-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.23 2.76.12 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.26 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+        Aggregate repository
+      </a>
+      <a class="btn" href="/get-started.html">Clone &amp; build</a>
+      <a class="btn" href="/docs.html">Documentation index</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="tldr">In one minute</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th></th><th></th></tr></thead>
+  <tbody>
+    <tr><td><strong>Language / runtime</strong></td><td>C# on .NET 10, single-targeted. No third-party runtime dependencies in shipping assemblies.</td></tr>
+    <tr><td><strong>Licence</strong></td><td>Apache-2.0, with inherited HTML Renderer material under BSD 3-Clause.</td></tr>
+    <tr><td><strong>Shape</strong></td><td>11 components, 3 applications, each its own repository, composed with git submodules.</td></tr>
+    <tr><td><strong>Distribution</strong></td><td>Components ship as NuGet packages at <code>0.1.0-preview.1</code>, versioned in lockstep. The applications are not packaged.</td></tr>
+    <tr><td><strong>Build</strong></td><td><code>dotnet build</code> against a generated, focused <code>.slnx</code> per product and platform.</td></tr>
+    <tr><td><strong>Tests</strong></td><td>xUnit for most components; self-hosted console runners for Graphics, Media and Input; test262 for JavaScript; two independent WPT suites for rendering.</td></tr>
+    <tr><td><strong>State</strong></td><td>Preview. Public API unstable, most code not human-reviewed, no security audit. <a href="/status.html">Details →</a></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="map">The component map</h2>
+
+<p>
+  Each tier depends only on the tier below it, and the direction is enforced by architecture
+  tests rather than convention. Abstractions never reference implementations; the application
+  composition root picks the backends.
+</p>
+
+<div class="stack">
+  <div class="stack-row">
+    <div class="stack-tier">Applications</div>
+    <div class="stack-items">
+      <a class="stack-item is-app" href="/applications/browser.html">Broiler.Browser<span>Windows · Linux · Android</span></a>
+      <a class="stack-item is-app" href="/applications/writer.html">Broiler.Writer<span>Windows · Linux · Android · WebAssembly</span></a>
+      <a class="stack-item is-app" href="/applications/code.html">Broiler.Code<span>Windows · Linux</span></a>
+    </div>
+  </div>
+  <div class="stack-row">
+    <div class="stack-tier">Integration</div>
+    <div class="stack-items">
+      <a class="stack-item" href="/architecture.html#htmlbridge">Broiler.HtmlBridge<span>DOM ↔ renderer ↔ JavaScript</span></a>
+      <a class="stack-item" href="/components/ui.html">Broiler.UI<span>Retained-mode toolkit</span></a>
+      <a class="stack-item" href="/components/documents.html">Broiler.Documents<span>RTF · DOCX · ODT · HTML · MD · PDF</span></a>
+    </div>
+  </div>
+  <div class="stack-row">
+    <div class="stack-tier">Web engine</div>
+    <div class="stack-items">
+      <a class="stack-item" href="/components/dom.html">Broiler.DOM<span>Parse · tree · serialize</span></a>
+      <a class="stack-item" href="/components/css.html">Broiler.CSS<span>Selectors · cascade</span></a>
+      <a class="stack-item" href="/components/layout.html">Broiler.Layout<span>CSS box model</span></a>
+      <a class="stack-item" href="/components/html.html">Broiler.HTML<span>Renderer</span></a>
+      <a class="stack-item" href="/components/js.html">Broiler.JS<span>JavaScript → IL</span></a>
+    </div>
+  </div>
+  <div class="stack-row">
+    <div class="stack-tier">Platform core</div>
+    <div class="stack-items">
+      <a class="stack-item" href="/components/graphics.html">Broiler.Graphics<span>Raster · text · backends</span></a>
+      <a class="stack-item" href="/components/media.html">Broiler.Media<span>Image · audio · video</span></a>
+      <a class="stack-item" href="/components/input.html">Broiler.Input<span>Keyboard · mouse · pen · touch</span></a>
+      <a class="stack-item is-plan" href="/components/vm.html">Broiler.VM<span>Bytecode profile host</span></a>
+    </div>
+  </div>
+  <div class="stack-row">
+    <div class="stack-tier">Runtime</div>
+    <div class="stack-items">
+      <span class="stack-item" style="cursor:default">.NET 10<span>Direct2D · OpenGL · Vulkan · EGL · Canvas · X11 · evdev · Win32</span></span>
+    </div>
+  </div>
+</div>
+
+<h2 id="rules">The four rules everything follows</h2>
+
+<div class="grid grid-2">
+  <div class="card">
+    <span class="card-kicker">Rule 1</span>
+    <h3>An abstraction never references an implementation</h3>
+    <p>
+      <code>Broiler.Graphics</code> depends on the image <em>abstraction</em>, never a codec.
+      <code>Broiler.UI</code> depends on the neutral graphics core, never Direct2D. The
+      application composition root is the only place a concrete implementation is chosen.
+    </p>
+  </div>
+  <div class="card">
+    <span class="card-kicker">Rule 2</span>
+    <h3>One concern has exactly one canonical owner</h3>
+    <p>
+      One mutable DOM tree, one cascade, one layout engine. A bridge may project a canonical
+      result into another shape; it may not keep a second copy of the truth.
+    </p>
+  </div>
+  <div class="card">
+    <span class="card-kicker">Rule 3</span>
+    <h3>Platform code stays at the edge</h3>
+    <p>
+      No UI runtime assembly may reference Win32, WPF, COM or an HWND. The Android input
+      providers target plain <code>net10.0</code> and take primitive event data, so they build
+      and test with no Android SDK installed.
+    </p>
+  </div>
+  <div class="card">
+    <span class="card-kicker">Rule 4</span>
+    <h3>The rules are tests</h3>
+    <p>
+      Architecture tests walk the project graph and fail the build on a platform-specific
+      reference, a native handle on a public surface, or a friend-assembly grant nobody
+      decided on.
+    </p>
+  </div>
+</div>
+
+<p style="margin-top:1.6rem">
+  <a class="btn" href="/architecture.html">The full architecture
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </a>
+</p>
+
+<h2 id="use">Using a piece of it</h2>
+
+<p>
+  You do not have to take the whole platform. The components are independently published, and
+  several are useful on their own — a layout engine with no renderer, a UI toolkit with no
+  browser, image codecs with no UI at all.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">the common cases</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet add package Broiler.Layout --prerelease                  # the layout engine alone
+dotnet add package Broiler.UI.All --prerelease                  # the whole UI toolkit
+dotnet add package Broiler.Media.Image.Managed --prerelease      # PNG/JPEG/GIF/WebP codecs
+dotnet add package Broiler.Documents.Rtf --prerelease            # one document codec
+dotnet add package Broiler.Graphics --prerelease                 # neutral rendering core
+dotnet add package Broiler.Graphics.Windows --prerelease         # + the Direct2D backend</code></pre>
+</div>
+
+<p>
+  Everything is prerelease and the API is not frozen.
+  <a href="/packages.html">The full package index →</a>
+</p>
+
+<h2 id="components">The eleven components</h2>
+
+<div class="art-grid">
+  <a class="art-tile" href="/components/graphics.html">
+    <img src="/assets/img/component-graphics.png" alt="" width="72" height="72" loading="lazy">
+    <b>Broiler.Graphics</b><span>Raster, text, backends</span>
+  </a>
+  <a class="art-tile" href="/components/ui.html">
+    <img src="/assets/img/component-ui.png" alt="" width="72" height="72" loading="lazy">
+    <b>Broiler.UI</b><span>56 control packages</span>
+  </a>
+  <a class="art-tile" href="/components/media.html">
+    <img src="/assets/img/component-media.png" alt="" width="72" height="72" loading="lazy">
+    <b>Broiler.Media</b><span>Decode-first media</span>
+  </a>
+  <a class="art-tile" href="/components/documents.html">
+    <img src="/assets/img/component-documents.png" alt="" width="72" height="72" loading="lazy">
+    <b>Broiler.Documents</b><span>Rich-text codecs</span>
+  </a>
+  <a class="art-tile" href="/components/input.html">
+    <img src="/assets/img/component-input.png" alt="" width="72" height="72" loading="lazy">
+    <b>Broiler.Input</b><span>Device contracts</span>
+  </a>
+  <a class="art-tile" href="/components.html">
+    <img src="/assets/img/broiler-mark.png" alt="" width="72" height="72" loading="lazy">
+    <b>DOM · CSS · Layout<br>HTML · JS · VM</b><span>The engine components</span>
+  </a>
+</div>
+
+<p style="margin-top:1.4rem">
+  <a class="btn" href="/components.html">Component catalogue
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </a>
+</p>
+
+<h2 id="evidence">The evidence, and how to read it</h2>
+
+<p>
+  Broiler's documentation is unusually careful about what a passing test does and does not
+  prove. Three things are worth knowing before you quote any number from it.
+</p>
+
+<div class="grid grid-3">
+  <div class="card">
+    <h3>Two independent WPT suites</h3>
+    <p>
+      One scores against a Chromium screenshot; the other renders both the test and the
+      reference WPT itself declares, with no second engine. Their pass rates are deliberately
+      <em>not</em> comparable, and each is blind to what the other catches.
+    </p>
+  </div>
+  <div class="card">
+    <h3>No release totals are recorded</h3>
+    <p>
+      The test262 dashboard's release table reads "no current release-candidate run recorded",
+      because a total belongs there only when it links to raw artifacts from an exact commit
+      and an exact suite revision.
+    </p>
+  </div>
+  <div class="card">
+    <h3>Failures are published</h3>
+    <p>
+      51 open rendering gaps, 84 failing tests in one runner suite, 0% code certified by a
+      named human. Those are on the site because leaving them off would make the rest
+      meaningless.
+    </p>
+  </div>
+</div>
+
+<p style="margin-top:1.6rem">
+  <a class="btn" href="/conformance.html">Conformance &amp; evidence</a>
+  <a class="btn" href="/assurance.html" style="margin-left:.5rem">Assurance &amp; review</a>
+</p>
+
+<h2 id="contributing">Contributing</h2>
+
+<p>
+  A fix usually belongs in a component repository rather than the aggregate one — the renderer,
+  CSS engine, DOM, JS engine, graphics, input, media, document codecs, UI toolkit and all three
+  applications each live under
+  <a href="https://github.com/Broiler-Platform">the Broiler-Platform organisation</a>, and the
+  aggregate repository composes them as submodules. Write the fix at its correct layer rather
+  than contorting it into the top level.
+</p>
+
+<ul class="checklist">
+  <li>Solutions are <strong>generated</strong> from <code>eng/solutions.json</code>. Change the project-reference graph, then regenerate — a hand-edited <code>.slnx</code> is reverted by the next run.</li>
+  <li>Component-owned tests live in the component's own solution, inside its submodule.</li>
+  <li>Some <code>Broiler.HTML</code> and <code>Broiler.CSS</code> files are CRLF, and a few are mixed within one file. If a two-line change reports two thousand, your editor rewrote the line endings.</li>
+  <li>Each component's roadmap is the source of truth for its own work; the root roadmap holds only what crosses component boundaries.</li>
+</ul>
+
+<h2 id="where">Where everything is</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Looking for</th><th>Go to</th></tr></thead>
+  <tbody>
+    <tr><td>How to clone, build, test and run</td><td><a href="/get-started.html">Get started</a></td></tr>
+    <tr><td>Layering, ownership, submodule topology</td><td><a href="/architecture.html">Architecture</a></td></tr>
+    <tr><td>What each component owns and its ADRs</td><td><a href="/components.html">Components</a></td></tr>
+    <tr><td>Test suites, corpora, measured results</td><td><a href="/conformance.html">Conformance</a></td></tr>
+    <tr><td>Review records and the assurance system</td><td><a href="/assurance.html">Assurance</a></td></tr>
+    <tr><td>Open cross-repository work and exit gates</td><td><a href="/roadmap.html">Roadmap</a></td></tr>
+    <tr><td>Every NuGet package, and what is not published</td><td><a href="/packages.html">Packages</a></td></tr>
+    <tr><td>Threat surface and preview limits</td><td><a href="/security.html">Security &amp; limits</a></td></tr>
+    <tr><td>Every markdown document, by topic</td><td><a href="/docs.html">Documentation index</a></td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="pager">
+  <a href="/status.html"><span class="dir">Previous</span><span class="ttl">Where it stands</span></a>
+  <a class="next" href="/get-started.html"><span class="dir">Next</span><span class="ttl">Clone &amp; build</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

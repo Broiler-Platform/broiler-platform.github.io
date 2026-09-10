@@ -1,0 +1,228 @@
+{"title": "About Broiler — what it is and why it exists", "desc": "What Broiler is in plain language: an open-source browser, word processor and code editor built on one platform written from scratch in .NET, how it is made, and where it came from.", "nav": "about"}
+---
+<section class="page-head">
+  <div class="wrap">
+    <span class="eyebrow">About</span>
+    <h1>What Broiler is</h1>
+    <p class="lede">
+      A browser, a word processor and a code editor — plus the platform underneath them, which
+      is the actual project. Everything is open source, and everything was written from
+      scratch rather than wrapped around somebody else's engine.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="short">The short version</h2>
+
+<p>
+  Almost every "alternative browser" you can download is Chrome underneath. The window
+  dressing changes; the engine that turns a web page into pixels is the same one Google
+  maintains. The same is true across software generally — a handful of large engines do the
+  actual work, and everything else is a shell around them.
+</p>
+
+<p class="pullout">
+  Broiler is an attempt to build the whole stack again, in the open, in a language you can
+  read — and then to prove how far it got, honestly, including the parts that fall short.
+</p>
+
+<p>
+  The visible result is three applications. The real project is the layer beneath them: a set
+  of independent building blocks — a rendering engine, a layout engine, a UI toolkit, image
+  and document handling, a JavaScript engine — that any .NET program can use.
+</p>
+
+<h2 id="apps">The three apps</h2>
+
+<div class="app-grid">
+  <a class="app-card" href="/applications/browser.html">
+    <img class="app-icon" src="/assets/img/app-browser.svg" alt="" width="56" height="56">
+    <h3>Browser</h3>
+    <p>Loads and renders real websites with its own engine, its own layout and its own JavaScript.</p>
+  </a>
+  <a class="app-card" href="/applications/writer.html">
+    <img class="app-icon" src="/assets/img/app-writer.svg" alt="" width="56" height="56">
+    <h3>Writer</h3>
+    <p>Writes and formats documents, and opens the Word, RTF, HTML and Markdown files you already have.</p>
+  </a>
+  <a class="app-card" href="/applications/code.html">
+    <img class="app-icon" src="/assets/img/app-code.svg" alt="" width="56" height="56">
+    <h3>Code</h3>
+    <p>Edits C#, checks it as you type, builds it — and records what a person has reviewed.</p>
+  </a>
+</div>
+
+<h2 id="why">Why do it this way</h2>
+
+<h3 id="why-managed">Written in managed .NET, not C++</h3>
+
+<p>
+  Browser engines are traditionally written in C++, where a mistake with memory is a security
+  bug. Broiler is written in C# on .NET, where the runtime prevents whole classes of those
+  mistakes outright. That is not a claim that Broiler is <em>secure</em> — plenty of other
+  things can still go wrong, and this preview has had no security audit — but it removes a
+  category of problem by construction rather than by care.
+</p>
+
+<p>
+  It also makes the code readable by far more people. If you can read C#, you can read how
+  this browser decides where a paragraph goes.
+</p>
+
+<h3 id="why-shared">One platform, three apps, four kinds of machine</h3>
+
+<p>
+  The word processor and the code editor are not separate products that happen to look
+  similar. They are the same application framework with different content in it. That is why
+  a dialog behaves identically in both, and why adding a platform means writing a thin
+  adapter rather than a new app.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Runs on</th><th>Browser</th><th>Writer</th><th>Code</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Windows</strong></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td><strong>Linux</strong></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td><strong>Android</strong></td><td>Yes — tested on an emulator, not yet on a real phone</td><td>Yes — same</td><td>Planned</td></tr>
+    <tr><td><strong>Inside a web browser</strong></td><td>—</td><td>Yes</td><td>Experimental</td></tr>
+    <tr><td><strong>macOS</strong></td><td colspan="3">Not yet. It needs work on windowing, graphics, input and Apple's signing process first.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="how">How it is made</h2>
+
+<p>
+  Broiler is a small project — one maintainer — and it says openly that a large share of the
+  code was written by AI coding tools working under that maintainer's direction. The
+  maintainer decides what to build, reviews changes, runs the tests, drives refactors and
+  pays for the inference.
+</p>
+
+<div class="callout callout-ember">
+  <p class="callout-title">Why that is stated so prominently</p>
+  <p>
+    Because it changes what you should assume. AI can produce a great deal of plausible code
+    quickly, and plausible is not the same as correct. So rather than claiming the code is
+    reviewed, the project built a tool that <strong>records what a person has actually
+    read</strong> — file by file, against a fingerprint of the exact text they read, so an
+    approval expires when the code changes underneath it.
+  </p>
+  <p style="margin-bottom:0">
+    Today that number is honest and unflattering, and it is published anyway.
+    <a href="/assurance.html">How review is recorded →</a>
+  </p>
+</div>
+
+<p>
+  The same instinct runs through the rest of the project. Test results are published with the
+  failures included. Where a measurement is missing, the documentation says it is missing
+  rather than leaving a gap you might read as a pass.
+</p>
+
+<h2 id="name">The name, and the chicken</h2>
+
+<p>
+  A broiler is a chicken raised for meat. The project runs with the joke: the components ship
+  with cartoon-chicken artwork, and the acronym came afterwards — <strong>B</strong>rowser
+  <strong>I</strong>nfrastructure in <strong>I</strong>ntermediate <strong>L</strong>anguage
+  with <strong>E</strong>nhanced <strong>R</strong>eliability. "Intermediate language" is the
+  .NET part: the JavaScript engine compiles your scripts into the same instruction set the
+  rest of .NET runs on.
+</p>
+
+<div class="art-grid" style="margin:1.6rem 0">
+  <div class="art-tile" style="cursor:default">
+    <img src="/assets/img/component-graphics.png" alt="Cartoon chicken painting at an easel" width="72" height="72" loading="lazy">
+    <b>Graphics</b><span>Drawing</span>
+  </div>
+  <div class="art-tile" style="cursor:default">
+    <img src="/assets/img/component-ui.png" alt="Cartoon chicken at a desktop computer" width="72" height="72" loading="lazy">
+    <b>UI</b><span>Windows and controls</span>
+  </div>
+  <div class="art-tile" style="cursor:default">
+    <img src="/assets/img/component-media.png" alt="Cartoon chicken with audio, image and video buttons" width="72" height="72" loading="lazy">
+    <b>Media</b><span>Pictures and playback</span>
+  </div>
+  <div class="art-tile" style="cursor:default">
+    <img src="/assets/img/component-documents.png" alt="Cartoon chicken at a desk covered in paperwork" width="72" height="72" loading="lazy">
+    <b>Documents</b><span>File formats</span>
+  </div>
+  <div class="art-tile" style="cursor:default">
+    <img src="/assets/img/component-input.png" alt="Cartoon chicken surrounded by keyboards, mice and gamepads" width="72" height="72" loading="lazy">
+    <b>Input</b><span>Devices</span>
+  </div>
+</div>
+
+<h2 id="lineage">Standing on other people's work</h2>
+
+<p>
+  Broiler did not start from nothing, and it names what it started from.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Came from</th><th>Became</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><a href="https://github.com/ArthurHub/HTML-Renderer">HTML&nbsp;Renderer</a><br><span class="small">by José Manuel Menéndez Poo, developed by Arthur Teplitzki and others</span></td>
+      <td>The starting point for the rendering engine. Inherited code keeps its original BSD 3-Clause licence and copyright notices.</td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/yantrajs/yantra">Yantra&nbsp;JS</a></td>
+      <td>The starting point for the JavaScript engine. Apache-2.0, with the upstream history kept intact.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Broiler has diverged a long way from both and is maintained independently. It is
+  <strong>not</strong> a continuation, an official edition or a release of either project, and
+  neither upstream team is involved in it or endorses it. Unicode data keeps its own terms.
+  The full provenance is in
+  <a href="https://github.com/MaiRat/Broiler/blob/main/THIRD_PARTY_NOTICES.md">the third-party notices</a>.
+</p>
+
+<h2 id="licence">Licence</h2>
+
+<p>
+  Apache License 2.0, except where a file says otherwise. In practice: you can use it, change
+  it, ship it and sell things built with it, as long as you keep the notices. Like all free
+  software, it comes with no warranty — and given this is a preview, that matters more than
+  usual. <a href="/security.html">Safety and limits →</a>
+</p>
+
+<div class="dev-strip">
+  <div class="dev-text">
+    <h3>
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+      The technical version
+    </h3>
+    <p>
+      Eleven components, the dependency rules between them, and the evidence for every claim
+      on this page.
+    </p>
+  </div>
+  <div class="dev-links">
+    <a class="btn" href="/developers.html">Developer overview</a>
+    <a class="btn" href="/architecture.html">Architecture</a>
+  </div>
+</div>
+
+<div class="pager">
+  <a href="/applications.html"><span class="dir">Previous</span><span class="ttl">The apps</span></a>
+  <a class="next" href="/status.html"><span class="dir">Next</span><span class="ttl">Where it stands</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

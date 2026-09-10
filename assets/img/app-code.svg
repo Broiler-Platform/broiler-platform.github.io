@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108" role="img" aria-label="Broiler Code">
+  <path fill="#2464C8" d="M14,24 A14,14 0,0 1,28 10 L80,10 A14,14 0,0 1,94 24 L94,84 A14,14 0,0 1,80 98 L28,98 A14,14 0,0 1,14 84 Z"/>
+  <path fill="#A9CFF4" d="M14,24 A14,14 0,0 1,28 10 L80,10 A14,14 0,0 1,94 24 L94,30 L14,30 Z"/>
+  <path fill="#FFFFFF" d="M42,44 L48,50 L36,62 L48,74 L42,80 L24,62 Z M66,44 L84,62 L66,80 L60,74 L72,62 L60,50 Z M62,40 L68,42 L52,86 L46,84 Z"/>
+</svg>
