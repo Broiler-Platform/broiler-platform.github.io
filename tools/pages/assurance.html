@@ -114,7 +114,7 @@
 <table>
   <thead><tr><th>Application</th><th>Recorded status</th></tr></thead>
   <tbody>
-    <tr><td><code>Broiler.Browser</code></td><td><span class="pill pill-pending">Pending</span> for the repository — and a summary only, not a repository-level approval.</td></tr>
+    <tr><td><code>Broiler.Browser</code></td><td><span class="pill pill-pending">Pending</span> for the repository — and a summary only, not a repository-level approval. Its public pre-release <code>0.1.0-preview.1</code> was published on 2026-09-30.</td></tr>
     <tr><td><code>Broiler.Writer</code></td><td><span class="pill pill-risk">No record at all</span>. The repository carries no <code>HUMAN_REVIEW.md</code>, so no checkout should be described as human-approved. <strong>It nonetheless has public GitHub pre-releases</strong> — <code>0.1.0-preview.3</code>, <code>.4</code> and <code>.5</code>, published 2026-09-22 to 2026-09-30.</td></tr>
     <tr><td><code>Broiler.Plate</code></td><td><span class="pill pill-pending">Pending</span>, generated on 2026-09-30. 0 of 248 relevant code units reviewed. Its public pre-release <code>0.1.0-preview.2</code> was published on 2026-09-22, before the record existed.</td></tr>
     <tr><td><code>Broiler.Mail</code></td><td><span class="pill pill-pending">Pending</span>, generated. 0 of 420 relevant code units reviewed.</td></tr>
@@ -314,6 +314,7 @@ dotnet run --project Broiler.Code/src/Broiler.Code.Review.Cli -c Release -- assu
     <li><strong>Broiler.VM</strong> published eight packages to nuget.org on 2026-09-23 while its <code>HUMAN_REVIEW.md</code> read <code>PENDING</code>. Its status ledger records the publication and leaves to the owner whether the prohibition is revised or the publication answered.</li>
     <li><strong>Broiler Writer</strong> published public GitHub pre-releases <code>0.1.0-preview.3</code> to <code>.5</code> (2026-09-22 to 2026-09-30) from a repository with no <code>HUMAN_REVIEW.md</code>. The desktop builds are not code-signed; the Android packages are signed with the Broiler release key.</li>
     <li><strong>Broiler Plate</strong> published a public GitHub pre-release, <code>0.1.0-preview.2</code>, on 2026-09-22, when the repository had no review record at all; the generated record added on 2026-09-30 reads <code>PENDING</code>, 0 of 248 units. The build is not code-signed.</li>
+    <li><strong>Broiler Browser</strong> published a public GitHub pre-release, <code>0.1.0-preview.1</code>, on 2026-09-30, while its <code>HUMAN_REVIEW.md</code> reads <code>PENDING</code> as a summary only. The desktop builds are not code-signed; the Android packages are signed with the Broiler release key.</li>
     <li><strong>Every component</strong> publishes preview packages to nuget.org — the four with no review record at all (Input, Media, Documents, Native) included.</li>
   </ul>
 </div>

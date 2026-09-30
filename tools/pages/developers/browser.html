@@ -1,4 +1,4 @@
-{"title": "Broiler.Browser — technical detail", "desc": "The browser application repository: platform heads, configurations, generated solutions, the NuGet packages it composes, network and cookies, the command line, CI, and the draft release.", "nav": "developers"}
+{"title": "Broiler.Browser — technical detail", "desc": "The browser application repository: platform heads, configurations, generated solutions, the NuGet packages it composes, network and cookies, the command line, CI, and the first preview release.", "nav": "developers"}
 ---
 <section class="page-head">
   <div class="wrap">
@@ -247,10 +247,13 @@ dotnet test  Broiler.Browser.Tests.slnx -c Release</code></pre>
 </p>
 
 <div class="callout callout-warn">
-  <p class="callout-title"><code>browser-v0.1.0-preview.1</code> exists as a tag — its release is a draft, not published</p>
+  <p class="callout-title"><code>browser-v0.1.0-preview.1</code> is a public pre-release</p>
   <p>
-    The tag was cut on 2026-09-30. Its GitHub release has not been published, so there is no
-    public Broiler Browser download.
+    The tag was cut on 2026-09-30 at <code>5fff149</code>, whose CI run passed, and the drafted
+    release was published on 2026-09-30:
+    <a href="https://github.com/Broiler-Platform/Broiler.Browser/releases/tag/browser-v0.1.0-preview.1">Broiler Browser 0.1.0-preview.1</a>. <code>HUMAN_REVIEW.md</code> still reads
+    <code>PENDING</code> — a summary, not a repository-level approval — so it was published
+    ahead of the exact-commit review the root roadmap sets as the release gate.
   </p>
 </div>
 
