@@ -15,7 +15,7 @@
           <span class="plat on">Windows</span>
           <span class="plat on">Linux</span>
           <span class="plat on">Android · emulator-tested</span>
-          <span class="pill pill-preview">Early preview</span>
+          <span class="pill pill-preview">Preview download</span>
         </div>
       </div>
     </div>
@@ -150,18 +150,27 @@
 <h2 id="get">Getting it</h2>
 
 <div class="status-band">
-  <h3>No download yet — the first one is being prepared</h3>
+  <h3>A first preview you can download — with caveats</h3>
   <p>
-    A first preview, <strong>0.1.0-preview.1</strong>, was built on 30 September for Windows,
-    Linux and Android. It is still an unpublished draft: nobody outside the project can download
-    it until someone reviews and releases it. The draft holds Windows and Linux files that are
-    <strong>not code-signed</strong> and an Android package signed with the project's release
-    key, and its own notes say to open controlled content only, because the JavaScript engine is
-    not a security sandbox.
+    <a href="https://github.com/Broiler-Platform/Broiler.Browser/releases/tag/browser-v0.1.0-preview.1">Broiler Browser 0.1.0-preview.1</a> was published on 30 September 2026 as a GitHub
+    pre-release — "a preview build for evaluation and testing, not for production use". Its own
+    notes add that the JavaScript engine "is <strong>not a security sandbox</strong>: open
+    controlled content only".
   </p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Download</th><th>What it is</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Windows</strong> <code>…-win-x64.zip</code></td><td>One program file with the .NET runtime inside, about 47&nbsp;MB zipped. Unzip and run it; nothing to install. <strong>Not code-signed</strong>, so Windows SmartScreen may warn you before the first start.</td></tr>
+      <tr><td><strong>Linux</strong> <code>…-linux-x64.zip</code></td><td>The same for X11, about 48&nbsp;MB zipped. Also not code-signed.</td></tr>
+      <tr><td><strong>Android</strong> <code>…-arm64.apk</code></td><td>Installed by hand (sideloaded). Signed with the Broiler release key, whose fingerprint the release notes quote. Emulator-tested only.</td></tr>
+    </tbody>
+  </table>
+  </div>
   <p style="margin-bottom:0">
-    Until then you can build it from source, which takes a .NET 10 SDK and one command.
-    <a href="/get-started.html">How to build →</a>
+    What is <em>not</em> behind it yet: the Browser's review record reads pending, and is a
+    summary rather than a human review of its code. Its automated tests did pass on the exact
+    version the preview was built from. <a href="/status.html#download">What that means →</a>
   </p>
 </div>
 

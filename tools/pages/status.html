@@ -5,7 +5,7 @@
     <span class="eyebrow">Status</span>
     <h1>Where Broiler actually stands</h1>
     <p class="lede">
-      Early preview. The apps run and do real work, and two of them can now be downloaded as
+      Early preview. The apps run and do real work, and three of them can now be downloaded as
       previews — but nothing here should be trusted with anything that matters. This page says
       why, in detail, without the usual softening.
     </p>
@@ -20,11 +20,12 @@
 <h2 id="download">Can I download it?</h2>
 
 <div class="status-band">
-  <h3>Two of the apps, as early previews — read the small print first.</h3>
+  <h3>Three of the apps, as early previews — read the small print first.</h3>
   <p>
     Since 22 September 2026 the project has published preview builds of the
     <a href="/applications/writer.html#get">Writer</a> and of
-    <a href="/applications/plate.html#get">Plate</a> as GitHub pre-releases. Each describes
+    <a href="/applications/plate.html#get">Plate</a> as GitHub pre-releases, and since
+    30 September 2026 of the <a href="/applications/browser.html#get">Browser</a>. Each describes
     itself as "a preview build for evaluation and testing, not for production use". There is
     still <strong>no installer</strong>: the desktop downloads are single files you unzip and
     run, and the Android one is a package you install by hand.
@@ -47,9 +48,9 @@
       </tr>
       <tr>
         <td><strong>Browser</strong></td>
-        <td>Nothing yet. 0.1.0-preview.1 was built on 30 Sep and waits, unpublished, as a draft.</td>
-        <td>—</td>
-        <td><span class="pill pill-pending">Pending</span></td>
+        <td><a href="https://github.com/Broiler-Platform/Broiler.Browser/releases/tag/browser-v0.1.0-preview.1">0.1.0-preview.1</a>, 30 Sep — Windows, Linux, Android</td>
+        <td>Windows and Linux: <strong>no</strong>. Android: yes, with the Broiler release key.</td>
+        <td><span class="pill pill-pending">Pending · summary only</span></td>
       </tr>
       <tr>
         <td><strong>Code</strong></td>
@@ -77,16 +78,16 @@
   <p style="margin-bottom:0">
     The project's roadmap says a release should come from an exact commit that has passed
     human, dependency, licence, static-analysis and vulnerability review, should build
-    reproducibly, and should be signed. None of that is recorded for the Writer or Plate
-    previews: the Writer has no human-review record at all, Plate's reads pending with nothing
-    reviewed, and the Writer's latest preview was published from a version whose automated
+    reproducibly, and should be signed. None of that is recorded for any of the three
+    previews: the Browser's review record is a pending summary rather than a review of its code,
+    the Writer has no human-review record at all, Plate's reads pending with nothing reviewed, and the Writer's latest preview was published from a version whose automated
     tests were failing. Use them to look around, on copies of files that do not matter.
   </p>
 </div>
 
 <div class="progress-row">
-  <div class="stage done"><b>Done</b><span>Apps that build and run on their supported systems; first preview downloads of the Writer and Plate</span></div>
-  <div class="stage now"><b>In progress</b><span>The Browser's first preview; human review of the code</span></div>
+  <div class="stage done"><b>Done</b><span>Apps that build and run on their supported systems; first preview downloads of the Browser, Writer and Plate</span></div>
+  <div class="stage now"><b>In progress</b><span>Human review of the code</span></div>
   <div class="stage"><b>Next</b><span>Releases that have passed review, built reproducibly and signed</span></div>
   <div class="stage"><b>Later</b><span>Automatic updates, native installers, a stable 1.0</span></div>
 </div>
@@ -291,7 +292,7 @@
   <div class="feature">
     <h3>Try it and break it</h3>
     <p>
-      Download the Writer or Plate preview, or build the Browser yourself, and report what
+      Download the Browser, Writer or Plate preview, and report what
       breaks — bug reports from real use are worth a lot.
       <a href="/get-started.html">How to build →</a>
     </p>
