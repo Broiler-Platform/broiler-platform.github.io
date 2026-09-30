@@ -6,7 +6,7 @@
     <span class="eyebrow">Architecture</span>
     <h1>How the platform is put together</h1>
     <p class="lede">
-      Broiler is one dependency graph split across more than a dozen repositories. The rules that keep
+      Broiler is one dependency graph split across more than twenty repositories. The rules that keep
       it navigable — who owns which concern, which direction a reference may point, and what a
       component is forbidden to know about — are asserted by tests, not only written down.
     </p>
@@ -80,23 +80,23 @@
   <thead><tr><th>Tier</th><th>Owns</th><th>Deliberately does not own</th></tr></thead>
   <tbody>
     <tr>
-      <td><strong>Applications</strong><br><span class="small">Browser · Writer · Code</span></td>
+      <td><strong>Applications</strong><br><span class="small">Browser · Writer · Code · Plate · Mail</span></td>
       <td>Window and chrome, page/document lifecycle, favourites and recent files, clipboard policy, platform heads</td>
       <td>Rendering, layout, parsing, codecs, control implementations</td>
     </tr>
     <tr>
-      <td><strong>Integration</strong><br><span class="small">HtmlBridge · UI · Documents</span></td>
-      <td>JavaScript-facing browser behaviour, retained-mode controls, document codecs and the rich-text model</td>
+      <td><strong>Integration</strong><br><span class="small">HtmlBridge · JSeal · UI · Documents</span></td>
+      <td>JavaScript-facing browser behaviour, the engine-neutral script contracts, retained-mode controls, document codecs and the rich-text model</td>
       <td>Parallel implementations of the canonical engines below</td>
     </tr>
     <tr>
-      <td><strong>Web engine</strong><br><span class="small">DOM · CSS · Layout · HTML · JS</span></td>
+      <td><strong>Web engine</strong><br><span class="small">DOM · CSS · Layout · HTML · JS · Regex · Unicode</span></td>
       <td>Tokenizing, tree building, selectors and cascade, the box model, painting, JavaScript compilation and execution</td>
       <td>Platform windows, device input, network policy, codecs</td>
     </tr>
     <tr>
-      <td><strong>Platform core</strong><br><span class="small">Graphics · Media · Input</span></td>
-      <td>Bitmaps, raster, text and fonts, render lists, presentation backends; decode and probe; device discovery and delivery</td>
+      <td><strong>Platform core</strong><br><span class="small">Graphics · Media · Input · Native · Net</span></td>
+      <td>Bitmaps, raster, text and fonts, render lists, presentation backends; decode and probe; device discovery and delivery; native API bindings and library probing; cookies, site resolution and the HTTP transport</td>
       <td>DOM event construction, browser permissions, playback state machines, preview UI</td>
     </tr>
   </tbody>
@@ -108,7 +108,9 @@
 <p>
   This table is the operative one when a bug needs a home. It is taken from the HtmlBridge
   architecture record, which fixes who owns each web-platform concern and what the bridge is
-  permitted to do with it.
+  permitted to do with it — with the networking row updated for
+  <a href="https://github.com/Broiler-Platform/Broiler.Net">Broiler.Net</a>, which took over
+  cookies and the HTTP transport in September 2026, after that record was last reconciled.
 </p>
 
 <div class="table-wrap">
@@ -121,7 +123,8 @@
     <tr><td>Layout boxes, used values, hit testing, scrolling</td><td><code>Broiler.Layout</code> through <code>ILayoutView</code></td><td>Translate canonical results into CSSOM View objects, state changes and events</td></tr>
     <tr><td>JavaScript language and modules</td><td><code>Broiler.JS</code></td><td>Supply browser globals, DOM bindings, module URL resolution, CSP and host policy, page lifecycle ordering</td></tr>
     <tr><td>Raster, image, audio and video implementation</td><td><code>Broiler.Graphics</code> / <code>Broiler.Media</code> / <code>Broiler.HTML</code></td><td>Record Canvas API calls and route resources — never duplicate codecs</td></tr>
-    <tr><td>Networking, origins, frames, timers, messaging</td><td>HtmlBridge and the host</td><td>Enforce host policy and expose browser-shaped JavaScript behaviour</td></tr>
+    <tr><td>Cookies, site resolution, HTTP transport — redirects, credentials, CORS</td><td><code>Broiler.Net</code>, through one profile-owned <code>BrowserNetworkSession</code></td><td>Supply each request's document context; let page script reach the transport only through gates — <code>fetch()</code>, <code>XMLHttpRequest</code> and <code>sendBeacon</code> with their credentials and CORS modes, and <code>document.cookie</code> as the profile's non-HTTP cookie API</td></tr>
+    <tr><td>Origins, frames, timers, messaging</td><td>HtmlBridge and the host</td><td>Enforce host policy and expose browser-shaped JavaScript behaviour</td></tr>
   </tbody>
 </table>
 </div>
@@ -129,101 +132,167 @@
 <h2 id="htmlbridge">HtmlBridge</h2>
 
 <p>
-  HtmlBridge is what turns a set of engine components into a browser. It connects the
-  JavaScript engine to the canonical DOM, CSS, HTML and layout components and owns the
-  JavaScript-facing browser behaviour that none of them should know about. It lives in the
-  <a href="/applications/browser.html">Broiler.Browser</a> repository, next to the application
-  that needs it. Its boundary is versioned: <code>htmlbridge-public-surface/v2</code>.
+  HtmlBridge is what turns a set of engine components into a browser — or, as its own README
+  puts it, an embeddable HTML control for .NET: a live DOM, a running JavaScript realm, and
+  the host seam, the role WebView2 fills. It connects the JavaScript engine to the canonical
+  DOM, CSS, HTML and layout components and owns the JavaScript-facing browser behaviour that
+  none of them should know about. On 2026-09-16 it was extracted from
+  <a href="/applications/browser.html">Broiler.Browser</a>, with its history, into
+  <a href="https://github.com/Broiler-Platform/Broiler.HtmlBridge">its own repository</a>; the
+  browser is now one embedder of it. Its boundary is versioned:
+  <code>htmlbridge-public-surface/v2</code>.
+</p>
+
+<p>
+  The named control surface is not written yet. Today a host composes <code>DomBridge</code>,
+  <code>ScriptEngine</code> and a layout view itself, which is what
+  <code>Broiler.Browser.Core</code> does; the repository's
+  <a href="https://github.com/Broiler-Platform/Broiler.HtmlBridge/blob/main/docs/html-control.md"><code>docs/html-control.md</code></a>
+  is the plan for closing that gap against what WebView2 and MSHTML offer.
 </p>
 
 <div class="table-wrap">
 <table>
   <thead><tr><th>Assembly</th><th>Responsibility</th></tr></thead>
   <tbody>
-    <tr><td><code>Broiler.HtmlBridge.Core</code></td><td>Shared contracts and value objects, script-extraction descriptors, CSP parsing, profiling records and logging</td></tr>
-    <tr><td><code>Broiler.HtmlBridge.Dom</code></td><td><code>DomBridge</code>, JavaScript DOM/CSSOM/event bindings, browser runtime state, resource and browsing-context policy, serialization projection, the document event loop</td></tr>
-    <tr><td><code>Broiler.HtmlBridge.Scripting</code></td><td>Public execution interfaces, <code>ScriptEngine</code>, interactive sessions, orchestration of script execution around a bridge instance</td></tr>
+    <tr><td><code>Broiler.HtmlBridge.Core</code></td><td>Shared models with no engine in them: CSP, origins, the microtask queue, navigation requests, the render logger, fetch timing. Reaches the network through <code>Broiler.Net</code></td></tr>
+    <tr><td><code>Broiler.HtmlBridge.DomBridgeUtils</code></td><td>The bridge's static helpers that need no bridge instance: tree, attribute, CSS, layout-geometry and serialization utilities. Sits below <code>Dom</code></td></tr>
+    <tr><td><code>Broiler.HtmlBridge.Dom</code></td><td>The DOM bridge itself: tree building, the DOM/CSSOM/canvas/forms/frames/workers bindings, and the polyfills shipped as embedded JavaScript</td></tr>
+    <tr><td><code>Broiler.HtmlBridge.Scripting</code></td><td><code>IScriptEngine</code> and the interactive session: script extraction, module roots, evaluation policy. References <code>Broiler.JSeal.BroilerJs</code></td></tr>
+    <tr><td><code>Broiler.HtmlBridge.Scripting.Vm</code></td><td>An <code>IScriptEngine</code> on the Broiler.VM JavaScript profile, selected by the <code>Debug-VM</code> / <code>Release-VM</code> configurations. References <code>Broiler.JSeal.Vm</code></td></tr>
   </tbody>
 </table>
 </div>
 
 <div class="code">
   <div class="code-head"><span class="code-title">dependency direction</span></div>
-  <pre><code>Broiler.HtmlBridge.Scripting
-  -> Broiler.HtmlBridge.Dom
-    -> Broiler.HtmlBridge.Core</code></pre>
+  <pre><code>Broiler.HtmlBridge.Scripting.Vm          -&gt; Broiler.JSeal.Vm         (package)
+  -&gt; Broiler.HtmlBridge.Scripting        -&gt; Broiler.JSeal.BroilerJs  (package)
+    -&gt; Broiler.HtmlBridge.Dom            -&gt; Broiler.JSeal            (package)
+      -&gt; Broiler.HtmlBridge.DomBridgeUtils
+        -&gt; Broiler.HtmlBridge.Core       -&gt; Broiler.Net, Broiler.Layout, Broiler.CSS.Dom,
+                                            Broiler.Dom.Html, Broiler.JavaScript.Engine</code></pre>
 </div>
+
+<p>
+  The rule that shapes it: <strong>a binding never names an engine.</strong> It names JSEAL —
+  the JavaScript Engine Abstraction Layer, split out into
+  <a href="https://github.com/Broiler-Platform/Broiler.JSeal">Broiler.JSeal</a> on 2026-09-19,
+  whose contracts assembly has no references at all — and a <em>provider</em> names the engine.
+  <code>eng/jseal-budget.json</code> records how much engine coupling each project still has, and
+  CI recounts it on every push; the numbers may fall and may never rise. The migration is not
+  finished: <code>Broiler.HtmlBridge.Dom</code>'s engine references have fallen from 891 to 12 by
+  the count in <a href="https://github.com/Broiler-Platform/Broiler.HtmlBridge/blob/main/docs/jseal.md"><code>docs/jseal.md</code></a>.
+</p>
 
 <p class="small">
   A new bridge assembly is justified only by a stable deployment or dependency seam — never by
-  a single web-platform feature. Feature bindings are co-located by web-platform surface.
+  a single web-platform feature. Feature bindings are co-located by web-platform surface. The
+  aggregate repository's HtmlBridge architecture record was last reconciled on 2026-07-29 and
+  still describes three assemblies; the HtmlBridge repository's own README and
+  <code>docs/</code> are the current description.
 </p>
 
 <h2 id="topology">Repository topology</h2>
 
 <p>
-  The aggregate <a href="https://github.com/MaiRat/Broiler">Broiler</a> repository is a
-  composition, not a monolith. Twelve components and applications are git submodules with
-  their own remotes under the <code>Broiler-Platform</code> organisation; what remains in the
-  aggregate repository is <code>Broiler.Layout</code>, the integration libraries, and the tools
-  and tests under <code>src/</code> and <code>tests/</code>.
+  The aggregate <a href="https://github.com/Broiler-Platform/Broiler">Broiler</a> repository is a
+  composition, not a monolith. It gathers twenty-five git submodules, each with its own remote
+  under the <code>Broiler-Platform</code> organisation: eighteen components, five applications,
+  the planned Broiler Fond, and <code>Broiler.Terminal</code>, an empty placeholder. Since
+  2026-09-29 no component lives in the aggregate tree any more — the in-tree
+  <code>Broiler.Layout</code>, the Broiler.VM documents and the HtmlBridge sources were deleted
+  and came back as submodules. What remains is the tools and tests under <code>src/</code> and
+  <code>tests/</code>, the cross-component documentation, and the solution files.
 </p>
 
 <div class="code">
   <div class="code-head"><span class="code-title">aggregate layout</span></div>
   <pre><code>Broiler/
-├── src/                       # integration libraries, applications, tools
+├── src/                       # tools: CLI, DevConsole, WPT runner, playback
 ├── tests/                     # integration and WPT assets
-├── docs/                      # architecture notes and roadmaps
-├── Broiler.DOM/               # submodule
-├── Broiler.CSS/               # submodule; nested DOM checkout
-├── Broiler.Layout/            # in-tree layout component
-├── Broiler.Graphics/          # submodule; nested Input and Media
-├── Broiler.HTML/              # submodule; nested graphics checkout
-├── Broiler.JS/                # submodule; DateTime, Regex, Unicode
-├── Broiler.Input/             # submodule
-├── Broiler.Media/             # submodule; nested graphics checkout
-├── Broiler.Documents/         # submodule; nested DOM and graphics
-├── Broiler.UI/                # submodule; nested component checkouts
-├── Broiler.Browser/           # submodule; browser application
-├── Broiler.Writer/            # submodule; Writer application
-├── Broiler.Code/              # submodule; Broiler Code, review tool
-├── Broiler.VM/                # planned bytecode execution core
+├── docs/                      # cross-component architecture notes and roadmaps
 ├── eng/solutions.json         # solution entry points and platform boundaries
-└── Broiler.*.slnx             # generated product/platform/test workspaces</code></pre>
+├── Broiler.*.slnx             # generated workspaces — several now name missing paths
+│
+│   web engine
+├── Broiler.DOM/               # submodule
+├── Broiler.CSS/               # submodule
+├── Broiler.Layout/            # submodule; own repository since 2026-09-09
+├── Broiler.HTML/              # submodule
+├── Broiler.JS/                # submodule
+├── Broiler.RegEx/             # submodule; package Broiler.Regex
+├── Broiler.Unicode/           # submodule
+├── Broiler.DateTime/          # submodule
+│   integration
+├── Broiler.HtmlBridge/        # submodule; out of Broiler.Browser since 2026-09-16
+├── Broiler.JSeal/             # submodule; JavaScript engine abstraction
+├── Broiler.UI/                # submodule
+├── Broiler.Documents/         # submodule
+│   platform core
+├── Broiler.Graphics/          # submodule
+├── Broiler.Media/             # submodule
+├── Broiler.Input/             # submodule
+├── Broiler.Native/            # submodule; native API bindings
+├── Broiler.Net/               # submodule; cookies, sites, HTTP transport
+├── Broiler.VM/                # submodule; bytecode profile host, unaccepted
+│   applications
+├── Broiler.Browser/           # submodule; browser
+├── Broiler.Writer/            # submodule; word processor
+├── Broiler.Code/              # submodule; Broiler Code, review tool
+├── Broiler.Plate/             # submodule; document and picture viewer
+├── Broiler.Mail/              # submodule; mail app, in development
+├── Broiler.Fond/              # submodule; homebanking, planned
+└── Broiler.Terminal/          # submodule; empty placeholder</code></pre>
 </div>
 
-<h3 id="nesting">Why components nest each other</h3>
+<div class="callout callout-warn">
+  <p class="callout-title">The aggregate itself lags behind its submodules</p>
+  <p>
+    The aggregate's README, <code>docs/</code>, <code>eng/</code>, scripts and every top-level
+    <code>.slnx</code> are unchanged since 2026-09-10. <code>Broiler.Cli.slnx</code>,
+    <code>Broiler.Wpt.slnx</code>, <code>Broiler.Tooling.slnx</code> and
+    <code>Broiler.Tests.slnx</code> still list projects at paths that no longer exist — the
+    removed <code>src/Broiler.HtmlBridge.*</code> projects and the old nested locations inside
+    Broiler.JS and Broiler.HTML — and the tools under <code>src/</code> still reference the
+    removed bridge projects. Whether they build has not been tested; the paths do not resolve.
+    The aggregate has had no CI run on <code>main</code> since March 2026.
+  </p>
+</div>
+
+<h3 id="nesting">From nested checkouts to packages</h3>
 
 <p>
-  Each component repository carries checkouts of the components <em>it</em> depends on, so that
-  it still builds standalone. That is a deliberate trade, and it has a cost the repositories
-  state openly:
+  Until September 2026, each component repository carried checkouts of the components
+  <em>it</em> depended on, so that it still built standalone. The cost was that composing them
+  compiled some components more than once — <code>Broiler.Media</code> five times in a Writer
+  desktop head, <code>Broiler.Graphics</code> four times. Between 2026-09-11 and 2026-09-18,
+  every component that nested another replaced those submodules with package references to
+  nuget.org, and the applications followed. No pinned repository contains a nested checkout any
+  more — Graphics, UI, Writer, Code and Plate keep only a leftover <code>.gitmodules</code> file
+  with nothing behind it. Every component and application now takes its dependencies as
+  packages, and a build restores each one once.
 </p>
 
 <div class="callout callout-info">
-  <p class="callout-title">Known issue: some components compile more than once</p>
+  <p class="callout-title">The duplicate-compilation issue ended with the checkouts</p>
   <p>
-    Because a component references its own nested checkouts by literal relative path, composing
-    them in an application means <code>Broiler.Media</code> is compiled five times in a Writer
-    desktop head, <code>Broiler.Graphics</code> four times, and several others twice. Every
-    nested gitlink points at the same commit as the top-level one, so the duplicates are
-    assembly-identical and no reference conflict is reported — but it is wasted work, and it
-    violates the one-project-per-assembly-identity rule. <code>Broiler.CSS</code> and
-    <code>Broiler.HTML</code> already avoid it with a <code>$(BroilerDomPath)</code> /
-    <code>$(BroilerGraphicsPath)</code> property hook; the fix is to give the remaining
-    components the same hook upstream. The solution generator already folds nested paths onto
-    the top-level ones, so the <code>.slnx</code> files list each assembly once.
+    Broiler.Browser's README records that its known issues from composing checkouts —
+    <code>Broiler.Layout</code> vendored as a directory, <code>Broiler.HTML</code>'s pre-<code>src/</code>
+    reference paths, and components compiled more than once — all "ended with the checkouts",
+    and that nothing there compiles a component any more. The trade is the usual one for
+    packages: a consumer sees another component's <em>published</em> package, not its source, so a
+    member on another repository's <code>main</code> may be missing from the preview it pins.
+    The browser's package versions are minimums, and restore resolves several of them upward
+    with an <code>NU1603</code> warning each.
   </p>
 </div>
 
 <p>
-  <code>Broiler.Layout</code> is the one exception to the submodule pattern: it has no
-  standalone repository, so <code>Broiler.Browser</code> vendors it as ordinary tracked files.
-  Both <code>Broiler.HTML.Core</code> and the bridge reach it as
-  <code>..\..\..\Broiler.Layout\</code>, which resolves to the repository root either way — so
-  should the component ever be published, the directory can be replaced by a submodule at the
-  same path with no reference changes.
+  <code>Broiler.Layout</code>, once vendored inside <code>Broiler.Browser</code> as ordinary
+  tracked files, has had its own repository since 2026-09-09 and is now an aggregate submodule.
+  The browser, the renderer and the bridge now take it as a nuget.org package, like every other
+  component.
 </p>
 
 <h2 id="solutions">Solutions are generated, not hand-edited</h2>
@@ -243,35 +312,47 @@ pwsh scripts/update-solutions.ps1 -Verify    # fail instead of writing — the C
 </div>
 
 <p>
-  The verify form is the first job in every application repository's CI, because it is what
-  catches a new <code>ProjectReference</code> that was never folded into a solution. Each
-  solution contains exactly its entry point's transitive closure — 80 projects for the Windows
-  browser head, 54 for the Windows Writer, 38 for the Windows Code head.
+  The verify form is a CI job in the Browser, Code and Plate repositories, because it is what
+  catches a new <code>ProjectReference</code> that was never folded into a solution; the
+  Writer's README still describes it, but its current workflow no longer runs it. Each solution
+  contains exactly its entry point's transitive closure — and since the components arrive as
+  packages, and a package is not a project a solution lists, that closure is now only the
+  repository's own projects: 2 for the Windows browser head, 3 for the Windows Writer, 6 for the
+  Windows Code head. Broiler Code's CI has been failing since 2026-09-17: its submodules were
+  removed, but its Linux head still references component checkout paths that no longer exist.
 </p>
 
-<h2 id="configurations">Six build configurations</h2>
+<h2 id="configurations">Build configurations</h2>
 
 <p>
-  MSBuild understands only <code>Debug</code> and <code>Release</code>. Broiler's heads declare
-  six, so a <code>Directory.Build.props</code> in each application repository decomposes them —
-  without it, a <code>-c Release-Linux</code> build is unoptimized and has neither
-  <code>RELEASE</code> nor <code>LINUX</code> defined.
+  MSBuild understands only <code>Debug</code> and <code>Release</code>, and most components —
+  Graphics, Input, Media, CSS and others — now declare only those two, having dropped their
+  platform-suffixed configurations; the UI and Documents solutions still declare the
+  <code>-Windows</code> and <code>-Linux</code> pairs. The applications declare more, and
+  decompose each name into a base configuration and one axis: the Writer in its
+  <code>Directory.Build.props</code>, the browser in
+  <code>eng/Broiler.Configurations.props</code>. Without that decomposition, a
+  <code>-c Release-Linux</code> publish builds unoptimized and with neither <code>RELEASE</code>
+  nor <code>LINUX</code> defined.
 </p>
 
 <div class="table-wrap">
 <table>
-  <thead><tr><th>Configuration</th><th>Effect</th></tr></thead>
+  <thead><tr><th>Configuration</th><th>Declared by</th><th>Effect</th></tr></thead>
   <tbody>
-    <tr><td><code>Debug</code> / <code>Release</code></td><td>Framework-dependent; builds the platform-neutral set only</td></tr>
-    <tr><td><code>Debug-Windows</code> / <code>Release-Windows</code></td><td>Adds the Direct2D backend and Windows heads; pins <code>win-x64</code></td></tr>
-    <tr><td><code>Debug-Linux</code> / <code>Release-Linux</code></td><td>Adds the OpenGL/Vulkan backends and Linux heads; pins <code>linux-x64</code></td></tr>
+    <tr><td><code>Debug</code> / <code>Release</code></td><td>Every repository; the only pair in most components</td><td>Framework-dependent</td></tr>
+    <tr><td><code>Debug-Windows</code> / <code>Release-Windows</code></td><td>Writer and Browser heads; the UI and Documents solutions</td><td>Pins <code>win-x64</code> on the heads; what the publish paths use</td></tr>
+    <tr><td><code>Debug-Linux</code> / <code>Release-Linux</code></td><td>Writer and Browser heads; the UI and Documents solutions</td><td>Pins <code>linux-x64</code> on the heads; what the publish paths use</td></tr>
+    <tr><td><code>Debug-VM</code> / <code>Release-VM</code></td><td>Browser, HtmlBridge</td><td>Runs script on the Broiler.VM JavaScript profile through <code>Broiler.JSeal.Vm</code>; changes what is restored, not what a solution lists</td></tr>
   </tbody>
 </table>
 </div>
 
 <p class="small">
-  A plain <code>dotnet build</code> therefore does <em>not</em> compile the Direct2D backend.
-  Platform projects are excluded from every configuration except their own.
+  In the browser, the runtime-identifier-pinned pairs are deliberately absent from the
+  solutions: they are published per project, and a solution-level build of a configuration a
+  <code>.slnx</code> does not declare fails with <code>MSB4126</code>. The <code>-VM</code> pair is
+  declared, so it works both ways.
 </p>
 
 <h2 id="hosts">Platform hosts</h2>
@@ -309,7 +390,9 @@ pwsh scripts/update-solutions.ps1 -Verify    # fail instead of writing — the C
       A platform-neutral frame planner validated against a CPU oracle, plus
       <code>JSImport</code>/<code>JSExport</code> Canvas interop gated with
       <code>[SupportedOSPlatform("browser")]</code>. This hosts <em>managed Broiler
-      applications</em> in a browser — it is not a port of the HTML/JavaScript engine.
+      applications</em> in a browser — it is not a port of the HTML/JavaScript engine. The
+      Writer's WebAssembly CI job has been commented out since 2026-09-14, and no release
+      includes a web build.
     </p>
   </div>
 </div>
@@ -319,40 +402,63 @@ pwsh scripts/update-solutions.ps1 -Verify    # fail instead of writing — the C
 <p>
   <a href="/components/vm.html">Broiler.VM</a> is a NativeAOT-compatible component that
   executes verified bytecode artifacts. The distinction it insists on is unusual and worth
-  stating precisely: <strong>it owns no opcode set, no value representation and no language
-  semantics.</strong> It owns profile selection, bounded artifact loading, the verification
-  boundary, the execution lifecycle, resource authority, diagnostics and composition evidence.
+  stating precisely: <strong>it owns no value representation and no language semantics, and its
+  core owns no opcode set.</strong> It owns profile selection, bounded artifact loading, the
+  verification boundary, the execution lifecycle, resource authority, diagnostics and
+  composition evidence. Since a correction of 2026-09-25, one thing is shared <em>as an
+  encoding</em>: the universal bytecode's common family — an instruction encoding whose meanings
+  name no language — lives in <code>Broiler.VM.Ubc</code>, outside the core contract, and no core
+  assembly references it (ADR 0013).
 </p>
 
 <p>
-  Profiles are separate components that reference the core; the core references none of them. A
-  profile is added by compiling it into a product and registering its descriptor directly —
-  there is no assembly scanning, no load-by-name, no extension directory and no binary plug-in
-  ABI, because every executable profile must be rooted by a direct typed reference for Native
-  AOT. Redundancy between profiles is avoided by sharing <em>mechanism</em> — how bytes are read
-  safely, how a budget is charged — and never <em>semantics</em>.
+  Profiles are product project families inside the component —
+  <code>src/Broiler.VM.Profile.&lt;Language&gt;*</code> — and the core never references one; a
+  composition root references both, which is the only direction that exists. JavaScript,
+  WebAssembly and MachineCode profiles exist, none of them accepted. A profile is added by
+  compiling it into a product and registering its descriptor directly — there is no assembly
+  scanning, no load-by-name, no extension directory and no binary plug-in ABI, because every
+  executable profile must be rooted by a direct typed reference for Native AOT. Redundancy
+  between profiles is avoided by sharing <em>mechanism</em> — how bytes are read safely, how a
+  budget is charged — and now that one encoding; never <em>semantics</em>.
 </p>
 
 <div class="callout callout-warn">
-  <p class="callout-title">Implemented, evidenced — and entirely unaccepted</p>
+  <p class="callout-title">Implemented, evidenced, published — and entirely unaccepted</p>
   <p>
-    Twelve boundary records, a fourteen-project graph implementing core contract version 1, two
-    fixture profiles, two Native AOT composition roots, an 87-artifact malformed corpus and 318
-    passing tests exist. <strong>No milestone is accepted</strong>, because no relevant code unit
-    carries a human decision — so its generated <code>HUMAN_REVIEW.md</code> reads
-    <code>PENDING</code> and no package, RID or support claim may be issued.
-    <code>Broiler.JS</code> remains the engine every current consumer uses; Broiler.VM does not
-    depend on it, wrap it, or replace it on any published schedule.
+    Thirteen boundary records, a graph of thirty-one projects and 113 edges, a composition
+    register of eleven roots that advertises none, and an 87-artifact malformed-input corpus
+    exist. The milestone ledger (updated 2026-09-28) records VM-0 through VM-7 as in progress and
+    unaccepted — VM-7, the native artifact form, has an x86-64 backend that executes and an arm64
+    backend that only emits. <strong>No milestone is accepted</strong>, because no relevant code
+    unit carries a human decision: the generated <code>HUMAN_REVIEW.md</code> reads
+    <code>PENDING</code>, 0 of 5,773 relevant units, and says no package may be published and no
+    RID claimed until that changes. Eight packages — the three core ones and five profile-family
+    ones — were published to nuget.org on 2026-09-23 regardless, while it read
+    <code>PENDING</code>; the ledger records the publication and moves no row for it. No runtime
+    identifier is claimed.
+  </p>
+  <p style="margin-bottom:0">
+    <code>Broiler.JS</code> remains the default engine for every current consumer; Broiler.VM
+    does not depend on it, wrap it, or replace it on any stated schedule. The VM path is an
+    opt-in configuration: HtmlBridge's and the browser's <code>Debug-VM</code> /
+    <code>Release-VM</code> run the script-only paths on the VM JavaScript profile through
+    <code>Broiler.JSeal.Vm</code>, and hand document-bearing ones to Broiler.JS, which stays in
+    the graph — in the browser's words, no page load runs on the VM yet.
   </p>
 </div>
 
 <h2 id="reading">Where to read more</h2>
 
 <ul class="checklist">
-  <li><a href="https://github.com/MaiRat/Broiler/blob/main/docs/architecture/htmlbridge.md">HtmlBridge architecture</a> — bridge assemblies, ownership boundaries and public seams</li>
-  <li><a href="https://github.com/MaiRat/Broiler/blob/main/docs/architecture/browser-webassembly.md">Browser WebAssembly architecture</a> — browser-host, rendering, input and support decisions</li>
-  <li><a href="https://github.com/MaiRat/Broiler/blob/main/docs/architecture/android.md">Android application architecture</a> — host topology, platform baseline and remaining device gates</li>
-  <li><a href="https://github.com/MaiRat/Broiler/blob/main/docs/architecture/multithreading.md">Multithreading analysis</a> — cross-component integration and host measurements</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.HtmlBridge/blob/main/README.md">Broiler.HtmlBridge README</a> — the five assemblies, the network seam, build configurations and packaging</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.HtmlBridge/blob/main/docs/jseal.md">JSEAL in HtmlBridge</a> — engine neutrality, the contracts, the providers, the budget, and how far the migration has got</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.HtmlBridge/blob/main/docs/cross-component-layering.md">Cross-component layering audit</a> — where the bridge still does DOM, CSS or layout work, and where that work belongs</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler/blob/main/docs/architecture/htmlbridge.md">Aggregate HtmlBridge architecture record</a> — ownership boundaries and public seams; last reconciled 2026-07-29, so its assembly list predates the extraction</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler.Browser/blob/main/docs/vm-javascript-profile.md">The Debug-VM and Release-VM configurations</a> — what running script on the VM changes in the browser, and what it does not</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler/blob/main/docs/architecture/browser-webassembly.md">Browser WebAssembly architecture</a> — browser-host, rendering, input and support decisions</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler/blob/main/docs/architecture/android.md">Android application architecture</a> — host topology, platform baseline and remaining device gates</li>
+  <li><a href="https://github.com/Broiler-Platform/Broiler/blob/main/docs/architecture/multithreading.md">Multithreading analysis</a> — cross-component integration and host measurements</li>
   <li><a href="/components.html">Component pages</a> — each component's own architecture, ADRs and roadmap</li>
 </ul>
 

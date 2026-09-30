@@ -28,8 +28,8 @@
 
 <p>
   There is no meta-package. An application takes the core plus exactly the backends it presents
-  with. Every package ships XML documentation and a <code>.snupkg</code> symbol package, and is
-  built deterministically with SourceLink.
+  with. Every package ships XML documentation and a <code>.snupkg</code> symbol package, is
+  built deterministically with SourceLink, and is published to nuget.org only.
 </p>
 
 <div class="table-wrap">
@@ -37,7 +37,7 @@
   <thead><tr><th>Package</th><th>Target</th><th>Role</th></tr></thead>
   <tbody>
     <tr><td><code>Broiler.Graphics</code></td><td><code>net10.0</code></td><td>Platform-neutral core: bitmaps, canvas, geometry, colour, deterministic CPU raster, text and fonts, render lists. Trimming- and AOT-friendly, fully safe code.</td></tr>
-    <tr><td><code>Broiler.Graphics.Windows</code></td><td><code>net10.0-windows</code></td><td>Direct2D/DirectWrite backend, window and input integration, HWND-backed video presentation target.</td></tr>
+    <tr><td><code>Broiler.Graphics.Windows</code></td><td><code>net10.0</code>*</td><td>Direct2D/DirectWrite backend, window and input integration, HWND-backed video presentation target.</td></tr>
     <tr><td><code>Broiler.Graphics.Linux</code></td><td><code>net10.0</code></td><td>Shared Linux runtime support: native library probing, dependency resolution, runtime diagnostics.</td></tr>
     <tr><td><code>Broiler.Graphics.Linux.OpenGL</code></td><td><code>net10.0</code></td><td>OpenGL/EGL presentation over Mesa/EGL, with pbuffer and opt-in X11 window surfaces.</td></tr>
     <tr><td><code>Broiler.Graphics.Linux.Vulkan</code></td><td><code>net10.0</code></td><td>Vulkan 1.2 loader/device path. Presentation is still CPU-present.</td></tr>
@@ -46,6 +46,20 @@
   </tbody>
 </table>
 </div>
+
+<p class="small">
+  * The Direct2D project file now targets plain <code>net10.0</code>; the component's README
+  and packaging document still say <code>net10.0-windows</code>. It remains a Windows-only
+  backend either way.
+</p>
+
+<p>
+  The native API declarations the backends call — entry points, ABI structs, COM contracts,
+  library probing — no longer live here. They moved to the shared
+  <a href="https://github.com/Broiler-Platform/Broiler.Native">Broiler.Native</a> packages
+  (<code>Broiler.Native.Windows</code>, <code>.Linux</code> and <code>.Android</code>), which
+  Graphics, Input and Media now all consume from nuget.org.
+</p>
 
 <h2 id="codecs">The core does not decode images</h2>
 
@@ -63,12 +77,20 @@
 <div class="code">
   <div class="code-head"><span class="code-title">dependency direction</span></div>
   <pre><code>Broiler.Graphics.Windows       -> Broiler.Graphics -> Broiler.Media.Image   (abstraction only)
-Broiler.Graphics.Windows       -> Broiler.Media.Video                       (declares the HWND video target)
+Broiler.Graphics.Windows       -> Broiler.Media.Video, Broiler.Media.Video.Windows
+                                                              (implements the HWND video target)
+Broiler.Graphics.Windows       -> Broiler.Native.Windows
 Broiler.Graphics.Linux.OpenGL  -> Broiler.Graphics.Linux -> Broiler.Graphics
 Broiler.Graphics.Linux.Vulkan  -> Broiler.Graphics.Linux -> Broiler.Graphics
-Broiler.Graphics.Android       -> Broiler.Graphics
+Broiler.Graphics.Linux         -> Broiler.Native.Linux
+Broiler.Graphics.Android       -> Broiler.Graphics, Broiler.Native.Android
 Broiler.Graphics.WebAssembly   -> Broiler.Graphics</code></pre>
 </div>
+
+<p class="small">
+  This is read from the project files. The README's own diagram has not yet gained the
+  <code>Broiler.Native.*</code> and <code>Broiler.Media.Video.Windows</code> edges.
+</p>
 
 <h2 id="backends">Backend status</h2>
 
@@ -97,26 +119,28 @@ Broiler.Graphics.WebAssembly   -> Broiler.Graphics</code></pre>
 <h2 id="build">Building, testing and demos</h2>
 
 <p>
-  The solution defines six configurations. <code>Debug</code>/<code>Release</code> build the
-  platform-neutral set — core, WebAssembly, Android and their test runners. The
-  <code>-Windows</code> and <code>-Linux</code> variants add the backends for that platform and
-  select the matching runtime identifier. <strong>A plain <code>dotnet build</code> does not
-  compile the Direct2D backend.</strong>
+  Only <code>Debug</code> and <code>Release</code> remain; the platform-suffixed configurations
+  are obsolete. The repository has no submodules — Media, Input and Native come from nuget.org,
+  pinned in <code>Directory.Packages.props</code>. The solution build covers the
+  platform-neutral set — core, WebAssembly, Android and their test runners. <strong>The Direct2D
+  and Linux backends are excluded from the solution build</strong>, so a plain
+  <code>dotnet build</code> still does not compile them; the test script builds the host's
+  platform suite explicitly, and packing enumerates every packable project.
 </p>
 
 <div class="code">
   <div class="code-head"><span class="code-title">build &amp; test</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>git clone --recurse-submodules https://github.com/Broiler-Platform/Broiler.Graphics.git
-dotnet build Broiler.Graphics.slnx -c Release-Windows
-bash ./eng/run-tests.sh Release-Windows</code></pre>
+  <pre><code>git clone https://github.com/Broiler-Platform/Broiler.Graphics.git
+dotnet build Broiler.Graphics.slnx -c Release
+bash ./eng/run-tests.sh Release</code></pre>
 </div>
 
 <p>
   Tests are <strong>self-hosted console runners rather than a test framework</strong>, so there
-  is nothing for <code>dotnet test</code> to discover. The script picks the runners the
-  configuration produced — the Direct2D suite under <code>-Windows</code>, the Linux suite under
-  <code>-Linux</code>, and the three neutral suites under every configuration — and starts them
-  with <code>--no-build</code>, so they exercise exactly the binaries the build produced.
+  is nothing for <code>dotnet test</code> to discover. The script runs the three neutral suites
+  with <code>--no-build</code>, so they exercise exactly the binaries the build produced, then
+  builds and runs the suite for the host it is on — the Direct2D suite under Git Bash on
+  Windows, the Linux suite on Linux.
 </p>
 
 <h3 id="demos">The Linux demo is the composition root for graphics plus input</h3>
@@ -130,7 +154,7 @@ bash ./eng/run-tests.sh Release-Windows</code></pre>
 
 <div class="code">
   <div class="code-head"><span class="code-title">linux demo</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>dotnet run --project src/demos/Broiler.Graphics.Linux.Demo -c Debug-Linux -- \
+  <pre><code>dotnet run --project src/demos/Broiler.Graphics.Linux.Demo -c Debug -- \
   --window --enable-evdev-input --interactive</code></pre>
 </div>
 
@@ -150,17 +174,21 @@ bash ./eng/run-tests.sh Release-Windows</code></pre>
 <h2 id="ci">CI and releases</h2>
 
 <p>
-  CI builds and tests both configurations on every push and pull request —
-  <code>Release-Linux</code> on Ubuntu, <code>Release-Windows</code> on Windows — and attaches
-  the packed packages to each run. Neither configuration alone produces the whole set, so the
-  Windows leg packs both: it can build every project, because the Linux libraries are plain
-  <code>net10.0</code> with no runtime identifier.
+  CI builds <code>Release</code> on Ubuntu and on Windows for every push to <code>main</code>
+  and every pull request, runs the test script and the preview-version resolver's own tests,
+  and on the Windows leg runs <code>eng/pack.ps1</code> to produce and validate all seven
+  packages, attached to the run as <code>nuget-packages</code>.
 </p>
 
 <p>
-  Publishing is manual by default and dry-runs unless told otherwise. Pushing a <code>v*</code>
-  tag publishes to nuget.org, and the tag must match the version in
-  <code>eng/Broiler.Packaging.props</code>.
+  Publishing goes to nuget.org only. A manual dispatch dry-runs unless told otherwise and, with
+  no explicit suffix, picks the next unused <code>0.1.0-preview.N</code> by reading what
+  nuget.org already holds for all seven packages; <code>eng/verify-feed.ps1</code> then proves a
+  clean consumer can restore the set before anything is pushed. Pushing a <code>v*</code> tag
+  publishes for real, and the tag must be on the release line and not already used.
+  <code>eng/Broiler.Packaging.props</code> is now a floor rather than the version, and each
+  repository advances its own preview sequence — consumers currently pin Graphics at
+  <code>0.1.0-preview.7</code>.
 </p>
 
 <div class="pager">

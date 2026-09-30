@@ -74,6 +74,14 @@
     </p>
   </div>
   <div class="feature">
+    <h3>Or sign one declaration at a time</h3>
+    <p>
+      Where a component records a narrower claim than "a person read this file", put the caret
+      on a method or type and sign just that. The editor writes your name and never the
+      fingerprint, so it cannot mint an approval by itself.
+    </p>
+  </div>
+  <div class="feature">
     <h3>Approvals expire when the code changes</h3>
     <p>
       Staleness is decided by content, not by commit — so rebasing does not wipe your reviews,
@@ -83,8 +91,9 @@
   <div class="feature">
     <h3>Notes that follow the code</h3>
     <p>
-      A note stays attached to the lines it was written about as they move, and says so when it
-      can no longer find them rather than pointing at the wrong place.
+      A note — a concern, a to-do or an observation — stays attached to the lines it was written
+      about as they move, and says so when it can no longer find them rather than pointing at
+      the wrong place.
     </p>
   </div>
   <div class="feature">
@@ -100,7 +109,14 @@
   The records live in the repository next to the code, so review history is part of the
   project's history — and a pull request can be told which reviews it just invalidated. The
   same code computes the badge in the editor and the number published by the project's
-  automation, so the two cannot disagree.
+  automation, so the two cannot disagree. A command-line companion,
+  <code>broiler-review assurance</code>, lists, checks and reports the same records without the
+  editor.
+</p>
+
+<p>
+  Broiler Code applies the rule to itself: its own review record reads <strong>pending, with 0 of
+  1,499 relevant units reviewed</strong>.
 </p>
 
 <p>
@@ -134,11 +150,17 @@
 <h2 id="get">Getting it</h2>
 
 <div class="status-band">
-  <h3>No download yet</h3>
+  <h3>No download — and the build is currently broken</h3>
+  <p>
+    Nothing has been released, signed or not. On 17 September the repository switched from
+    carrying its building blocks as copies to downloading them as packages, and its automated
+    build has failed on every change since: the build script still tries to fetch the copies
+    that were removed, so it stops before compiling anything. The last passing build is from
+    8 September.
+  </p>
   <p style="margin-bottom:0">
-    Both desktop versions build on every change, but nothing has been signed and published to
-    install. You can build it from source today.
-    <a href="/get-started.html">How to build →</a>
+    Until that is fixed, building from the current source is for people prepared to repair it.
+    <a href="/developers/code.html">Technical detail →</a>
   </p>
 </div>
 
@@ -161,8 +183,8 @@
 </div>
 
 <div class="pager">
-  <a href="/applications/writer.html"><span class="dir">Previous</span><span class="ttl">Broiler Writer</span></a>
-  <a class="next" href="/about.html"><span class="dir">Next</span><span class="ttl">About Broiler</span></a>
+  <a href="/applications/plate.html"><span class="dir">Previous</span><span class="ttl">Broiler Plate</span></a>
+  <a class="next" href="/applications/mail.html"><span class="dir">Next</span><span class="ttl">Broiler Mail</span></a>
 </div>
 
       </div>

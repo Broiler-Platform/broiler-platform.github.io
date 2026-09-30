@@ -1,4 +1,4 @@
-{"title": "Broiler.UI — Broiler Platform", "desc": "Broiler's platform-neutral retained-mode UI toolkit: 56 packages, one contract and one Standard implementation per control, real break-out OS windows and owner-drawn chrome.", "nav": "developers"}
+{"title": "Broiler.UI — Broiler Platform", "desc": "Broiler's platform-neutral retained-mode UI toolkit: 60 packages, one contract and one Standard implementation per control, real break-out OS windows and owner-drawn chrome.", "nav": "developers"}
 ---
 <section class="page-head">
   <div class="wrap">
@@ -12,7 +12,7 @@
     </p>
     <div class="tag-row" style="margin-top:1.4rem">
       <span class="pill pill-pending">HUMAN_REVIEW pending</span>
-      <span class="pill pill-plain">56 packages</span>
+      <span class="pill pill-plain">60 packages</span>
       <span class="pill pill-plain">net10.0</span>
       <span class="pill pill-plain">Apache-2.0</span>
     </div>
@@ -27,8 +27,9 @@
 <h2 id="shape">The shape of the toolkit</h2>
 
 <p>
-  56 packages, all plain <code>net10.0</code>. Every one ships XML documentation and a
-  <code>.snupkg</code> symbol package and is built deterministically with SourceLink.
+  60 packages, all plain <code>net10.0</code>, published to nuget.org only. Every one ships XML
+  documentation and a <code>.snupkg</code> symbol package and is built deterministically with
+  SourceLink.
 </p>
 
 <div class="table-wrap">
@@ -55,11 +56,11 @@
 <table>
   <thead><tr><th>Family</th><th>Controls</th></tr></thead>
   <tbody>
-    <tr><td>Shell</td><td><code>Window</code>, <code>Dialog</code>, <code>Tooltip</code>, <code>FileDialog</code>, <code>FontDialog</code></td></tr>
+    <tr><td>Shell</td><td><code>Window</code>, <code>Dialog</code>, <code>AboutDialog</code>, <code>Tooltip</code>, <code>FileDialog</code>, <code>FontDialog</code></td></tr>
     <tr><td>Layout</td><td><code>Panel</code>, <code>ScrollView</code>, <code>Splitter</code>, <code>TabView</code></td></tr>
     <tr><td>Content</td><td><code>Label</code>, <code>ImageView</code>, <code>ProgressBar</code></td></tr>
     <tr><td>Commands</td><td><code>Button</code>, <code>ToggleButton</code>, <code>Toolbar</code>, <code>Menu</code></td></tr>
-    <tr><td>Value and selection</td><td><code>CheckBox</code>, <code>RadioButton</code>, <code>Slider</code>, <code>ListView</code>, <code>ComboBox</code>, <code>TreeView</code></td></tr>
+    <tr><td>Value and selection</td><td><code>CheckBox</code>, <code>RadioButton</code>, <code>Slider</code>, <code>SpinBox</code>, <code>ListView</code>, <code>ComboBox</code>, <code>TreeView</code></td></tr>
     <tr><td>Text</td><td><code>Edit</code>, <code>CodeEditor</code>, <code>RichEdit</code>, <code>FormatCodeView</code></td></tr>
   </tbody>
 </table>
@@ -68,7 +69,9 @@
 <p class="small">
   <code>Broiler.UI.RichEdit.Rtf</code> sits outside the pairing: it is an optional integration
   that adds RTF load and save to <code>Broiler.UI.RichEdit</code> through
-  <code>Broiler.Documents.Rtf</code>.
+  <code>Broiler.Documents.Rtf</code>. The newest control, <code>StandardAboutDialog</code>, shows
+  application metadata and a scrollable list of the loaded <code>Broiler.*</code> component
+  versions.
 </p>
 
 <h2 id="boundary">The graphics boundary is enforced</h2>
@@ -151,35 +154,25 @@ await dialog.ShowModal(mainWindow);            // its own OS window where the ho
 
 <p>
   The rich-text and formatting-code packages additionally depend on
-  <a href="/components/documents.html">Broiler.Documents</a>, so that component has to be on
-  the feed you restore from.
+  <a href="/components/documents.html">Broiler.Documents</a>, which — like Graphics and Input —
+  now restores from nuget.org with everything else.
 </p>
 
 <h2 id="build">Building and testing</h2>
 
 <p>
-  Two of this repository's submodules carry submodules of their own that it needs.
-  <strong>Initialise those by name rather than recursing</strong> — <code>--recursive</code>
-  would walk the Media→Graphics cycle and fetch an unused <code>Broiler.DOM</code> as well.
-</p>
-
-<div class="code">
-  <div class="code-head"><span class="code-title">all four lines are load-bearing</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>git submodule update --init
-git -C Broiler.Graphics submodule update --init Broiler.Media
-git -C Broiler.Documents submodule update --init Broiler.Graphics
-git -C Broiler.Documents/Broiler.Graphics submodule update --init Broiler.Media</code></pre>
-</div>
-
-<p class="small">
-  A project reference to a directory that is not there is only a <em>warning</em> during restore;
-  the build then fails on missing types, which is a confusing way to discover an uninitialised
-  submodule.
+  <strong>A plain clone is enough.</strong> Graphics, Input and Documents used to be submodules,
+  two of them with nested submodules of their own; they are now nuget.org packages, with versions pinned
+  independently in <code>eng/Broiler.Dependencies.props</code>. <code>NuGet.config</code> makes
+  nuget.org the only source, so no token or private feed is needed. (A leftover
+  <code>.gitmodules</code> file still names the three old checkouts, but the repository records
+  no submodule.)
 </p>
 
 <div class="code">
   <div class="code-head"><span class="code-title">build &amp; test</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>dotnet build Broiler.UI.slnx -c Release
+  <pre><code>git clone https://github.com/Broiler-Platform/Broiler.UI.git
+dotnet build Broiler.UI.slnx -c Release
 dotnet test  Broiler.UI.slnx -c Release</code></pre>
 </div>
 
@@ -194,7 +187,7 @@ dotnet test  Broiler.UI.slnx -c Release</code></pre>
   <li><strong><code>Broiler.UI.Win32.Demo</code></strong> — the control gallery, and the reference host for owner-drawn chrome. Its main window is frameless, so the title bar and buttons you see are drawn by Broiler.UI. Opening a dialog shows the other half of the design; <em>File ▸ Show logical dialog</em> opens one that opts out and stays inside the main window.</li>
   <li><strong><code>Broiler.UI.Linux.Demo</code></strong> — hosts standard controls through <code>Broiler.Graphics.Linux.OpenGL</code> and can bridge first-round keyboard/mouse input from evdev when an X11 window has focus.</li>
   <li><strong><code>Broiler.UI.RichEdit.Win32.Demo</code></strong> — the rich-text editor on Direct2D.</li>
-  <li><strong><code>Broiler.UI.WebAssembly.Demo</code></strong> — builds under every configuration and vendors the canonical Canvas 2D replay module from <code>Broiler.Graphics.WebAssembly</code>.</li>
+  <li><strong><code>Broiler.UI.WebAssembly.Demo</code></strong> — now a standalone source demo outside the solution. It still needs local <code>Broiler.Graphics</code> and <code>Broiler.Input</code> checkouts, until the browser backend and its Canvas replay module are available as a package.</li>
 </ul>
 
 <h2 id="preview">Preview status</h2>
@@ -209,6 +202,15 @@ dotnet test  Broiler.UI.slnx -c Release</code></pre>
     <li>No dedicated fuzzing campaign, SAST report, dependency scan or independent security audit is recorded.</li>
   </ul>
 </div>
+
+<p>
+  <code>HUMAN_REVIEW.md</code> remains <code>PENDING</code>. A targeted engineering review of
+  2026-09-13 — build topology, CI, session lifecycle, RichEdit layout, representative controls —
+  is recorded in
+  <a href="https://github.com/Broiler-Platform/Broiler.UI/blob/main/docs/component-review.md">docs/component-review.md</a>,
+  which says in its first lines that it is <strong>not</strong> the revision-scoped human
+  approval.
+</p>
 
 <h2 id="adrs">Twenty-six ADRs</h2>
 

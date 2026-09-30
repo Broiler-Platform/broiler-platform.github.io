@@ -1,13 +1,13 @@
-{"title": "The apps — Broiler Browser, Writer and Code", "desc": "Three open-source apps built on one platform: a web browser, a word processor and a C# code editor, for Windows, Linux, Android and the web.", "nav": "apps"}
+{"title": "The apps — Broiler Browser, Writer, Plate, Code and Mail", "desc": "Open-source apps built on one platform: a web browser, a word processor, a document viewer, a C# code editor and a mail app, for Windows, Linux and Android.", "nav": "apps"}
 ---
 <section class="page-head">
   <div class="wrap">
     <span class="eyebrow">The apps</span>
-    <h1>Three apps, one platform underneath</h1>
+    <h1>Five apps, one platform underneath</h1>
     <p class="lede">
-      A browser, a word processor and a code editor. They share a toolkit, a renderer and one
-      way of handling files — so they look alike, behave alike, and run on the same set of
-      machines.
+      A browser, a word processor, a viewer, a code editor and a mail app. They share a
+      toolkit, a renderer and one way of handling files — so they look alike and behave alike,
+      wherever each of them runs.
     </p>
   </div>
 </section>
@@ -32,11 +32,23 @@
         <img class="app-icon" src="/assets/img/app-writer.svg" alt="" width="56" height="56">
         <h3>Broiler Writer</h3>
         <p>
-          Write, format and save documents — Word, RTF, HTML, Markdown — with a reveal-codes
-          view that shows exactly what formatting is where.
+          Write, format and save documents — DOCX, ODT, RTF, HTML, Markdown — with a
+          reveal-codes view that shows exactly what formatting is where.
         </p>
         <div class="platforms">
-          <span class="plat on">Windows</span><span class="plat on">Linux</span><span class="plat on">Android</span><span class="plat on">In a browser</span>
+          <span class="plat on">Windows</span><span class="plat on">Linux</span><span class="plat on">Android</span><span class="pill pill-preview">Preview download</span>
+        </div>
+      </a>
+
+      <a class="app-card" href="/applications/plate.html">
+        <img class="app-icon" src="/assets/img/app-plate.svg" alt="" width="56" height="56">
+        <h3>Broiler Plate</h3>
+        <p>
+          Open a document or a picture and look at it — nothing else. The read-only half of the
+          Writer, with pictures added.
+        </p>
+        <div class="platforms">
+          <span class="plat on">Windows</span><span class="pill pill-preview">Preview download</span>
         </div>
       </a>
 
@@ -51,15 +63,29 @@
           <span class="plat on">Windows</span><span class="plat on">Linux</span>
         </div>
       </a>
+
+      <a class="app-card" href="/applications/mail.html">
+        <img class="app-icon" src="/assets/img/app-mail.svg" alt="" width="56" height="56">
+        <h3>Broiler Mail</h3>
+        <p>
+          One mail account, received and read; writing and sending is the version being built
+          now. Deliberately small.
+        </p>
+        <div class="platforms">
+          <span class="plat on">Windows</span><span class="pill pill-pending">In development</span>
+        </div>
+      </a>
     </div>
 
     <div class="status-band" style="margin-top:2.5rem">
-      <h3>You can't download these yet</h3>
+      <h3>Two of them have a preview you can download</h3>
       <p style="margin-bottom:0">
-        All three build and run, and continuous testing keeps them building — but no signed,
-        installable release has been published, because the review and packaging work that
-        should come first is not finished. If you can run a build, you can run all three
-        today. <a href="/status.html">What that means in practice →</a>
+        The <a href="/applications/writer.html#get">Writer</a> and
+        <a href="/applications/plate.html#get">Plate</a> have early preview builds on GitHub.
+        They are for trying out, not for real work: the desktop files are not code-signed, and
+        none of the code behind them has been through human review yet. The Browser's first
+        preview is built but not published; Code and Mail have no download, and Code's
+        automated build is currently broken. <a href="/status.html#download">What that means in practice →</a>
       </p>
     </div>
 
@@ -70,21 +96,22 @@
         <h3>The same window, everywhere</h3>
         <p>
           Broiler draws its own controls, menus and title bars rather than borrowing the
-          system's. An app looks and behaves the same on Windows, Linux and Android.
+          system's. An app looks and behaves the same on every system it runs on.
         </p>
       </div>
       <div class="feature">
         <h3>Real system windows where it counts</h3>
         <p>
-          On Windows, dialogs like Open and Save are genuine top-level windows: you can drag
-          one to a second monitor, and closing it never closes the app.
+          On Windows, dialogs like Open, Save and About are genuine top-level windows: you can
+          drag one to a second monitor, and closing it never closes the app.
         </p>
       </div>
       <div class="feature">
-        <h3>No account, ever</h3>
+        <h3>No Broiler account, ever</h3>
         <p>
-          None of the three has a sign-in, a profile or telemetry. On Android only the Browser
-          may use the network at all, and unencrypted connections are off.
+          None of the apps has a Broiler sign-in or telemetry. Mail signs in to your own mail
+          server only. On Android only the Browser may use the network at all, and unencrypted
+          connections are off.
         </p>
       </div>
       <div class="feature">
@@ -102,10 +129,11 @@
         </p>
       </div>
       <div class="feature">
-        <h3>Small downloads — eventually</h3>
+        <h3>Small downloads</h3>
         <p>
-          The desktop Writer compiles to a single 9.2&nbsp;MB file that runs with no .NET
-          installed. That is the shape releases will take.
+          The Writer's and Plate's desktop previews are each a single file that runs with no
+          .NET installed — about 5&nbsp;MB zipped. The Browser's draft preview is much bigger,
+          about 47&nbsp;MB zipped, because its JavaScript engine cannot be compiled that way yet.
         </p>
       </div>
     </div>
@@ -126,12 +154,22 @@
           <tr>
             <td><strong>Writer</strong></td>
             <td class="center">Yes</td><td class="center">Yes</td>
-            <td class="center">Emulator-tested</td><td class="center">Yes</td>
+            <td class="center">Emulator-tested</td><td class="center">Paused</td>
+          </tr>
+          <tr>
+            <td><strong>Plate</strong></td>
+            <td class="center">Yes</td><td class="center">—</td>
+            <td class="center">—</td><td class="center">—</td>
           </tr>
           <tr>
             <td><strong>Code</strong></td>
             <td class="center">Yes</td><td class="center">Yes</td>
             <td class="center">Planned</td><td class="center">Experimental</td>
+          </tr>
+          <tr>
+            <td><strong>Mail</strong></td>
+            <td class="center">Yes</td><td class="center">Planned</td>
+            <td class="center">—</td><td class="center">—</td>
           </tr>
         </tbody>
       </table>
@@ -139,8 +177,22 @@
 
     <p class="small">
       "Emulator-tested" means it builds and runs on an emulated Android 16 device.
-      <strong>Nobody has verified either app on a physical phone yet.</strong> macOS is not
-      supported and is not close.
+      <strong>Nobody has verified either app on a physical phone yet</strong> — even though
+      the Writer's preview now includes an Android package you can install. "Paused" means the
+      Writer's web version is not being built while it is moved onto the platform's new
+      packages; no preview includes it. macOS is not supported and is not close.
+    </p>
+
+    <h2 id="planned">Further out</h2>
+
+    <p>
+      <strong>Broiler Fond</strong> — "Finance on Demand" — is a planned home-banking app: one
+      program on your own computer that talks directly to your own bank accounts, with nothing
+      passing through the project. It is at the stage of groundwork only. Its own description
+      is blunt: it has no bank connection, no handling of credentials, no payments and no user
+      interface yet, and it is not a registered banking product.
+      <a href="https://github.com/Broiler-Platform/Broiler.Fond">Its repository</a> tracks the
+      plan.
     </p>
 
     <div class="dev-strip">
@@ -151,7 +203,8 @@
         </h3>
         <p>
           Each app is its own repository with its own generated solutions, CI and platform
-          heads. The developer overview maps them onto the components underneath.
+          heads, taking the components underneath as NuGet packages. The developer overview maps
+          them.
         </p>
       </div>
       <div class="dev-links">

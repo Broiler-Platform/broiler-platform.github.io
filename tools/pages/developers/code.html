@@ -1,4 +1,4 @@
-{"title": "Broiler.Code — technical detail", "desc": "The Broiler Code repository: the asserted layering, the capability matrix, frozen performance budgets, the Human Review workspace, solutions and CI.", "nav": "developers"}
+{"title": "Broiler.Code — technical detail", "desc": "The Broiler Code repository: the Human Review workspace, per-declaration review and the assurance CLI, the asserted layering, the capability matrix, frozen performance budgets, solutions and the failing CI.", "nav": "developers"}
 ---
 <section class="page-head">
   <div class="wrap">
@@ -11,9 +11,11 @@
       into a checkable record.
     </p>
     <div class="tag-row" style="margin-top:1.4rem">
-      <span class="pill pill-preview">MVP-0 + Phases 0–3 delivered</span>
+      <span class="pill pill-preview">MVP-0, MVP-0.1 + Phases 0–3 delivered</span>
+      <span class="pill pill-pending">HUMAN_REVIEW pending — 0 of 1499</span>
+      <span class="pill pill-risk">CI failing on main since 2026-09-17</span>
       <span class="pill pill-plain">2 heads</span>
-      <span class="pill pill-plain">4 submodules</span>
+      <span class="pill pill-plain">No submodules</span>
       <span class="pill pill-plain">Apache-2.0</span>
     </div>
   </div>
@@ -73,6 +75,85 @@
   the editor and CI compute the same state from the same code.
 </p>
 
+<h2 id="per-declaration">MVP-0.1 — reviewing one declaration at a time</h2>
+
+<p>
+  Some components record a narrower claim than "a person read this file": an assurance
+  annotation on every relevant declaration, ending in a <code>// Broiler-Human:</code> line that
+  starts out <code>PENDING</code>. Signing one used to mean typing into a comment at a column the
+  owning component's parser insists on. MVP-0.1, delivered, puts that in the review pane.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>What shipped</th><th>Where</th></tr></thead>
+  <tbody>
+    <tr><td>The annotation grammar, the review state machine, and the rewrite that records a decision</td><td><code>Broiler.Code.Review/Assurance</code></td></tr>
+    <tr><td>Code units, the eight-case exemption predicate, and fingerprints that reproduce the owning component's published values</td><td><code>Broiler.Code.Language.CSharp.Roslyn</code></td></tr>
+    <tr><td>The caret choosing a declaration, the pane sections, and the two commands</td><td><code>Broiler.Code.Core/Review</code>, <code>CodeShell</code></td></tr>
+    <tr><td>A note-kind picker — <code>Concern</code>, <code>Todo</code>, <code>Observation</code> — and symbol anchors, closing two of MVP-0's stated gaps</td><td><code>CodeShell</code>, both heads</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="callout callout-info">
+  <p class="callout-title">The editor writes a name, never a fingerprint</p>
+  <p>
+    A reviewer's decision is recorded as their alias; the generator binds it to the
+    declaration's fingerprint on its next run. So the editor <strong>structurally cannot mint a
+    verified approval</strong>. It also rewrites a file's generated header only after reproducing
+    the existing one byte for byte, so a build that counts differently leaves it alone rather
+    than writing a plausible wrong number.
+  </p>
+</div>
+
+<h3 id="assurance-cli">The assurance commands</h3>
+
+<p>
+  The command-line half brings the same annotation to the other component repositories. A
+  component opts in by committing <code>assurance.config.json</code>, then
+  <code>list</code>s the units that need a block, <code>insert</code>s machine assessments for
+  them, and <code>generate</code>s the headers, <code>CODE-ASSURANCE.md</code>,
+  <code>HUMAN_REVIEW.md</code> and <code>assurance.manifest.json</code>. From then on
+  <code>check</code> in CI holds the tree to what <code>generate</code> would write, and a
+  reviewer's only edit is the <code>// Broiler-Human:</code> line.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">broiler-review assurance</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>broiler-review assurance list     --root &lt;dir&gt; [--files &lt;list&gt;] [--strict] [--json &lt;out&gt;|-]
+broiler-review assurance insert   --root &lt;dir&gt; --assessments &lt;file.json&gt; [--dry-run]
+broiler-review assurance generate --root &lt;dir&gt; [--dry-run] [--adopt]
+broiler-review assurance check    --root &lt;dir&gt; [--config &lt;file&gt;] [--release]
+broiler-review assurance status   --root &lt;dir&gt; [--config &lt;file&gt;]</code></pre>
+</div>
+
+<p class="small">
+  <code>broiler-review</code> stands for the built tool — no project installs a command of that
+  name. It runs as
+  <code>dotnet run --project src/Broiler.Code.Review.Cli -c Release -- assurance …</code>. The full
+  reference is
+  <a href="https://github.com/Broiler-Platform/Broiler.Code/blob/main/docs/architecture/broiler-code-assurance-cli.md"><code>docs/architecture/broiler-code-assurance-cli.md</code></a>.
+</p>
+
+<h3 id="own-record">This repository's own record</h3>
+
+<p>
+  Broiler Code applies the scheme to itself, and its generated <code>HUMAN_REVIEW.md</code> says
+  exactly where that stands:
+</p>
+
+<div class="stats" style="margin:1.5rem 0">
+  <div class="stat"><span class="stat-num accent">0 of 1499</span><span class="stat-label">Relevant units human-reviewed — Status: PENDING</span></div>
+  <div class="stat"><span class="stat-num accent">2165</span><span class="stat-label">Code units in total</span></div>
+  <div class="stat"><span class="stat-num accent">666</span><span class="stat-label">Exempt</span></div>
+</div>
+
+<p class="small">
+  <code>assurance check --release</code> fails while any relevant unit is without a decision bound
+  to its current fingerprint — which today is all of them.
+</p>
+
 <h2 id="architecture">The layering is asserted, not just documented</h2>
 
 <div class="table-wrap">
@@ -82,9 +163,10 @@
     <tr><td><code>Broiler.Code.Workspaces</code></td><td>nothing</td><td>Broiler.UI, Roslyn, any platform</td></tr>
     <tr><td><code>Broiler.Code.Review</code></td><td><code>Broiler.Code.Workspaces</code></td><td>Broiler.UI, Roslyn, git</td></tr>
     <tr><td><code>Broiler.Code.Language.CSharp.Syntax</code></td><td><code>Broiler.UI.CodeEditor</code></td><td>Roslyn</td></tr>
-    <tr><td><code>Broiler.Code.Language.CSharp.Roslyn</code></td><td><code>Broiler.UI.CodeEditor</code>, workspaces, Roslyn</td><td>—</td></tr>
+    <tr><td><code>Broiler.Code.Language.CSharp.Assurance</code></td><td>the review model, Roslyn</td><td>—</td></tr>
+    <tr><td><code>Broiler.Code.Language.CSharp.Roslyn</code></td><td><code>Broiler.UI.CodeEditor</code>, workspaces, the review model (through the assurance assembly), Roslyn</td><td>—</td></tr>
     <tr><td><code>Broiler.Code.Core</code></td><td>workspaces, review, Broiler.UI <strong>abstractions</strong>, Broiler.Input, Broiler.Graphics</td><td>Roslyn, any Broiler.UI implementation</td></tr>
-    <tr><td><code>Broiler.Code.Windows</code> / <code>.Linux</code></td><td><code>Broiler.Code.Core</code> plus the standard controls and one graphics/input backend</td><td>shell or workspace logic of its own</td></tr>
+    <tr><td><code>Broiler.Code.Windows</code> / <code>.Linux</code></td><td><code>Broiler.Code.Core</code>, the C# semantic assembly, the standard controls and one graphics/input backend</td><td>shell or workspace logic of its own</td></tr>
   </tbody>
 </table>
 </div>
@@ -94,7 +176,10 @@
   host compose the portable classifier alone — the decision the Phase 0 payload probes measured.
   <code>Broiler.Code.Review</code> has no UI reference for a related reason: <strong>the coverage
   number CI publishes and the badge the editor draws are computed by the same code, so they
-  cannot disagree.</strong>
+  cannot disagree.</strong> MVP-0.1 is the first thing to compose a language service into a
+  head: Roslyn now reaches <code>Broiler.Code.Windows</code> and <code>.Linux</code> and still
+  stays out of <code>Broiler.Code.Core</code>'s closure, which
+  <code>CodeEditorArchitectureTests</code> continues to assert.
 </p>
 
 <h2 id="capability">Two capabilities, presented separately</h2>
@@ -180,12 +265,30 @@
 
 <div class="code">
   <div class="code-head"><span class="code-title">clone, build, run</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>git clone --recurse-submodules https://github.com/Broiler-Platform/Broiler.Code.git
+  <pre><code>git clone https://github.com/Broiler-Platform/Broiler.Code.git
 cd Broiler.Code
 
 dotnet build Broiler.Windows.Code.slnx -c Release
-dotnet run --project src/Broiler.Code.Windows/Broiler.Code.Windows.csproj -c Release
-dotnet test  Broiler.Code.Tests.slnx -c Release</code></pre>
+dotnet run --project src/Broiler.Code.Windows/Broiler.Code.Windows.csproj -c Release</code></pre>
+</div>
+
+<div class="callout callout-warn">
+  <p class="callout-title">The move from submodules to packages is half done</p>
+  <p>
+    <code>78324b9</code> (2026-09-17, "Submodules -&gt; nuget") removed all four submodules, so
+    <code>--recurse-submodules</code> has nothing to fetch. The Windows head now takes its
+    components as NuGet packages. But <strong>the Linux head, the portable C#
+    classifier (<code>Broiler.Code.Language.CSharp.Syntax</code>) and
+    <code>Broiler.Code.Core.Tests</code> still reference
+    <code>..\..\Broiler.UI\…</code>-style paths</strong> into the checkouts that commit removed,
+    so the Linux solution and the test solution do not resolve. The README still describes the
+    submodule layout.
+  </p>
+  <p>
+    Note also that this repository's <code>NuGet.config</code>, unlike the other applications',
+    routes <code>Broiler.*</code> packages to the Broiler-Platform GitHub Packages feed rather than
+    nuget.org.
+  </p>
 </div>
 
 <h2 id="solutions">Solutions</h2>
@@ -194,14 +297,22 @@ dotnet test  Broiler.Code.Tests.slnx -c Release</code></pre>
 <table>
   <thead><tr><th>Solution</th><th>Entry point</th><th class="num">Projects</th></tr></thead>
   <tbody>
-    <tr><td><code>Broiler.Windows.Code.slnx</code></td><td><code>src/Broiler.Code.Windows</code></td><td class="num">38</td></tr>
-    <tr><td><code>Broiler.Linux.Code.slnx</code></td><td><code>src/Broiler.Code.Linux</code></td><td class="num">40</td></tr>
-    <tr><td><code>Broiler.Code.Tests.slnx</code></td><td>the four test projects</td><td class="num">41</td></tr>
+    <tr><td><code>Broiler.Windows.Code.slnx</code></td><td><code>src/Broiler.Code.Windows</code></td><td class="num">6</td></tr>
+    <tr><td><code>Broiler.Linux.Code.slnx</code></td><td><code>src/Broiler.Code.Linux</code></td><td class="num">44</td></tr>
+    <tr><td><code>Broiler.Code.Tests.slnx</code></td><td>the test projects</td><td class="num">45</td></tr>
     <tr><td><code>Broiler.Code.Phase0.slnx</code></td><td>the three Phase 0 harnesses</td><td class="num">3</td></tr>
     <tr><td><code>Broiler.WebAssembly.Code.slnx</code></td><td>the two payload probes</td><td class="num">2</td></tr>
   </tbody>
 </table>
 </div>
+
+<p class="small">
+  Counted in the checked-in <code>.slnx</code> files; the README's own table is out of date. The
+  Windows solution holds only this repository's projects, because its components are packages.
+  The Linux and test solutions are larger because they still list component projects at the
+  removed submodule paths — 38 of the Linux solution's 44 entries and 33 of the test solution's
+  45 point at files that no longer exist.
+</p>
 
 <p class="small">
   The <code>SampleReports</code> fixture is deliberately in <em>no</em> solution: it fails to
@@ -212,10 +323,13 @@ dotnet test  Broiler.Code.Tests.slnx -c Release</code></pre>
 <h2 id="warnings">No suppression list, deliberately</h2>
 
 <p>
-  <code>Directory.Build.props</code> carries no <code>NoWarn</code> list. A clean rebuild of all
-  five solutions emits one <code>CS8602</code> in <code>Broiler.Graphics.Linux.OpenGL</code> and
-  three <code>xUnit1031</code> in <code>Broiler.Code.Core.Tests</code>, and nothing else — every
-  <code>Broiler.Code.*</code> project sets <code>TreatWarningsAsErrors</code> and compiles clean.
+  <code>Directory.Build.props</code> carries no <code>NoWarn</code> list. The README records that a
+  clean rebuild of all five solutions emits one <code>CS8602</code> in
+  <code>Broiler.Graphics.Linux.OpenGL</code> and three <code>xUnit1031</code> in
+  <code>Broiler.Code.Core.Tests</code>, and nothing else — every <code>Broiler.Code.*</code>
+  project sets <code>TreatWarningsAsErrors</code> and compiles clean. That measurement was taken
+  while Broiler.Graphics still compiled here from a submodule; with the Linux and test solutions
+  unable to resolve their component paths, it cannot be repeated as written today.
 </p>
 
 <p>
@@ -231,6 +345,20 @@ dotnet test  Broiler.Code.Tests.slnx -c Release</code></pre>
 </p>
 
 <h2 id="ci">Continuous integration</h2>
+
+<div class="callout callout-danger">
+  <p class="callout-title">CI has failed on <code>main</code> since 2026-09-17</p>
+  <p>
+    No run since <code>78324b9</code> has passed. In the latest (2026-09-30) every job except
+    Human review coverage fails in its <strong>Set up</strong> step, before anything is built:
+    the <code>setup-broiler</code> action still initialises the nested submodules that commit
+    removed, and <code>git</code> cannot enter a directory that is no longer there. The last
+    green run on <code>main</code> was on 2026-09-08. The repository has no tags and no
+    releases.
+  </p>
+</div>
+
+<p>What <code>ci.yml</code> is meant to run:</p>
 
 <ul class="checklist neutral">
   <li><strong>Solution manifest</strong>, <strong>build</strong> and <strong>tests</strong> on both hosts, as in the other applications.</li>

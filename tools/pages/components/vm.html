@@ -1,4 +1,4 @@
-{"title": "Broiler.VM — Broiler Platform", "desc": "A NativeAOT-compatible host for verified bytecode profiles. It owns no opcode set and no language semantics. Implemented, evidenced — and every milestone unaccepted until a human reads it.", "nav": "developers"}
+{"title": "Broiler.VM — Broiler Platform", "desc": "A NativeAOT-compatible host for verified bytecode profiles. Its core owns no opcode set and no language semantics. Implemented, evidenced, published — and every milestone unaccepted until a human reads it.", "nav": "developers"}
 ---
 <section class="page-head">
   <div class="wrap">
@@ -7,12 +7,12 @@
     <h1>Broiler.VM</h1>
     <p class="lede">
       A NativeAOT-compatible component that executes verified bytecode artifacts. It is a
-      <strong>host for language profiles, not a language</strong>: it owns no opcode set, no
-      value representation and no language semantics of its own.
+      <strong>host for language profiles, not a language</strong>: it owns no value
+      representation and no language semantics of its own, and its core owns no opcode set.
     </p>
     <div class="tag-row" style="margin-top:1.4rem">
       <span class="pill pill-pending">All milestones unaccepted</span>
-      <span class="pill pill-plain">0 packages published</span>
+      <span class="pill pill-risk">8 packages published while PENDING</span>
       <span class="pill pill-risk">0 % human reviewed</span>
       <span class="pill pill-plain">Native AOT contract</span>
     </div>
@@ -27,11 +27,20 @@
 <div class="callout callout-warn">
   <p class="callout-title">Read this before anything else on the page</p>
   <p>
-    Code exists — a fourteen-project graph implementing core contract version 1 — but
-    <strong>no milestone is accepted, and none can be until a human reads the work.</strong> No
-    relevant code unit carries a decision on its <code>// Broiler-Human:</code> line, so the
-    generated <code>HUMAN_REVIEW.md</code> states <code>PENDING</code>. No release capability is
-    claimed, no package is published, and no RID or support table may be issued.
+    Code exists — a thirty-one-project, 113-edge graph, fourteen projects of which implement core
+    contract version 1 — but <strong>no milestone is accepted, and none can be until a human
+    reads the work.</strong> No relevant code unit carries a decision on its
+    <code>// Broiler-Human:</code> line, so the generated <code>HUMAN_REVIEW.md</code> states
+    <code>PENDING</code>: 0 of 5,773 relevant units reviewed. No release capability and no
+    runtime identifier is claimed.
+  </p>
+  <p>
+    <strong>Packages were published anyway.</strong> On 2026-09-23 the repository's Publish
+    workflow pushed eight packages to nuget.org — the core's three and five profile-family
+    packages, at <code>0.1.0-preview.4</code> and <code>.5</code> — while
+    <code>HUMAN_REVIEW.md</code> read <code>PENDING</code>, as it still does. The status ledger
+    records this in a dated correction and moves no milestone for it: whether the prohibition is
+    revised or the publication answered is the owner's decision.
   </p>
   <p style="margin-bottom:0">
     The component states the consequence plainly: what has accumulated unreviewed
@@ -98,31 +107,49 @@
 
 <p>
   Redundancy between profiles is avoided by sharing <em>mechanism</em> — how bytes are read
-  safely, how a budget is charged — and never <em>semantics</em>. Values, frames, opcodes and
-  syntax trees are not shared, and a new shared component is opened only through an explicit
+  safely, how a budget is charged — and never <em>semantics</em>. Values, frames and syntax
+  trees are not shared, and a new shared component is opened only through an explicit
   extraction gate. This is what stops a multi-profile VM from collapsing into a
   lowest-common-denominator core that suits no language well.
 </p>
 
+<div class="callout callout-info">
+  <p class="callout-title">Corrected 2026-09-25: opcodes are now shared as an encoding</p>
+  <p>
+    The extraction gate has fired once. <strong>ADR 0013</strong> admits a <em>universal
+    bytecode</em> — one instruction encoding, a common family whose rows mean the same in every
+    language, a family-table schema, a primitive table of machine operations and one verifier
+    walk — in <code>Broiler.VM.Ubc</code>, beside one dispatch loop that executes it. That
+    assembly is <strong>not part of the core contract</strong> and no core assembly references
+    it. A profile's own instructions keep the meanings the profile gives them; values and frame
+    layouts are still not shared. The component's README records the correction in the open
+    rather than silently rewriting its old sentence that "it owns no opcode set".
+  </p>
+</div>
+
 <h2 id="exists">What exists today</h2>
 
 <p>
-  The status ledger is the authority for what has been built. As recorded on 2026-08-29:
+  The <a href="https://github.com/Broiler-Platform/Broiler.VM/blob/main/docs/roadmap.status.md">status ledger</a>
+  is the authority for what has been built. It was last updated on 2026-09-28, with dated
+  corrections that move no row:
 </p>
 
 <div class="table-wrap">
 <table>
   <thead><tr><th>Area</th><th>What is in the repository</th></tr></thead>
   <tbody>
-    <tr><td><strong>Boundary records</strong></td><td>Twelve ADRs — component topology and dependency graph, profile identity and static catalog, core contract v1 and amendments, lifecycle and state machine, operation-result envelope, verified-artifact ownership, resource authority and budgets, guest-initiated loads, external suspension and async instantiation, embedding decisions, the source-level profile contract, security ownership and support matrix</td></tr>
-    <tr><td><strong>Core assemblies</strong></td><td><code>Broiler.VM.Abstractions</code> (profile-neutral contracts), <code>Broiler.VM.Binary</code> (bounded binary primitives), <code>Broiler.VM.Runtime</code> (catalog, runtime, lifecycle, resource authority)</td></tr>
+    <tr><td><strong>Boundary records</strong></td><td>Thirteen ADRs — component topology and dependency graph, profile identity and static catalog, core contract v1 and amendments, lifecycle and state machine, operation-result envelope, verified-artifact ownership, resource authority and budgets, guest-initiated loads, external suspension and async instantiation, embedding decisions, the source-level profile contract, security ownership and support matrix, and the universal-bytecode extraction record. Every one is still <code>Proposed</code></td></tr>
+    <tr><td><strong>Graph</strong></td><td>Thirty-one projects and 113 edges, the count ADR 0001's revision of 2026-09-25 states; the fourteen projects that implement core contract version 1 are unchanged</td></tr>
+    <tr><td><strong>Core assemblies</strong></td><td><code>Broiler.VM.Abstractions</code> (profile-neutral contracts), <code>Broiler.VM.Binary</code> (bounded binary primitives), <code>Broiler.VM.Runtime</code> (catalog, runtime, lifecycle, resource authority). Outside the core contract: <code>Broiler.VM.Ubc</code> and <code>Broiler.VM.Emitter.Bytecode</code></td></tr>
     <tr><td><strong>Resource authority</strong></td><td>Aggregate budgets and the full precedence algorithm; guest-initiated-load mediation with its four bounds; external suspension</td></tr>
-    <tr><td><strong>Profiles</strong></td><td>Two fixture profiles, plus two application-local consumer profiles written against the public contract alone</td></tr>
-    <tr><td><strong>Compositions</strong></td><td>Two named composition roots — Calculator and Workbench — that publish and run under trimming and Native AOT</td></tr>
+    <tr><td><strong>Profiles</strong></td><td>Two test-only fixture profiles and two application-local consumer profiles written against the public contract alone — and now three product profile families: <strong>JavaScript</strong>, <strong>WebAssembly</strong> and <strong>MachineCode</strong>. See <a href="#profiles-first">below</a></td></tr>
+    <tr><td><strong>Compositions</strong></td><td>Eleven roots in the composition register — the core's Calculator and Workbench, plus JavaScript, WebAssembly, polyglot and universal-bytecode roots. <strong>All are demonstrations; none is advertised</strong></td></tr>
+    <tr><td><strong>Native output</strong></td><td>An x86-64 backend whose machine code this host arms and executes, and an arm64 backend that is <strong>emitting-only</strong> and has run nowhere (VM-7)</td></tr>
     <tr><td><strong>Adversarial inputs</strong></td><td>A fuzz-target host and a retained malformed-input corpus of 87 artifacts</td></tr>
     <tr><td><strong>Measurement</strong></td><td>A soak host whose long lifecycle run is sampled for a memory plateau, and an uninstrumented benchmark host publishing what the core costs a profile on the JIT and Native AOT lanes</td></tr>
     <tr><td><strong>Frozen surface</strong></td><td>A public API baseline, a composition register, a baseline register, a public support table, and a pristine feed consumer that reaches the component only through packages</td></tr>
-    <tr><td><strong>Tests</strong></td><td><strong>318 passing</strong> — 121 architecture, 197 behavioural</td></tr>
+    <tr><td><strong>Tests</strong></td><td>Evidence bundle VM-6-001 retains <strong>318 passing</strong> — 121 architecture, 197 behavioural — from 2026-08-30. The suite has grown since, and the ledger deliberately cites the bundle rather than restating a current total no retained record holds</td></tr>
   </tbody>
 </table>
 </div>
@@ -134,16 +161,21 @@
     that implementing, landing and evidencing a milestone may proceed without a review decision,
     and that <strong>publishing a package, claiming a RID, issuing a support table or moving any
     milestone to <code>Accepted</code> may not.</strong> At VM-6 that stops being a formality:
-    the milestone's own gate asks that reviews be complete, so the last milestone in the roadmap
-    cannot be met by anyone who wrote it.
+    the milestone's own gate asks that reviews be complete, so the milestone that gates the
+    release cannot be met by anyone who wrote it.
+  </p>
+  <p style="margin-bottom:0">
+    The publishing half of that ruling did not hold: eight packages reached nuget.org on
+    2026-09-23 with every unit still <code>HUMAN_PENDING</code>. The ledger states that as a
+    fact rather than an acceptance, and no milestone moved because of it.
   </p>
 </div>
 
 <h2 id="milestones">Milestones</h2>
 
 <p>
-  Seven milestones, none accepted. Completion is never inferred transitively — VM-0 acceptance
-  would not accept VM-1.
+  Eight milestones, <strong>every one "In progress and unaccepted"</strong> in the ledger of
+  2026-09-28. Completion is never inferred transitively — VM-0 acceptance would not accept VM-1.
 </p>
 
 <div class="table-wrap">
@@ -157,23 +189,27 @@
     <tr><td><strong>VM-4</strong></td><td>Lifecycle, concurrency, diagnostics and host integration — reentrancy, cancellation, isolation, host failure, disposal and memory-plateau evidence</td></tr>
     <tr><td><strong>VM-5</strong></td><td>The core's own overhead — verification throughput, catalog and runtime lifecycle cost, budget metering, startup, image size and resident-set plateau, on both JIT and Native AOT</td></tr>
     <tr><td><strong>VM-6</strong></td><td>Package, publish and continuously recertify — freeze the public API, the profile contract and the core contract version; wire graph, catalog, AOT and drift checks into required CI</td></tr>
+    <tr><td><strong>VM-7</strong></td><td>Admit a native artifact form and in-process native execution — the first milestone that <em>widens</em> what a product image may do rather than narrowing it. It owns code: an x86-64 backend whose output this host arms and executes, and an arm64 backend that only emits, its execution excluded because the required instruction-cache maintenance has no managed expression. Its enforcement rules landed with negative controls; no exit-gate clause is demonstrated</td></tr>
   </tbody>
 </table>
 </div>
 
-<h2 id="assurance">The only component with per-unit assurance metadata</h2>
+<h2 id="assurance">The reference implementation of per-unit assurance</h2>
 
 <p>
   Broiler.VM is the reference implementation of the platform's code-assurance system, and its
   report is generated rather than written — regenerated by the test run itself, which also
-  rewrites <code>HUMAN_REVIEW.md</code>, the manifest and every generated source header.
+  rewrites <code>HUMAN_REVIEW.md</code>, the manifest and every generated source header. It is no
+  longer the only component with per-unit records: Broiler.Net, Broiler.RegEx and
+  Broiler.DateTime now carry generated ones too, every one <code>PENDING</code> with nothing
+  reviewed.
 </p>
 
 <div class="stats" style="margin:1.6rem 0">
-  <div class="stat"><span class="stat-num">720</span><span class="stat-label">Relevant code units, 100% annotated (925 more exempt by predicate)</span></div>
+  <div class="stat"><span class="stat-num">5,773</span><span class="stat-label">Relevant code units, 100% annotated (4,453 more exempt by predicate; 10,226 in all, across 235 files)</span></div>
   <div class="stat"><span class="stat-num accent">0</span><span class="stat-label">Human reviewed — every relevant unit is <code>HUMAN_PENDING</code></span></div>
-  <div class="stat"><span class="stat-num">47</span><span class="stat-label">Units at <em>High</em> security risk, all pending: the bounded reader, the allocator, the verifier contracts, the limit precedence</span></div>
-  <div class="stat"><span class="stat-num">8 / 10</span><span class="stat-label">Maximum resource impact; 0.8 average over annotated units</span></div>
+  <div class="stat"><span class="stat-num">1,576</span><span class="stat-label">Units at <em>High</em> security risk and <strong>253 at <em>Critical</em></strong>, all pending — the verifier contracts and profile identity among them</span></div>
+  <div class="stat"><span class="stat-num">8 / 10</span><span class="stat-label">Maximum resource impact; 1.7 average over annotated units</span></div>
 </div>
 
 <p>
@@ -184,13 +220,25 @@
   <a href="/assurance.html">More on the assurance model →</a>
 </p>
 
-<h2 id="profiles-first">The two intended first profiles</h2>
+<h2 id="profiles-first">The language profiles</h2>
 
 <p>
   <strong>JavaScript</strong> and <strong>WebAssembly</strong>, as
-  <code>Broiler.VM.Profile.JavaScript</code> and <code>Broiler.VM.Profile.WebAssembly</code>.
-  Neither is planned by the core roadmap, and <strong>no core milestone depends on either
-  existing</strong> — which is the point of the split.
+  <code>Broiler.VM.Profile.JavaScript</code> and <code>Broiler.VM.Profile.WebAssembly</code>,
+  are the two intended first profiles. Neither is planned by the core roadmap, and <strong>no
+  core milestone depends on either existing</strong> — which is the point of the split.
+</p>
+
+<p>
+  Both now exist in this repository as product project families, each with its own roadmap,
+  ledger and decision series: JavaScript with its own bytecode format, verifier, interpreter,
+  compiler front end and command line; WebAssembly with a decoder, validator, store and
+  interpreter. A third family, <code>Broiler.VM.Profile.MachineCode</code>, took native
+  memory-page mapping, verification and execution out of the JavaScript profile on 2026-09-18.
+  <strong>Existing is the weakest claim any of them makes</strong>: none is accepted, no person
+  has read a line of any, none claims a runtime identifier, and no composition is advertised.
+  The profile families have packed since 2026-09-19, and five of their packages were among the
+  eight published on 2026-09-23.
 </p>
 
 <div class="callout callout-info">

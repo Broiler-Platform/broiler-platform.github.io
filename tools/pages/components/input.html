@@ -11,8 +11,8 @@
       event construction, browser permissions, encoding and playback all stay outside.
     </p>
     <div class="tag-row" style="margin-top:1.4rem">
-      <span class="pill pill-preview">0.1.0-preview.1</span>
-      <span class="pill pill-plain">25+ packages</span>
+      <span class="pill pill-preview">Consumers pin preview.5</span>
+      <span class="pill pill-plain">23 packages</span>
       <span class="pill pill-plain">Apache-2.0</span>
       <span class="pill pill-info">Privacy-gated capture</span>
     </div>
@@ -27,9 +27,12 @@
 <h2 id="packages">Packages</h2>
 
 <p>
-  One package per assembly, versioned in lockstep. <code>Broiler.Input.All</code> is a
-  dependencies-only meta-package over the neutral contracts; <strong>platform backends are
-  deliberately separate</strong>, so a consumer takes only the ones it runs on.
+  23 shipping packages, one per assembly, all at one version and published to nuget.org only.
+  That version is this repository's own preview sequence rather than a suite-wide one: the
+  floor is <code>preview.2</code> and consumers currently pin <code>0.1.0-preview.5</code>.
+  <code>Broiler.Input.All</code> is a dependencies-only meta-package over the neutral contracts;
+  <strong>platform backends are deliberately separate</strong>, so a consumer takes only the ones
+  it runs on.
 </p>
 
 <div class="table-wrap">
@@ -40,7 +43,7 @@
     <tr><td><code>Broiler.Input.All</code></td><td>Meta-package over the neutral contracts</td></tr>
     <tr><td><code>Broiler.Input.Camera</code> · <code>.Keyboard</code> · <code>.Microphone</code> · <code>.Mouse</code> · <code>.Pen</code> · <code>.Text</code> · <code>.Touch</code></td><td>Per-kind neutral abstractions</td></tr>
     <tr><td><code>Broiler.Input.Legacy</code></td><td>Window-callback compatibility adapter for migration</td></tr>
-    <tr><td><code>Broiler.Input.Windows</code> + <code>Broiler.Input.&lt;Kind&gt;.Windows</code></td><td>Windows providers (<code>net10.0-windows</code>)</td></tr>
+    <tr><td><code>Broiler.Input.Windows</code> + <code>Broiler.Input.&lt;Kind&gt;.Windows</code></td><td>Windows providers. The keyboard and mouse projects target <code>net10.0-windows</code>; the shared Windows support, camera and microphone projects now target plain <code>net10.0</code>, although the README still describes all of them as <code>net10.0-windows</code></td></tr>
     <tr><td><code>Broiler.Input.Linux</code> + <code>Broiler.Input.&lt;Kind&gt;.Linux</code></td><td>Linux evdev providers</td></tr>
     <tr><td><code>Broiler.Input.Android</code> + <code>Broiler.Input.&lt;Kind&gt;.Android</code></td><td>Android translation layer — no Android SDK dependency</td></tr>
   </tbody>
@@ -92,6 +95,13 @@ Broiler.Input.&lt;Kind&gt;.Android -> Broiler.Input.Android -> Broiler.Input</co
 
 <h2 id="native">Native boundaries and privacy</h2>
 
+<p>
+  The Windows and Linux native declarations themselves now live in
+  <a href="https://github.com/Broiler-Platform/Broiler.Native">Broiler.Native</a>, as the
+  <code>Broiler.Native.Windows</code> and <code>Broiler.Native.Linux</code> packages. The
+  providers keep their device and session behaviour and their error mapping.
+</p>
+
 <div class="table-wrap">
 <table>
   <thead><tr><th>Platform</th><th>Mechanism</th></tr></thead>
@@ -131,35 +141,37 @@ Broiler.Input.&lt;Kind&gt;.Android -> Broiler.Input.Android -> Broiler.Input</co
 </ul>
 
 <p>
-  Frames carry plane layout, rotation, colour space, timestamp and frame number. Neither
-  <code>Broiler.Input.Camera</code> nor its Windows provider depends on Graphics, UI, encoders,
-  playback or a third-party camera wrapper.
+  Frames carry plane layout, rotation, colour space, timestamp and frame number. The camera
+  document states that neither <code>Broiler.Input.Camera</code> nor its Windows provider
+  depends on Graphics, UI, encoders, playback or a third-party camera wrapper.
+</p>
+
+<p class="small">
+  One packaging fact sits awkwardly beside that sentence: the Windows camera provider's project
+  now carries package references to <code>Broiler.Media.Video.MediaFoundation</code> and
+  <code>Broiler.Media.Video.Windows</code>, though its source imports nothing from them, and the
+  README says those Media packages must be published before an Input release.
 </p>
 
 <h2 id="build">Build and validation</h2>
 
-<div class="table-wrap">
-<table>
-  <thead><tr><th>Configuration</th><th>Builds</th></tr></thead>
-  <tbody>
-    <tr><td><code>Debug</code> / <code>Release</code></td><td>Neutral contracts, the Android backends and their tests</td></tr>
-    <tr><td><code>Debug-Windows</code> / <code>Release-Windows</code></td><td>The above plus the Windows providers and the contract tests</td></tr>
-    <tr><td><code>Debug-Linux</code> / <code>Release-Linux</code></td><td>The above plus the Linux providers, the evdev diagnostic tool and the Linux tests</td></tr>
-  </tbody>
-</table>
-</div>
+<p>
+  Only <code>Debug</code> and <code>Release</code> remain; the platform-suffixed configurations
+  are gone. The solution build covers the neutral contracts, the Android backends and their
+  tests, and deliberately excludes every Windows and Linux provider.
+</p>
 
 <div class="code">
   <div class="code-head"><span class="code-title">build &amp; run the suites</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>dotnet build Broiler.Input.slnx -c Release-Windows --nologo
-bash ./eng/run-tests.sh Release-Windows</code></pre>
+  <pre><code>dotnet build Broiler.Input.slnx -c Release
+bash ./eng/run-tests.sh Release</code></pre>
 </div>
 
 <p>
-  A plain <code>dotnet build</code> uses <code>Debug</code>, which deliberately skips every
-  Windows and Linux provider. The Android translation, provider lifecycle and boundary tests run
-  on any host — the runner is platform-neutral, so it uses the base <code>Release</code>
-  configuration even when the solution was built as <code>Release-Windows</code>.
+  The Android translation and boundary tests run on any host. The script then builds and runs
+  the suite for the host it is on — the Windows contract tests under Git Bash on Windows, the
+  Linux tests on Linux — following their project references to the providers the solution build
+  skipped. Tests are self-hosted console runners, so <code>dotnet test</code> finds nothing.
 </p>
 
 <p>

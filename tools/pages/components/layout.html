@@ -1,4 +1,4 @@
-{"title": "Broiler.Layout — Broiler Platform", "desc": "A graphics-independent CSS box-model and layout engine for .NET 10, over the canonical Broiler DOM and computed styles. Public host seam, internal box tree, ten locked friend assemblies.", "nav": "developers"}
+{"title": "Broiler.Layout — Broiler Platform", "desc": "A graphics-independent CSS box-model and layout engine for .NET 10, over the canonical Broiler DOM and computed styles. Public host seam, internal box tree, eleven locked friend assemblies.", "nav": "developers"}
 ---
 <section class="page-head">
   <div class="wrap">
@@ -14,7 +14,7 @@
       <span class="pill pill-pending">Re-review required</span>
       <span class="pill pill-plain">net10.0</span>
       <span class="pill pill-plain">Apache-2.0</span>
-      <span class="pill pill-plain">In-tree, not a submodule</span>
+      <span class="pill pill-plain">Own repository since 2026-09-09</span>
     </div>
   </div>
 </section>
@@ -40,12 +40,20 @@
   the BCL. Nothing else.
 </p>
 
-<h2 id="friends">Ten friend assemblies, locked by a test</h2>
+<p>
+  <code>ILayoutView</code> is public too, but it is a contract a consumer implements and
+  injects, not one this component fills — and nothing in any Broiler component implements it
+  today. A consumer that injects no view reads no engine geometry.
+</p>
+
+<h2 id="friends">Eleven friend assemblies, locked by a test</h2>
 
 <p>
-  Ten assemblies have deliberate access to internal layout state. The exact set is pinned by
-  <code>LayoutArchitectureTests</code>, so a new grant requires an explicit boundary decision
-  and a documentation update rather than an <code>InternalsVisibleTo</code> line nobody notices.
+  Eleven assemblies have deliberate access to internal layout state. The authoritative list is
+  the <code>InternalsVisibleTo</code> set in <code>Broiler.Layout.csproj</code>, and
+  <code>LayoutArchitectureTests</code> pins it exactly, so a new grant requires an explicit
+  boundary decision rather than an <code>InternalsVisibleTo</code> line nobody notices. (The
+  README's own table still shows nine and defers to the project file.)
 </p>
 
 <div class="table-wrap">
@@ -55,8 +63,9 @@
     <tr><td><code>Broiler.HTML.Dom</code></td><td>Parses, serializes and visits renderer box trees</td></tr>
     <tr><td><code>Broiler.HTML</code></td><td>Selection, hit-testing and context-menu interaction over laid-out boxes</td></tr>
     <tr><td><code>Broiler.HTML.Orchestration</code></td><td>Projects computed style, invokes layout, builds paint fragments</td></tr>
-    <tr><td><code>Broiler.HTML.Headless</code></td><td>Produces the live geometry snapshot through <code>ILayoutView</code></td></tr>
+    <tr><td><code>Broiler.HTML.Image</code></td><td>Rasterises a nested browsing context, so it reads the embedded canvas to decide whether that frame's canvas is opaque or transparent</td></tr>
     <tr><td><code>Broiler.HtmlBridge.Dom</code></td><td>Supplies the visual-viewport scale around geometry snapshots</td></tr>
+    <tr><td><code>Broiler.Render.Stage.Benchmarks</code></td><td>The stage profiler drives internal thread-budget knobs — style recalculation, raster and tile — that the render path exposes to nothing else</td></tr>
     <tr><td><code>Broiler.DevConsole</code></td><td>Converts the internal tree into renderer-independent diagnostic snapshots</td></tr>
     <tr><td><code>Broiler.Wpt</code></td><td>Scoped native anchor placement around final WPT renders</td></tr>
     <tr><td><code>Broiler.Layout.Tests</code></td><td>Exercises the internal layout kernel directly</td></tr>
@@ -67,10 +76,12 @@
 </div>
 
 <p>
-  Facade and application assemblies consume owned projections instead of traversing the internal
-  tree — <code>Broiler.HTML.Image</code> delegates canvas-background resolution to orchestration,
-  and the WPF app consumes dev-console snapshots. Reducing this surface further, as consumers
-  move onto owned projections, is tracked work.
+  <code>Broiler.HTML.Headless</code>, a friend until recently, is gone — the project was deleted
+  from Broiler.HTML. Facade and application assemblies otherwise consume owned projections
+  instead of traversing the internal tree — <code>Broiler.HTML.Image</code> delegates
+  canvas-background resolution to orchestration, and the WPF app consumes dev-console
+  snapshots. Reducing this surface further, as consumers move onto owned projections, is
+  tracked work.
 </p>
 
 <h2 id="open">What is still open</h2>
@@ -100,28 +111,41 @@
     component has changed substantially since then, so that approval must not be treated as
     covering the current checkout or a broader release. A new release needs source review and a
     new attributable human decision, plus dependency/license review and recorded
-    static-analysis and vulnerability-scan evidence.
+    static-analysis and vulnerability-scan evidence — the first item on the component's
+    <a href="https://github.com/Broiler-Platform/Broiler.Layout/blob/main/docs/roadmap.md">roadmap</a>.
+    No such re-review is recorded for any of the preview packages since published to nuget.org.
   </p>
 </div>
 
 <h2 id="build">Build and test</h2>
 
 <p>
-  <code>Broiler.Layout</code> is the one component with no standalone repository: it lives in
-  the aggregate <code>Broiler</code> checkout, and <a href="/applications/browser.html">Broiler.Browser</a>
-  vendors it as ordinary tracked files. Build it from the aggregate repository root.
+  <code>Broiler.Layout</code> is no longer in-tree anywhere. Since 2026-09-09 it has had a
+  repository of its own, <a href="https://github.com/Broiler-Platform/Broiler.Layout">Broiler-Platform/Broiler.Layout</a>,
+  moved out of Broiler.Browser, which no longer vendors it; the aggregate repository deleted its
+  in-tree copy and now carries Layout as a submodule. It builds standalone, and every
+  dependency — the Broiler packages included — restores from nuget.org.
 </p>
 
 <div class="code">
-  <div class="code-head"><span class="code-title">from the aggregate root</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>dotnet build Broiler.Layout/Broiler.Layout/Broiler.Layout.csproj
-dotnet test  Broiler.Layout/Broiler.Layout.Tests/Broiler.Layout.Tests.csproj</code></pre>
+  <div class="code-head"><span class="code-title">standalone</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>git clone https://github.com/Broiler-Platform/Broiler.Layout.git
+dotnet build Broiler.Layout.slnx -c Release
+pwsh -File eng/run-tests.ps1 -Configuration Release</code></pre>
 </div>
 
+<p>
+  <code>Broiler.Layout</code> is published to nuget.org as a single package, currently at
+  <code>0.1.0-preview.10</code> in consumers' pins; the numbers below <code>preview.6</code> were
+  spent on the retired GitHub Packages feed. CI builds and tests <code>Release</code> on Ubuntu
+  and Windows with a floor on the executed test count, then packs and verifies the package.
+</p>
+
 <p class="small">
-  <code>Broiler.Layout.Tests</code> is the aggregate repository's largest green xUnit suite —
-  1,317 tests at the last recorded measurement. See
-  <a href="/conformance.html#unit">unit-test status</a> for what the rest of the suite reports.
+  <code>Broiler.Layout.Tests</code> moved with the component and runs in its own repository,
+  which records no test count. The last figure published for it — 1,317 tests, green — comes
+  from the aggregate repository's older unit-test status document, from before the move. See
+  <a href="/conformance.html#unit">unit-test status</a>.
 </p>
 
 <div class="pager">

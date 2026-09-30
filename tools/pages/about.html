@@ -1,12 +1,12 @@
-{"title": "About Broiler — what it is and why it exists", "desc": "What Broiler is in plain language: an open-source browser, word processor and code editor built on one platform written from scratch in .NET, how it is made, and where it came from.", "nav": "about"}
+{"title": "About Broiler — what it is and why it exists", "desc": "What Broiler is in plain language: an open-source browser, word processor, viewer, code editor and mail app built on one platform written from scratch in .NET, how it is made, and where it came from.", "nav": "about"}
 ---
 <section class="page-head">
   <div class="wrap">
     <span class="eyebrow">About</span>
     <h1>What Broiler is</h1>
     <p class="lede">
-      A browser, a word processor and a code editor — plus the platform underneath them, which
-      is the actual project. Everything is open source, and everything was written from
+      A browser, a word processor, a viewer, a code editor and a mail app — plus the platform
+      underneath them, which is the actual project. Everything is open source, and everything was written from
       scratch rather than wrapped around somebody else's engine.
     </p>
   </div>
@@ -32,12 +32,12 @@
 </p>
 
 <p>
-  The visible result is three applications. The real project is the layer beneath them: a set
-  of independent building blocks — a rendering engine, a layout engine, a UI toolkit, image
-  and document handling, a JavaScript engine — that any .NET program can use.
+  The visible result is a family of applications. The real project is the layer beneath them: a
+  set of independent building blocks — a rendering engine, a layout engine, a UI toolkit, image
+  and document handling, a JavaScript engine, networking — that any .NET program can use.
 </p>
 
-<h2 id="apps">The three apps</h2>
+<h2 id="apps">The apps</h2>
 
 <div class="app-grid">
   <a class="app-card" href="/applications/browser.html">
@@ -48,12 +48,22 @@
   <a class="app-card" href="/applications/writer.html">
     <img class="app-icon" src="/assets/img/app-writer.svg" alt="" width="56" height="56">
     <h3>Writer</h3>
-    <p>Writes and formats documents, and opens the Word, RTF, HTML and Markdown files you already have.</p>
+    <p>Writes and formats documents, and opens the DOCX, ODT, RTF, HTML and Markdown files you already have.</p>
+  </a>
+  <a class="app-card" href="/applications/plate.html">
+    <img class="app-icon" src="/assets/img/app-plate.svg" alt="" width="56" height="56">
+    <h3>Plate</h3>
+    <p>Opens a document or a picture and shows it. The Writer's read-only half.</p>
   </a>
   <a class="app-card" href="/applications/code.html">
     <img class="app-icon" src="/assets/img/app-code.svg" alt="" width="56" height="56">
     <h3>Code</h3>
     <p>Edits C#, checks it as you type, builds it — and records what a person has reviewed.</p>
+  </a>
+  <a class="app-card" href="/applications/mail.html">
+    <img class="app-icon" src="/assets/img/app-mail.svg" alt="" width="56" height="56">
+    <h3>Mail</h3>
+    <p>Receives and reads mail for one account; sending is being built. In development.</p>
   </a>
 </div>
 
@@ -74,24 +84,24 @@
   this browser decides where a paragraph goes.
 </p>
 
-<h3 id="why-shared">One platform, three apps, four kinds of machine</h3>
+<h3 id="why-shared">One platform, many apps, several kinds of machine</h3>
 
 <p>
-  The word processor and the code editor are not separate products that happen to look
-  similar. They are the same application framework with different content in it. That is why
-  a dialog behaves identically in both, and why adding a platform means writing a thin
+  The word processor, the viewer and the code editor are not separate products that happen to
+  look similar. They are the same application framework with different content in it. That is
+  why a dialog behaves identically in each, and why adding a platform means writing a thin
   adapter rather than a new app.
 </p>
 
 <div class="table-wrap">
 <table>
-  <thead><tr><th>Runs on</th><th>Browser</th><th>Writer</th><th>Code</th></tr></thead>
+  <thead><tr><th>Runs on</th><th>Browser</th><th>Writer</th><th>Plate</th><th>Code</th><th>Mail</th></tr></thead>
   <tbody>
-    <tr><td><strong>Windows</strong></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-    <tr><td><strong>Linux</strong></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-    <tr><td><strong>Android</strong></td><td>Yes — tested on an emulator, not yet on a real phone</td><td>Yes — same</td><td>Planned</td></tr>
-    <tr><td><strong>Inside a web browser</strong></td><td>—</td><td>Yes</td><td>Experimental</td></tr>
-    <tr><td><strong>macOS</strong></td><td colspan="3">Not yet. It needs work on windowing, graphics, input and Apple's signing process first.</td></tr>
+    <tr><td><strong>Windows</strong></td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td><strong>Linux</strong></td><td>Yes</td><td>Yes</td><td>—</td><td>Yes</td><td>Planned</td></tr>
+    <tr><td><strong>Android</strong></td><td>Yes — tested on an emulator, not yet on a real phone</td><td>Yes — same</td><td>—</td><td>Planned</td><td>—</td></tr>
+    <tr><td><strong>Inside a web browser</strong></td><td>—</td><td>Paused</td><td>—</td><td>Experimental</td><td>—</td></tr>
+    <tr><td><strong>macOS</strong></td><td colspan="5">Not yet. It needs work on windowing, graphics, input and Apple's signing process first.</td></tr>
   </tbody>
 </table>
 </div>
@@ -111,8 +121,8 @@
     Because it changes what you should assume. AI can produce a great deal of plausible code
     quickly, and plausible is not the same as correct. So rather than claiming the code is
     reviewed, the project built a tool that <strong>records what a person has actually
-    read</strong> — file by file, against a fingerprint of the exact text they read, so an
-    approval expires when the code changes underneath it.
+    read</strong> — file by file, or declaration by declaration, against a fingerprint of the
+    exact text they read, so an approval expires when the code changes underneath it.
   </p>
   <p style="margin-bottom:0">
     Today that number is honest and unflattering, and it is published anyway.
@@ -187,7 +197,7 @@
   <strong>not</strong> a continuation, an official edition or a release of either project, and
   neither upstream team is involved in it or endorses it. Unicode data keeps its own terms.
   The full provenance is in
-  <a href="https://github.com/MaiRat/Broiler/blob/main/THIRD_PARTY_NOTICES.md">the third-party notices</a>.
+  <a href="https://github.com/Broiler-Platform/Broiler/blob/main/THIRD_PARTY_NOTICES.md">the third-party notices</a>.
 </p>
 
 <h2 id="licence">Licence</h2>
@@ -206,7 +216,7 @@
       The technical version
     </h3>
     <p>
-      Eleven components, the dependency rules between them, and the evidence for every claim
+      Eighteen components, the dependency rules between them, and the evidence for every claim
       on this page.
     </p>
   </div>

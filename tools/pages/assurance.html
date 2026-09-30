@@ -24,9 +24,10 @@
   <p>
     The repository is suitable only for <strong>first-preview, controlled development, testing
     and evaluation</strong>. It must not be presented as production-ready, security-audited, or
-    free of defects or vulnerabilities. Several components are approved for first-preview use,
-    usually with conditions; several review records remain pending or explicitly state that they
-    are not approvals.
+    free of defects or vulnerabilities. Several components were approved for first-preview use,
+    usually with conditions — but every one of those approvals names a 2026-07-01 commit that the
+    source has since moved past. The other review records remain pending, explicitly state that
+    they are not approvals, or do not exist.
   </p>
 </div>
 
@@ -58,7 +59,8 @@
     <h3><code>CODE-ASSURANCE.md</code></h3>
     <p>
       Generated per-unit metadata — review state, security risk, IP risk, resource impact —
-      fingerprinted against the version certified. One component has adopted it so far.
+      fingerprinted against the version certified. Four components and three applications carry
+      it so far; four more have opted in without a report yet.
     </p>
     <p class="small"><strong>Strength:</strong> it measures the absence of review precisely, rather than leaving it blank.</p>
   </div>
@@ -67,31 +69,56 @@
 <h2 id="component-records">Component review records</h2>
 
 <p>
-  Every release-facing component has a record. <strong><code>PENDING</code> is not an
-  approval.</strong> The review files deliberately require a real developer to supply the
-  evidence and sign the decision; AI tools must not select or sign it.
+  <strong><code>PENDING</code> is not an approval</strong>, and neither is an approval for an
+  older commit. The review files deliberately require a real developer to supply the evidence and
+  sign the decision; AI tools must not select or sign it. Every approval below names one exact
+  commit and says that any later source change invalidates it — so where the source has moved
+  on, the table says so. Five repositories carry no record at all.
 </p>
+
+<h3 id="records-components">Components</h3>
 
 <div class="table-wrap">
 <table>
   <thead><tr><th>Component</th><th>Recorded status</th></tr></thead>
   <tbody>
-    <tr><td><code>Broiler.CSS</code></td><td><span class="pill pill-ok">Approved</span> for first preview. Dead/transitional code and preview instability are accepted limitations.</td></tr>
-    <tr><td><code>Broiler.DOM</code></td><td><span class="pill pill-pending">Pending</span> — not approved for preview use in that record.</td></tr>
-    <tr><td><code>Broiler.CSS/Broiler.DOM</code> <span class="small">(nested)</span></td><td><span class="pill pill-ok">Approved with conditions</span>. Parser/string-handling risks, dead code and cleanup follow-ups remain.</td></tr>
-    <tr><td><code>Broiler.Graphics</code></td><td><span class="pill pill-ok">Approved with conditions</span>. Image codecs, untrusted binary input, native Windows API usage and Direct2D/DirectWrite/DXGI/D3D interop are security-sensitive.</td></tr>
-    <tr><td><code>Broiler.HTML</code></td><td><span class="pill pill-ok">Approved with conditions</span>, first preview only. Renderer paths are not hardened for hostile HTML/CSS; obsolete and transitional APIs remain.</td></tr>
-    <tr><td><code>Broiler.HTML/Broiler.Graphics</code> <span class="small">(nested)</span></td><td><span class="pill pill-pending">Pending</span> — not approved in that nested record.</td></tr>
+    <tr><td><code>Broiler.CSS</code></td><td><span class="pill pill-pending">Pending</span> for the next preview. The earlier first-preview approval (commit <code>44e5444</code>, 2026-07-01) does not cover the current review target <code>517358f</code>; until a human completes the decision, the checkout must not be described as approved.</td></tr>
+    <tr><td><code>Broiler.DOM</code></td><td><span class="pill pill-pending">Pending</span> for <code>0.1.0-preview.2</code>, which was published to GitHub Packages on 2026-09-14 <em>before</em> this review round. The earlier approval (<code>2a1e370</code>, 2026-07-01) does not cover it, and neither the published preview nor the current checkout may be described as approved.</td></tr>
+    <tr><td><code>Broiler.Graphics</code></td><td><span class="pill pill-ok">Approved with conditions</span> for a 2026-07-01 commit; the source has changed since. Image codecs, untrusted binary input, native Windows API usage and Direct2D/DirectWrite/DXGI/D3D interop are security-sensitive.</td></tr>
+    <tr><td><code>Broiler.HTML</code></td><td><span class="pill pill-ok">Approved with conditions</span>, first preview only, for commit <code>a9915ed</code> (2026-07-01); the source has changed since. Renderer paths are not hardened for hostile HTML/CSS; obsolete and transitional APIs remain.</td></tr>
     <tr><td><code>Broiler.JS</code></td><td><span class="pill pill-pending">Pending</span> final human review. Available only for first preview with safety warnings; execution and host integration are security-sensitive and are <strong>not a sandbox</strong>.</td></tr>
-    <tr><td><code>Broiler.DateTime</code></td><td><span class="pill pill-ok">Approved</span> for preview. Residual risk is normal parser/date-time semantics and caller misuse in critical domains.</td></tr>
-    <tr><td><code>Broiler.Regex</code></td><td><span class="pill pill-ok">Approved</span> for preview. Resource-exhaustion risk from large or adversarial input remains <em>despite</em> a step budget.</td></tr>
-    <tr><td><code>Broiler.Unicode</code></td><td><span class="pill pill-ok">Approved with conditions</span>. Runtime libraries use committed data; developer-operated tools download Unicode/CLDR data and require review for refreshes.</td></tr>
-    <tr><td><code>Broiler.Regex/Broiler.Unicode</code> <span class="small">(nested)</span></td><td><span class="pill pill-pending">Pending</span> — not approved in that nested record.</td></tr>
-    <tr><td><code>Broiler.Layout</code></td><td><span class="pill pill-pending">Approval is stale</span>. First-preview approval recorded against a 2026-07-01 commit; the component has changed substantially since, so it must not be treated as covering current source.</td></tr>
-    <tr><td><code>Broiler.UI</code></td><td><span class="pill pill-pending">Pending</span>. Text editing, IME, clipboard and privacy handling unreviewed; accessibility has no recorded evidence.</td></tr>
-    <tr><td><code>Broiler.Browser</code></td><td><span class="pill pill-pending">Pending</span> for the repository.</td></tr>
-    <tr><td><code>Broiler.Writer</code></td><td><span class="pill pill-risk">No record at all</span>. The repository carries no <code>HUMAN_REVIEW.md</code>, so no checkout should be described as human-approved.</td></tr>
-    <tr><td><code>Broiler.VM</code></td><td><span class="pill pill-pending">Pending</span>, generated. Every relevant code unit is <code>HUMAN_PENDING</code>.</td></tr>
+    <tr><td><code>Broiler.Layout</code></td><td><span class="pill pill-pending">Approval is stale</span>. Approved with conditions for first preview at commit <code>6eaa76c</code> (2026-07-01); the component has changed substantially since, so its README says the approval must not be treated as covering current source.</td></tr>
+    <tr><td><code>Broiler.UI</code></td><td><span class="pill pill-pending">Pending</span>. Text editing, IME, clipboard and privacy handling unreviewed; accessibility has no recorded evidence. A 2026-09-13 engineering review in <code>docs/component-review.md</code> states that it is not the human approval.</td></tr>
+    <tr><td><code>Broiler.VM</code></td><td><span class="pill pill-pending">Pending</span>, generated. 0 of 5,773 relevant code units reviewed — and eight packages were published on 2026-09-23 regardless (<a href="#policy">below</a>).</td></tr>
+    <tr><td><code>Broiler.HtmlBridge</code></td><td><span class="pill pill-pending">Pending</span>. No reviewer assigned; the component must not be described as human-approved.</td></tr>
+    <tr><td><code>Broiler.JSeal</code></td><td><span class="pill pill-pending">Pending</span> in all four scopes — the contracts, both providers and the test suite. No reviewer assigned, no reviewed commit.</td></tr>
+    <tr><td><code>Broiler.Net</code></td><td><span class="pill pill-pending">Pending</span>, generated. 0 of 270 relevant code units reviewed.</td></tr>
+    <tr><td><code>Broiler.DateTime</code></td><td><span class="pill pill-ok">Approved</span> for preview at commit <code>3decee8</code> (2026-07-01), and the source has changed since, which the record says invalidates the approval. Its new per-unit record reads <code>PENDING</code>, 0 of 64 units. Residual risk is normal parser/date-time semantics and caller misuse in critical domains.</td></tr>
+    <tr><td><code>Broiler.Regex</code></td><td><span class="pill pill-ok">Approved</span> for preview at commit <code>d5b07a0</code> (2026-07-01), and the engine source has changed since, which the record says invalidates the approval. Its new per-unit record reads <code>PENDING</code>, 0 of 222 units. Resource-exhaustion risk from large or adversarial input remains <em>despite</em> a step budget.</td></tr>
+    <tr><td><code>Broiler.Unicode</code></td><td><span class="pill pill-ok">Approved with conditions</span> at commit <code>89f134e</code> (2026-07-01); the source has changed since. Runtime libraries use committed data; developer-operated tools download Unicode/CLDR data and require review for refreshes.</td></tr>
+    <tr><td><code>Broiler.Input</code>, <code>Broiler.Media</code>, <code>Broiler.Documents</code>, <code>Broiler.Native</code></td><td><span class="pill pill-risk">No record at all</span>. None of these repositories carries a <code>HUMAN_REVIEW.md</code>, and all four publish preview packages to nuget.org.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="small">
+  The nested records this table used to list — <code>Broiler.CSS/Broiler.DOM</code>,
+  <code>Broiler.HTML/Broiler.Graphics</code>, <code>Broiler.Regex/Broiler.Unicode</code> — are gone
+  with the nested checkouts themselves: the components now take each other as nuget.org packages,
+  and Regex no longer nests Unicode.
+</p>
+
+<h3 id="records-apps">Applications</h3>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Application</th><th>Recorded status</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.Browser</code></td><td><span class="pill pill-pending">Pending</span> for the repository — and a summary only, not a repository-level approval.</td></tr>
+    <tr><td><code>Broiler.Writer</code></td><td><span class="pill pill-risk">No record at all</span>. The repository carries no <code>HUMAN_REVIEW.md</code>, so no checkout should be described as human-approved. <strong>It nonetheless has public GitHub pre-releases</strong> — <code>0.1.0-preview.3</code>, <code>.4</code> and <code>.5</code>, published 2026-09-22 to 2026-09-30.</td></tr>
+    <tr><td><code>Broiler.Plate</code></td><td><span class="pill pill-pending">Pending</span>, generated on 2026-09-30. 0 of 248 relevant code units reviewed. Its public pre-release <code>0.1.0-preview.2</code> was published on 2026-09-22, before the record existed.</td></tr>
+    <tr><td><code>Broiler.Mail</code></td><td><span class="pill pill-pending">Pending</span>, generated. 0 of 420 relevant code units reviewed.</td></tr>
+    <tr><td><code>Broiler.Code</code></td><td><span class="pill pill-pending">Pending</span>, generated. 0 of 1,499 relevant code units reviewed.</td></tr>
   </tbody>
 </table>
 </div>
@@ -177,31 +204,89 @@
 <div class="callout callout-ember">
   <p class="callout-title">A component that has not adopted the system is not at 0 %</p>
   <p>
-    It is <strong>unmeasured</strong> — which is a weaker position, not a stronger one. One
-    component has adopted the system so far; the other nine, and the browser's own
-    <code>src/</code>, report nothing.
+    It is <strong>unmeasured</strong> — which is a weaker position, not a stronger one. Every
+    record that exists reads 0 %. Everything else — CSS, Graphics, HTML, Input, Layout,
+    Documents, HtmlBridge, JSeal, Native, Unicode, Writer and the browser's own <code>src/</code>
+    — reports nothing.
   </p>
 </div>
 
-<h3 id="vm-numbers">The one adopted component, in full</h3>
+<h3 id="adoption">Who carries per-unit records</h3>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Repository</th><th class="num">Relevant units</th><th class="num">Human reviewed</th><th class="num">Security: High</th><th class="num">Critical</th></tr></thead>
+  <tbody>
+    <tr><td><code>Broiler.VM</code></td><td class="num">5,773</td><td class="num"><strong>0 %</strong></td><td class="num">1,576</td><td class="num">253</td></tr>
+    <tr><td><code>Broiler.Net</code></td><td class="num">270</td><td class="num"><strong>0 %</strong></td><td class="num">185</td><td class="num">0</td></tr>
+    <tr><td><code>Broiler.Regex</code></td><td class="num">222</td><td class="num"><strong>0 %</strong></td><td class="num">96</td><td class="num">0</td></tr>
+    <tr><td><code>Broiler.DateTime</code></td><td class="num">64</td><td class="num"><strong>0 %</strong></td><td class="num">16</td><td class="num">8</td></tr>
+    <tr><td><code>Broiler.Code</code></td><td class="num">1,499</td><td class="num"><strong>0 %</strong></td><td class="num">650</td><td class="num">36</td></tr>
+    <tr><td><code>Broiler.Mail</code></td><td class="num">420</td><td class="num"><strong>0 %</strong></td><td class="num">191</td><td class="num">18</td></tr>
+    <tr><td><code>Broiler.Plate</code></td><td class="num">248</td><td class="num"><strong>0 %</strong></td><td class="num">58</td><td class="num">10</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="small">
+  Net, Regex and DateTime generated their first records on 2026-09-30. Broiler.JS, Broiler.DOM,
+  Broiler.UI and Broiler.Media committed their <code>assurance.config.json</code> the same day:
+  they have opted in and annotation is under way, but there is no generated report yet and so no
+  coverage figure to quote.
+</p>
+
+<h3 id="vm-numbers">Broiler.VM, the largest record, in full</h3>
 
 <div class="stats" style="margin:1.6rem 0">
-  <div class="stat"><span class="stat-num">47</span><span class="stat-label">Files scanned, all carrying an annotation</span></div>
-  <div class="stat"><span class="stat-num">720</span><span class="stat-label">Relevant code units, 100 % annotated (925 more exempt by predicate)</span></div>
+  <div class="stat"><span class="stat-num">235</span><span class="stat-label">Files scanned, all carrying an annotation</span></div>
+  <div class="stat"><span class="stat-num">5,773</span><span class="stat-label">Relevant code units of 10,226, 100 % annotated (4,453 exempt by predicate)</span></div>
   <div class="stat"><span class="stat-num accent">0 %</span><span class="stat-label">Human reviewed — every relevant unit <code>HUMAN_PENDING</code></span></div>
-  <div class="stat"><span class="stat-num">47</span><span class="stat-label">Units at <em>High</em> security risk (273 Medium, 398 Low, 2 None)</span></div>
+  <div class="stat"><span class="stat-num">1,576</span><span class="stat-label">Units at <em>High</em> security risk, 253 <em>Critical</em> (4,201 Medium, 954 Low, 9 None)</span></div>
 </div>
 
 <p>
-  The high-risk list is not abstract: it is the bounded binary reader, the bounded allocator, the
-  verifier contracts, the profile-identity parser and the resource-limit precedence — exactly the
-  code that stands between a malformed artifact and the host.
+  Resource impact peaks at 8 / 10 and averages 1.7 / 10 over the annotated units. The high-risk
+  list is not abstract: it opens with the bounded binary reader, the bounded allocator, the
+  verifier contracts and the profile-identity parser — exactly the code that stands between a
+  malformed artifact and the host.
 </p>
 
 <p>
   The report is generated, not written. It is regenerated by the test run itself, which also
   rewrites <code>HUMAN_REVIEW.md</code>, the manifest and every generated source header — so the
   file and the code cannot drift apart.
+</p>
+
+<h3 id="tooling">Signing one declaration, and the shared tool</h3>
+
+<p>
+  Broiler Code now does both halves outside Broiler.VM. Its review pane signs <strong>one
+  declaration at a time</strong>: it writes the reviewer's name into that declaration's
+  <code>// Broiler-Human:</code> line and never writes a fingerprint. And its
+  <code>broiler-review</code> command line brings the same annotation to other repositories — a
+  component commits <code>assurance.config.json</code>, then <code>list</code>s the units that need
+  a block, <code>insert</code>s machine assessments, and <code>generate</code>s the headers and the
+  three component-level files; from then on <code>check</code> holds the tree to what
+  <code>generate</code> would write.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">the assurance commands</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>broiler-review assurance list     --root &lt;dir&gt;
+broiler-review assurance insert   --root &lt;dir&gt; --assessments &lt;file.json&gt;
+broiler-review assurance generate --root &lt;dir&gt;
+broiler-review assurance check    --root &lt;dir&gt; [--release]
+broiler-review assurance status   --root &lt;dir&gt;
+
+# no command of that name is installed; a workflow runs it as
+dotnet run --project Broiler.Code/src/Broiler.Code.Review.Cli -c Release -- assurance ...</code></pre>
+</div>
+
+<p class="small">
+  With <code>--release</code>, <code>check</code> fails while any relevant unit lacks a decision
+  bound to its current fingerprint — the gate each generated <code>HUMAN_REVIEW.md</code> names.
+  The design is in Broiler Code's
+  <a href="https://github.com/Broiler-Platform/Broiler.Code/blob/main/docs/architecture/broiler-code-assurance-cli.md">assurance CLI record</a>.
 </p>
 
 <h3 id="policy">The release policy</h3>
@@ -211,8 +296,8 @@
   <p>
     An official release fails on <strong>any</strong> unresolved assurance state —
     <code>PENDING</code>, <code>STALE</code>, an unknown reviewer, a missing review, a fingerprint
-    mismatch, or an invalid review transition. Because every relevant unit in the adopted
-    component is <code>PENDING</code>, <strong>no component is currently eligible for an official
+    mismatch, or an invalid review transition. Because every relevant unit in every adopted
+    record is <code>PENDING</code>, <strong>no component is currently eligible for an official
     release</strong>, and the components that have not adopted the system cannot be assessed
     against that gate at all.
   </p>
@@ -223,11 +308,25 @@
   </p>
 </div>
 
+<div class="callout callout-danger">
+  <p class="callout-title">Things have shipped ahead of that gate</p>
+  <ul style="margin-bottom:0">
+    <li><strong>Broiler.VM</strong> published eight packages to nuget.org on 2026-09-23 while its <code>HUMAN_REVIEW.md</code> read <code>PENDING</code>. Its status ledger records the publication and leaves to the owner whether the prohibition is revised or the publication answered.</li>
+    <li><strong>Broiler Writer</strong> published public GitHub pre-releases <code>0.1.0-preview.3</code> to <code>.5</code> (2026-09-22 to 2026-09-30) from a repository with no <code>HUMAN_REVIEW.md</code>. The desktop builds are not code-signed; the Android packages are signed with the Broiler release key.</li>
+    <li><strong>Broiler Plate</strong> published a public GitHub pre-release, <code>0.1.0-preview.2</code>, on 2026-09-22, when the repository had no review record at all; the generated record added on 2026-09-30 reads <code>PENDING</code>, 0 of 248 units. The build is not code-signed.</li>
+    <li><strong>Every component</strong> publishes preview packages to nuget.org — the four with no review record at all (Input, Media, Documents, Native) included.</li>
+  </ul>
+</div>
+
 <p>
-  The aggregate table is currently <strong>hand-maintained</strong> from the components'
-  generated reports, because a platform-wide tool every component could share does not exist yet.
-  That is exactly the kind of hand-maintained summary the policy warns against — and it is
-  recorded in the file rather than hidden.
+  The platform-wide table that is meant to summarise all of this — kept in the Broiler.Browser
+  repository's <code>CODE-ASSURANCE.md</code> — is <strong>hand-maintained</strong>, which is
+  exactly the kind of summary the policy warns against, and it says so itself. It has fallen
+  behind: last touched on 2026-09-16, it still reads "one component has adopted", lists Broiler.VM
+  at 905 relevant units, and says a platform-wide tool every component could share does not exist
+  yet — although Broiler Code's <a href="#tooling"><code>broiler-review assurance</code></a> commands
+  are exactly that. The table on this page is taken from the components' generated reports
+  instead.
 </p>
 
 <h2 id="ai">AI-assisted development</h2>

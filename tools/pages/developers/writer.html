@@ -1,4 +1,4 @@
-{"title": "Broiler.Writer — technical detail", "desc": "The Writer application repository: four platform heads, NativeAOT desktop publishes, document codec policy, generated solutions, CI and known issues.", "nav": "developers"}
+{"title": "Broiler.Writer — technical detail", "desc": "The Writer application repository: four platform heads, NativeAOT desktop publishes, GitHub pre-releases, document codec policy, generated solutions, CI and known issues.", "nav": "developers"}
 ---
 <section class="page-head">
   <div class="wrap">
@@ -7,14 +7,15 @@
     <h1>Broiler.Writer</h1>
     <p class="lede">
       Four platform heads — Windows, Linux, Android and WebAssembly — over a shared
-      <code>Broiler.Writer.Core</code>, plus <code>Broiler.Writer.FormatCodes</code>, the
-      reveal-codes layer that keeps a structured view of the document in sync with the editing
-      surface.
+      <code>Broiler.Writer.Core</code>, which owns the reveal-codes controller that keeps a
+      structured view of the document in sync with the editing surface, plus
+      <code>Broiler.Writer.FormatCodes</code>, the UI-independent projection scheduler beneath it.
     </p>
     <div class="tag-row" style="margin-top:1.4rem">
       <span class="pill pill-risk">No HUMAN_REVIEW record</span>
+      <span class="pill pill-preview">GitHub pre-release 0.1.0-preview.5</span>
       <span class="pill pill-plain">4 heads</span>
-      <span class="pill pill-plain">6 submodules</span>
+      <span class="pill pill-plain">No submodules</span>
       <span class="pill pill-plain">Apache-2.0</span>
     </div>
   </div>
@@ -26,23 +27,29 @@
       <div class="doc-body">
 
 <div class="callout callout-danger">
-  <p class="callout-title">Preview release — <code>0.1.0-preview.1</code></p>
+  <p class="callout-title">Preview — public GitHub pre-releases, not for production use</p>
   <p>
     Public APIs, repository layout and persisted behaviour are not frozen and may change before
     <code>1.0</code>. The document codecs parse untrusted input — RTF control words, Open XML
-    packages, HTML and PDF object graphs — and must be treated as security-sensitive; no fuzzing
-    campaign, dependency scan or independent security audit is recorded for this revision.
-    Substantial implementation work was AI-assisted, and <strong>this repository carries no
-    <code>HUMAN_REVIEW.md</code> yet</strong>, so no checkout of it should be described as
-    human-approved.
+    packages, ODT, HTML and PDF object graphs — and must be treated as security-sensitive; no
+    fuzzing campaign, dependency scan or independent security audit is recorded for this
+    repository. Substantial implementation work was AI-assisted, and <strong>this repository
+    carries no <code>HUMAN_REVIEW.md</code></strong>, so no checkout or release of it should be
+    described as human-approved. The latest pre-release, <code>0.1.0-preview.5</code>, was
+    published from a commit whose CI test jobs failed — see <a href="#releases">Releases</a>.
   </p>
 </div>
 
 <h2 id="start">Getting started</h2>
 
+<p>
+  The components the Writer is built on — Documents, DOM, Graphics, Media, Input and UI — are
+  NuGet packages restored from nuget.org, so a plain clone is the whole checkout.
+</p>
+
 <div class="code">
   <div class="code-head"><span class="code-title">clone, build, run</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>git clone --recurse-submodules https://github.com/Broiler-Platform/Broiler.Writer.git
+  <pre><code>git clone https://github.com/Broiler-Platform/Broiler.Writer.git
 cd Broiler.Writer
 
 dotnet build Broiler.Windows.Writer.slnx -c Release
@@ -50,11 +57,17 @@ dotnet run --project src/Broiler.Writer.Windows/Broiler.Writer.Windows.csproj -c
 dotnet test  Broiler.Writer.Tests.slnx -c Release</code></pre>
 </div>
 
+<p class="small">
+  The repository's README still says to clone with <code>--recurse-submodules</code>. That is
+  out of date: the tree records no submodule commits. A leftover <code>.gitmodules</code> still
+  names six components, but there is nothing for Git to check out.
+</p>
+
 <h2 id="formats">Document formats</h2>
 
 <p>
-  <code>Broiler.Writer.Core</code> registers the RTF, DOCX, HTML and Markdown codecs for both
-  opening and saving.
+  <code>Broiler.Writer.Core</code> registers the RTF, DOCX, ODT, HTML and Markdown codecs for
+  both opening and saving.
 </p>
 
 <div class="callout callout-info">
@@ -63,15 +76,23 @@ dotnet test  Broiler.Writer.Tests.slnx -c Release</code></pre>
     The Windows and Linux heads register <code>Broiler.Documents.Pdf</code> themselves, for
     <strong>opening only</strong>, so that no head acquires the codec transitively.
     <code>Broiler.Writer.FormatCodes.Tests</code> asserts that this separation holds — the policy
-    is a test, not a convention.
+    is a test, not a convention. Both heads compose three of the codec's optional providers: the
+    JPEG decoder, the sfnt font-program reader and the ICC colour-profile reader.
   </p>
 </div>
+
+<p>
+  An opened PDF can be saved in any of the save formats with its pictures. The PDF reader hands
+  them over as decoded pixels and every save format needs an encoded picture, so a save encodes
+  each one as PNG first (<code>WriterPictureEncoding</code>). The document in the editor is not
+  changed.
+</p>
 
 <h2 id="dialogs">Dialogs are real OS windows</h2>
 
 <p>
-  Open, Save As, Insert Picture and Font are <strong>real top-level OS windows</strong> on the
-  Windows head. Each can be moved onto another monitor, is ordered by the window manager, and
+  Open, Save As, Insert Picture, Font and About are <strong>real top-level OS windows</strong> on
+  the Windows head. Each can be moved onto another monitor, is ordered by the window manager, and
   carries the one title bar Broiler.UI draws for it rather than a second native caption.
 </p>
 
@@ -88,6 +109,13 @@ dotnet test  Broiler.Writer.Tests.slnx -c Release</code></pre>
   The Linux, Android and WebAssembly heads do not offer the capability, so their dialogs stay
   logical subwindows rendered inside the main viewport. That is the documented fallback rather
   than a failure.
+</p>
+
+<p>
+  New, Open and File → Exit ask what to do with unsaved edits — <strong>Save</strong>,
+  <strong>Discard</strong> or <strong>Cancel</strong> — using Broiler.UI's existing modal dialog,
+  with no toolkit change. On Linux the window manager's own close button still bypasses it: the
+  current graphics package exposes only a latched close flag, without a way to cancel or reset it.
 </p>
 
 <h2 id="aot">NativeAOT on both desktop heads</h2>
@@ -122,14 +150,58 @@ dotnet test  Broiler.Writer.Tests.slnx -c Release</code></pre>
 </div>
 
 <p>
-  The other two heads are deliberately excluded. <strong>Android</strong> — the SDK raises
+  The other two heads are not published with NativeAOT. <strong>Android</strong> — the SDK raises
   <code>XA1040</code> ("the NativeAOT runtime on Android is an experimental feature and not yet
-  suitable for production use"), and it collides with that head's
-  <code>PublishTrimmed=false</code> since native compilation implies trimming.
-  <strong>WebAssembly</strong> — NativeAOT emits a native binary for a desktop OS and does not
-  apply; the wasm analogue is mono's own <code>RunAOTCompilation</code>, a separate feature that
-  is not enabled.
+  suitable for production use"), so the head builds on Mono and keeps
+  <code>PublishTrimmed=false</code>. <strong>WebAssembly</strong> — NativeAOT emits a native
+  binary for a desktop OS and does not apply; the wasm analogue is mono's own
+  <code>RunAOTCompilation</code>, a separate feature that is not enabled.
 </p>
+
+<h2 id="releases">Releases</h2>
+
+<p>
+  Three Writer GitHub pre-releases have been published on the repository's
+  <a href="https://github.com/Broiler-Platform/Broiler.Writer/releases">Releases page</a>;
+  <code>preview.1</code> and <code>preview.2</code> exist only as tags.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Pre-release</th><th>Published</th></tr></thead>
+  <tbody>
+    <tr><td><code>writer-v0.1.0-preview.5</code> (latest)</td><td>2026-09-30</td></tr>
+    <tr><td><code>writer-v0.1.0-preview.4</code></td><td>2026-09-23</td></tr>
+    <tr><td><code>writer-v0.1.0-preview.3</code></td><td>2026-09-22</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Asset</th><th>What it is</th></tr></thead>
+  <tbody>
+    <tr><td><code>…-win-x64.zip</code>, <code>…-linux-x64.zip</code></td><td>One self-contained NativeAOT executable each. <strong>Not code-signed</strong> — the release notes warn that Windows SmartScreen may ask before the first start.</td></tr>
+    <tr><td><code>…-arm64.apk</code>, <code>….aab</code></td><td>The APK for sideloading and the app bundle (arm64 + x86_64), <strong>signed with the Broiler release key</strong>; the release notes quote the certificate's SHA-256 fingerprint.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  The release notes call each one "a preview build for evaluation and testing, not for
+  production use". <strong>No release includes a web build</strong>, and there is no store
+  listing.
+</p>
+
+<div class="callout callout-warn">
+  <p class="callout-title"><code>preview.5</code> was published from a red commit</p>
+  <p>
+    It was built from <code>954a057</code>, where CI's <strong>Tests (Linux)</strong> and
+    <strong>Tests (Windows)</strong> jobs failed; the build, Android and NativeAOT publish jobs
+    passed. The publish workflow does not run the test suite, and the draft it made was then
+    published.
+  </p>
+</div>
 
 <h2 id="solutions">Solutions</h2>
 
@@ -137,14 +209,20 @@ dotnet test  Broiler.Writer.Tests.slnx -c Release</code></pre>
 <table>
   <thead><tr><th>Solution</th><th>Entry point</th><th class="num">Projects</th></tr></thead>
   <tbody>
-    <tr><td><code>Broiler.Windows.Writer.slnx</code></td><td><code>src/Broiler.Writer.Windows</code></td><td class="num">54</td></tr>
-    <tr><td><code>Broiler.Linux.Writer.slnx</code></td><td><code>src/Broiler.Writer.Linux</code></td><td class="num">57</td></tr>
-    <tr><td><code>Broiler.Android.Writer.slnx</code></td><td><code>src/Broiler.Writer.Android</code></td><td class="num">56</td></tr>
-    <tr><td><code>Broiler.WebAssembly.Writer.slnx</code></td><td><code>src/Broiler.Writer.WebAssembly</code></td><td class="num">49</td></tr>
-    <tr><td><code>Broiler.Writer.Tests.slnx</code></td><td><code>src/Broiler.Writer.FormatCodes.Tests</code></td><td class="num">52</td></tr>
+    <tr><td><code>Broiler.Windows.Writer.slnx</code></td><td><code>src/Broiler.Writer.Windows</code></td><td class="num">3</td></tr>
+    <tr><td><code>Broiler.Linux.Writer.slnx</code></td><td><code>src/Broiler.Writer.Linux</code></td><td class="num">3</td></tr>
+    <tr><td><code>Broiler.Android.Writer.slnx</code></td><td><code>src/Broiler.Writer.Android</code></td><td class="num">4</td></tr>
+    <tr><td><code>Broiler.WebAssembly.Writer.slnx</code></td><td><code>src/Broiler.Writer.WebAssembly</code></td><td class="num">3</td></tr>
+    <tr><td><code>Broiler.Writer.Tests.slnx</code></td><td><code>src/Broiler.Writer.FormatCodes.Tests</code></td><td class="num">3</td></tr>
   </tbody>
 </table>
 </div>
+
+<p class="small">
+  Counted in the checked-in <code>.slnx</code> files. The components arrive as packages, and a
+  package is not a project a solution lists, so each solution now holds only the Writer's own
+  projects. The README's solution table predates that move and is out of date.
+</p>
 
 <h2 id="prereq">Prerequisites</h2>
 
@@ -153,8 +231,16 @@ dotnet test  Broiler.Writer.Tests.slnx -c Release</code></pre>
   <li><strong>Windows head</strong> — <code>net10.0-windows</code>, Direct2D.</li>
   <li><strong>Linux head</strong> — <code>net10.0</code>, X11 clipboard and input coordination.</li>
   <li><strong>Android head</strong> — the <code>android</code> workload; <code>net10.0-android36.0</code>, minimum SDK 24, <code>android-arm64</code> plus <code>android-x64</code>.</li>
-  <li><strong>WebAssembly head</strong> — the <code>wasm-tools</code> workload. It publishes <strong>trimmed on every publish path</strong>; publishing this app untrimmed crashes the mono runtime at boot.</li>
+  <li><strong>WebAssembly head</strong> — the <code>wasm-tools</code> workload. It publishes <strong>trimmed on every publish path</strong>; publishing this app untrimmed crashes the mono runtime at boot. CI has not built this head since 2026-09-14 — see <a href="#ci">Continuous integration</a>.</li>
 </ul>
+
+<p class="small">
+  The desktop heads still declare four configurations — <code>Debug-Windows</code>,
+  <code>Release-Windows</code>, <code>Debug-Linux</code>, <code>Release-Linux</code> — beside
+  plain <code>Debug</code>/<code>Release</code>. <code>Directory.Build.props</code> decomposes
+  them; without it a <code>-c Release-Linux</code> publish builds unoptimised and with neither
+  <code>RELEASE</code> nor <code>LINUX</code> defined.
+</p>
 
 <h2 id="layout">Repository layout</h2>
 
@@ -162,50 +248,80 @@ dotnet test  Broiler.Writer.Tests.slnx -c Release</code></pre>
 <table>
   <thead><tr><th>Path</th><th>Contents</th></tr></thead>
   <tbody>
-    <tr><td><code>src/Broiler.Writer</code></td><td>Shared application (<code>Broiler.Writer.Core</code>) — window, menu, toolbar, RichEdit surface, palette, format registry</td></tr>
-    <tr><td><code>src/Broiler.Writer.FormatCodes</code></td><td>Reveal-codes synchronization, structured editing and host policy</td></tr>
-    <tr><td><code>src/Broiler.Writer.FormatCodes.Tests</code></td><td>xUnit suite — format codes, document load, image render, PDF policy, desktop host smoke</td></tr>
+    <tr><td><code>src/Broiler.Writer</code></td><td>Shared application (<code>Broiler.Writer.Core</code>) — window, dialogs, menu, toolbar, icons, RichEdit surface, palette, format registry, reveal-codes controller, pane layout, shortcuts and zoom</td></tr>
+    <tr><td><code>src/Broiler.Writer.FormatCodes</code></td><td>UI-independent Formatting Codes projection scheduler; depends only on <code>Broiler.Documents.FormatCodes</code></td></tr>
+    <tr><td><code>src/Broiler.Writer.FormatCodes.Tests</code></td><td>xUnit suite — format codes, document load, image render, PDF policy, zoom, desktop host smoke</td></tr>
     <tr><td><code>src/Broiler.Writer.Windows</code></td><td>Windows head — <code>WinExe</code>, Direct2D, Win32 clipboard, and the break-out host that gives each dialog its own OS window</td></tr>
     <tr><td><code>src/Broiler.Writer.Linux</code></td><td>Linux head — X11 clipboard and input coordination</td></tr>
     <tr><td><code>src/Broiler.Writer.Android</code></td><td>Android head — activity, manifest, resources</td></tr>
     <tr><td><code>src/Broiler.Writer.WebAssembly</code></td><td>Browser head — direct-Canvas 2D backend, browser file picker and download</td></tr>
+    <tr><td><code>src/Broiler.App</code></td><td>Source-only directory shared by the desktop heads — per-platform clipboards and Linux input coordination. No project of its own; each head links the files it needs.</td></tr>
+    <tr><td><code>src/Broiler.App.Android</code></td><td>Android view, canvas renderer, inset layout, input connection</td></tr>
+    <tr><td><code>eng/</code>, <code>scripts/</code></td><td>Solution manifest and generator; the preview-version resolver, Android signing and draft-release scripts</td></tr>
   </tbody>
 </table>
 </div>
 
-<h2 id="warnings">The suppression list was measured, not inherited</h2>
+<h2 id="warnings">The suppression list predates the package move</h2>
 
 <p>
-  <code>Directory.Build.props</code> carries the suppressed-warning list with a documented reason
-  for every code. That list was measured against a clean rebuild of all five solutions rather
-  than copied from elsewhere, and <strong>nothing in it is authored in this
-  repository</strong> — the nullable warnings come from component submodules and from vendored
-  Android glue, and <code>CA1416</code> is a false positive against runtime
-  <code>Build.VERSION.SdkInt</code> guards the analyzer cannot see through.
+  <code>Directory.Build.props</code> carries a suppressed-warning list —
+  <code>CS8602</code>, <code>CS8618</code> and <code>CS8625</code> — with a documented reason for
+  every code. It was measured against a clean rebuild of all five solutions rather than copied
+  from elsewhere, and it attributes all three codes to component sources, almost all of them in
+  <code>Broiler.Dom.Html</code>. <strong>That measurement is dated 2026-09-02</strong>, when the
+  components still compiled here from submodules; they are packages now, and the file's own
+  instruction to re-measure after a dependency change has not yet been followed.
 </p>
 
 <p>
-  <code>NU1504</code> is deliberately left visible: the nested <code>Broiler.DOM</code> checkout
-  lists <code>Microsoft.SourceLink.GitHub</code> twice, which is a real upstream defect whose fix
-  belongs in <a href="/components/dom.html">Broiler.DOM</a>. It is the only warning a clean build
-  still emits.
+  <code>CS8601</code>, <code>CS8603</code>, <code>CS8604</code> and <code>CA1416</code> are
+  suppressed only in <code>src/Broiler.App.Android</code>, the vendored .NET for Android glue,
+  rather than repository-wide — so the same code newly introduced in
+  <code>Broiler.Writer.Core</code> would still be reported.
+</p>
+
+<p>
+  <code>NU1504</code>, which this page used to call the one warning a clean build still emitted,
+  is fixed upstream: it came from a duplicate <code>Microsoft.SourceLink.GitHub</code> reference
+  in a nested <a href="/components/dom.html">Broiler.DOM</a> checkout.
 </p>
 
 <h2 id="known">Known issues</h2>
 
+<p>
+  The README records the three issues this page used to list — duplicate compilation, a nested
+  <code>Broiler.DOM</code> gitlink pinned off <code>main</code>, and <code>NU1504</code> — as
+  fixed upstream. What is open now:
+</p>
+
 <ul class="checklist neutral">
-  <li><strong>Some components compile more than once.</strong> <code>Broiler.Media</code> and <code>Broiler.Media.Image</code> five times in a desktop head, <code>Broiler.Graphics</code> four times, and <code>Broiler.Input</code>, <code>Broiler.Documents.Model</code> and <code>Broiler.Documents.FormatCodes</code> twice. Assembly-identical, so no reference conflict — but wasted work.</li>
-  <li><strong>The nested <code>Broiler.DOM</code> gitlink is not on <code>main</code>.</strong> <code>Broiler.Documents</code> pins its own checkout at a commit off a tokenizer fix branch, while the top-level submodule is on <code>main</code>. Both are checked out, so <code>Broiler.Dom</code> compiles from the older revision when reached through <code>Broiler.Documents.Html</code>. Resolving it means bumping the gitlink upstream.</li>
+  <li><strong>The test jobs fail on <code>main</code>.</strong> Both CI runs on 2026-09-30 failed; on <code>954a057</code> the failures are Tests (Linux) and Tests (Windows). The last green run on <code>main</code> was 2026-09-24.</li>
+  <li><strong>The WebAssembly head is not built by CI</strong>, and whether it currently builds is unknown. The README still describes it as a working head.</li>
+  <li><strong>Linux window-manager close skips the unsaved-changes prompt</strong> — see <a href="#dialogs">Dialogs</a>.</li>
+  <li><strong>The README lags the repository</strong> — submodule instructions, solution counts and a Solution manifest CI job that <code>ci.yml</code> no longer has.</li>
 </ul>
 
 <h2 id="ci">Continuous integration</h2>
 
+<p><code>ci.yml</code> runs on every push to <code>main</code> and every pull request:</p>
+
+<ul class="checklist neutral">
+  <li><strong>Build</strong> — the Windows head on <code>windows-latest</code>, the Linux head on <code>ubuntu-latest</code>.</li>
+  <li><strong>Tests</strong> — the suite on both hosts.</li>
+  <li><strong>Android head</strong> — a separate job, since it pays for the <code>android</code> workload.</li>
+  <li><strong>Publish (NativeAOT)</strong> — <code>Release-Windows</code> and <code>Release-Linux</code> with <code>PublishAot=true</code>, because AOT is the one build mode that fails on reflection the rest of the build accepts.</li>
+  <li><strong>WebAssembly head — commented out</strong> since <code>32aadaa</code> (2026-09-14), "until WebAssembly head is migrated" from submodules to NuGet packages.</li>
+</ul>
+
 <p>
-  Alongside the shared conventions, the WebAssembly job <strong>publishes as well as
-  builds</strong> — this app must publish trimmed, and only a publish exercises that. The
-  dispatch-only release workflow uploads <code>win-x64</code>, <code>linux-x64</code>, a
-  debug-signed <code>android-arm64</code> APK and the <code>browser-wasm</code> static site.
-  Pass <code>native-aot: false</code> when dispatching to get framework-dependent output instead.
+  <code>publish.yml</code> replaced the old release workflow. It is dispatch-only and builds the
+  Windows and Linux Writer with NativeAOT and the Android Writer as a release-signed app bundle
+  and APK — Mono, not NativeAOT, on Android — and drafts a GitHub pre-release carrying them.
+  <strong>Nothing is public until someone publishes the draft by hand.</strong> There is no
+  WebAssembly output. Each run takes the next preview number past every earlier
+  <code>writer-v*</code> tag, so numbers only increase, and the preview number becomes the
+  Android <code>versionCode</code> so each release installs over the one before.
 </p>
 
 <div class="pager">
