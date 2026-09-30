@@ -1,15 +1,16 @@
-{"title": "Components — Broiler Platform", "desc": "The eleven Broiler components: DOM, CSS, Layout, Graphics, Media, Input, HTML, JS, UI, Documents and VM. Purpose, packages, dependency direction and release status.", "nav": "developers"}
+{"title": "Components — Broiler Platform", "desc": "The eighteen Broiler components: DOM, CSS, Layout, Graphics, Media, Input, HTML, JS, UI, Documents, VM, HtmlBridge, JSeal, Net, Native, Regex, DateTime and Unicode. Purpose, packages, dependency direction and release status.", "nav": "developers"}
 ---
 <section class="page-head">
   <div class="wrap">
     <p class="crumb"><a href="/developers.html">For developers</a></p>
     <span class="eyebrow">Components</span>
-    <h1>Eleven components, released independently</h1>
+    <h1>Eighteen components, released independently</h1>
     <p class="lede">
-      Almost every reusable part of Broiler is its own repository, with its own solution, its
-      own CI and its own NuGet packages — <code>Broiler.Layout</code> is the exception, and
-      lives in the aggregate checkout. An application takes the pieces it needs; nothing is
-      bundled by default, and no abstraction ever references an implementation.
+      Every reusable part of Broiler is its own repository, with its own solution, its own CI
+      and its own NuGet packages — <code>Broiler.Layout</code>, the last one that lived inside
+      another repository, has had its own since September 2026. An application takes the
+      pieces it needs as packages; nothing is bundled by default, and no abstraction ever
+      references an implementation.
     </p>
   </div>
 </section>
@@ -18,13 +19,16 @@
   <div class="wrap">
 
     <div class="callout callout-ember">
-      <p class="callout-title">Lockstep preview versioning</p>
+      <p class="callout-title">Independent preview versions</p>
       <p>
-        Published component packages are versioned in lockstep at
-        <code>0.1.0-preview.1</code> — a prerelease, so every install needs
-        <code>--prerelease</code>. The version lives in
-        <code>eng/Broiler.Packaging.props</code>, vendored per component from one canonical
-        file. The <a href="/applications.html">applications</a> are not published as packages.
+        Component packages are published to nuget.org only, as prereleases, so every install
+        needs <code>--prerelease</code>. They are no longer versioned in lockstep: each
+        repository's publish workflow resolves its own next unused
+        <code>0.1.0-preview.N</code>, and <code>eng/Broiler.Packaging.props</code> is now a
+        floor rather than the version. Consumers pin what they built against — Graphics at
+        preview.7, Media at preview.14 and Documents at preview.21, for example — so there is
+        no single suite version to quote. The <a href="/applications.html">applications</a> are
+        not published as packages.
       </p>
     </div>
 
@@ -44,7 +48,7 @@
             <td><a href="/components/css.html"><strong>Broiler.CSS</strong></a></td>
             <td>CSS syntax, rules, selectors, declarations, values, diagnostics, parsing and serialization; selector matching, cascade, computed values and DOM-facing style services</td>
             <td class="num">2</td>
-            <td><span class="pill pill-ok">Approved for preview</span></td>
+            <td><span class="pill pill-pending">Pending · next preview</span></td>
           </tr>
           <tr>
             <td><a href="/components/layout.html"><strong>Broiler.Layout</strong></a></td>
@@ -61,61 +65,106 @@
           <tr>
             <td><a href="/components/media.html"><strong>Broiler.Media</strong></a></td>
             <td>Image, audio and video decoding, format probing and codec selection behind small abstraction assemblies</td>
-            <td class="num">8</td>
+            <td class="num">9</td>
             <td><span class="pill pill-preview">Preview</span></td>
           </tr>
           <tr>
             <td><a href="/components/input.html"><strong>Broiler.Input</strong></a></td>
             <td>Device discovery, lifecycle, timing, bounded delivery, capture leases and diagnostics, with Windows, Linux and Android providers</td>
-            <td class="num">25+</td>
+            <td class="num">23</td>
             <td><span class="pill pill-preview">Preview</span></td>
           </tr>
           <tr>
             <td><a href="/components/html.html"><strong>Broiler.HTML</strong></a></td>
             <td>The modular renderer: parsing, CSS processing, layout integration, painting, image generation and the CLI render tool</td>
-            <td class="num">—</td>
+            <td class="num">6</td>
             <td><span class="pill pill-ok">Approved, conditions</span></td>
           </tr>
           <tr>
             <td><a href="/components/js.html"><strong>Broiler.JS</strong></a></td>
-            <td>JavaScript parser, compiler, runtime, built-ins and host integration — compiled to .NET IL at runtime. Carries DateTime, Regex and Unicode</td>
-            <td class="num">—</td>
+            <td>JavaScript parser, compiler, runtime, built-ins and host integration — compiled to .NET IL at runtime. Takes Broiler.Regex and Broiler.Unicode as packages</td>
+            <td class="num">20</td>
             <td><span class="pill pill-pending">Review pending</span></td>
           </tr>
           <tr>
             <td><a href="/components/ui.html"><strong>Broiler.UI</strong></a></td>
             <td>Retained-mode UI: element tree, session, layout protocol, input routing, host and accessibility contracts, and one contract/implementation pair per control</td>
-            <td class="num">56</td>
+            <td class="num">60</td>
             <td><span class="pill pill-pending">Review pending</span></td>
           </tr>
           <tr>
             <td><a href="/components/documents.html"><strong>Broiler.Documents</strong></a></td>
-            <td>UI-free rich-text document model, formatting-codes projection, and the RTF, DOCX, ODT, HTML, Markdown and (unpublished) PDF codecs</td>
-            <td class="num">8</td>
+            <td>UI-free rich-text document model, formatting-codes projection, and the RTF, DOCX, ODT, HTML, Markdown and PDF codecs — PDF now published as a preview package, with the applications' read/write gates kept</td>
+            <td class="num">11</td>
             <td><span class="pill pill-preview">Preview</span></td>
           </tr>
           <tr>
             <td><a href="/components/vm.html"><strong>Broiler.VM</strong></a></td>
-            <td>NativeAOT-compatible host for verified bytecode profiles — profile selection, bounded loading, the verification boundary, execution lifecycle, resource authority</td>
-            <td class="num">0</td>
+            <td>NativeAOT-compatible host for verified bytecode profiles — profile selection, bounded loading, the verification boundary, execution lifecycle, resource authority. Its eight packages were published on 2026-09-23 while its review record read <code>PENDING</code></td>
+            <td class="num">8</td>
             <td><span class="pill pill-pending">Unaccepted · 0 % reviewed</span></td>
+          </tr>
+          <tr>
+            <td><a href="https://github.com/Broiler-Platform/Broiler.HtmlBridge"><strong>Broiler.HtmlBridge</strong></a></td>
+            <td>An embeddable HTML control for .NET: a live DOM, a running JavaScript realm, and the host seam — the role WebView2 fills. The named control surface is not written yet; a host composes the pieces itself</td>
+            <td class="num">5</td>
+            <td><span class="pill pill-pending">Review pending</span></td>
+          </tr>
+          <tr>
+            <td><a href="https://github.com/Broiler-Platform/Broiler.JSeal"><strong>Broiler.JSeal</strong></a></td>
+            <td>The JavaScript Engine Abstraction Layer: engine-neutral contracts with no references at all, and providers over Broiler.JS and the Broiler.VM JavaScript profile</td>
+            <td class="num">3</td>
+            <td><span class="pill pill-pending">Review pending</span></td>
+          </tr>
+          <tr>
+            <td><a href="https://github.com/Broiler-Platform/Broiler.Net"><strong>Broiler.Net</strong></a></td>
+            <td>A cookie engine, site resolution and a policy-aware HTTP transport, depending only on the .NET base class library. Code under Apache-2.0; the bundled Public Suffix List data under MPL-2.0</td>
+            <td class="num">1</td>
+            <td><span class="pill pill-pending">Pending · 0 of 270 units</span></td>
+          </tr>
+          <tr>
+            <td><a href="https://github.com/Broiler-Platform/Broiler.Native"><strong>Broiler.Native</strong></a></td>
+            <td>Shared native API bindings for Graphics, Input and Media: entry points, ABI structures, COM contracts and library probing. Hardware validation on Linux and Android is still open</td>
+            <td class="num">5</td>
+            <td><span class="pill pill-preview">Preview · no review record</span></td>
+          </tr>
+          <tr>
+            <td><a href="https://github.com/Broiler-Platform/Broiler.RegEx"><strong>Broiler.Regex</strong></a></td>
+            <td>An experimental ECMAScript regular-expression engine for Broiler.JS — a backtracking matcher with a shared step budget</td>
+            <td class="num">1</td>
+            <td><span class="pill pill-pending">Approved for rev. d5b07a0 · source changed since</span></td>
+          </tr>
+          <tr>
+            <td><a href="https://github.com/Broiler-Platform/Broiler.DateTime"><strong>Broiler.DateTime</strong></a></td>
+            <td>ISO-8601 / RFC-3339-like date-time values beyond the .NET <code>DateTime</code> year range — expanded and negative years, fixed UTC offsets only</td>
+            <td class="num">1</td>
+            <td><span class="pill pill-pending">Approved for rev. 3decee8 · source changed since</span></td>
+          </tr>
+          <tr>
+            <td><a href="https://github.com/Broiler-Platform/Broiler.Unicode"><strong>Broiler.Unicode</strong></a></td>
+            <td>Unicode property, emoji string-property and CLDR locale-data components used by Broiler.JS. The runtime libraries use committed data; the data tools download Unicode and CLDR data from the internet</td>
+            <td class="num">3</td>
+            <td><span class="pill pill-pending">Approved with conditions for rev. 89f134e · source changed since</span></td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <p class="small">
-      Package counts are the shipping NuGet packages a component publishes. Broiler.HTML and
-      Broiler.JS are consumed as project references through the aggregate checkout rather than
-      as packages. Review status is summarised from each component's <code>HUMAN_REVIEW.md</code>;
-      see <a href="/assurance.html">Assurance</a> for what each status actually means.
+      The first eleven have a page on this site; the last seven link to their repositories.
+      Package counts are the shipping NuGet packages a component publishes to nuget.org, and
+      they are also how the components reach each other — no component builds from a nested
+      checkout of another any more. Review status is summarised from each component's
+      <code>HUMAN_REVIEW.md</code>. An approval covers only the commit it names, and for every
+      approved component above the source has moved on since; see
+      <a href="/assurance.html">Assurance</a> for what each status actually means.
     </p>
 
     <h2 id="direction">Dependency direction at a glance</h2>
 
     <p>
       Every arrow points down the stack. There is no cycle, and no abstraction package depends
-      on an implementation package.
+      on an implementation package. Wherever an arrow crosses from one repository to another, it is a nuget.org package reference.
     </p>
 
     <div class="code">
@@ -130,8 +179,25 @@ Broiler.Graphics.&lt;Backend&gt; ──&gt; Broiler.Graphics ──&gt; Broiler.
 Broiler.Media.&lt;Kind&gt;.&lt;Impl&gt; ─&gt; Broiler.Media.&lt;Kind&gt; ──&gt; Broiler.Media
 Broiler.Input.&lt;Kind&gt;.&lt;OS&gt; ───&gt; Broiler.Input.&lt;Kind&gt; ──&gt; Broiler.Input
 
+Broiler.Graphics.&lt;Backend&gt; ──&gt; Broiler.Native.Windows | .Linux | .Android
+Broiler.Input (Windows, Linux providers) ──&gt; Broiler.Native.Windows | .Linux
+Broiler.Media.Image.Managed, Broiler.Media.Video.MediaFoundation ──&gt; Broiler.Native.Windows
+
 Broiler.Layout ──&gt; Broiler.CSS, Broiler.CSS.Dom, Broiler.Dom, Broiler.Graphics (primitives)
-Broiler.CSS.Dom ─&gt; Broiler.CSS, Broiler.Dom</code></pre>
+Broiler.CSS.Dom ─&gt; Broiler.CSS, Broiler.Dom
+Broiler.HTML.Core ──&gt; Broiler.CSS, Broiler.Graphics, Broiler.Layout, Broiler.Net
+
+Broiler.JavaScript.BuiltIns ──&gt; Broiler.Regex, Broiler.Unicode.Cldr.LocaleData
+Broiler.Regex ──&gt; Broiler.Unicode.Properties, Broiler.Unicode.Emoji.StringProperties
+
+Broiler.HtmlBridge.Core ──&gt; Broiler.Dom.Html, Broiler.CSS.Dom, Broiler.Layout,
+                            Broiler.JavaScript.Engine, Broiler.Net
+Broiler.HtmlBridge.Dom ───&gt; Broiler.JSeal                      (contracts, zero references)
+Broiler.HtmlBridge.Scripting ────&gt; Broiler.JSeal.BroilerJs ──&gt; Broiler.JSeal, Broiler.JavaScript.*
+Broiler.HtmlBridge.Scripting.Vm ─&gt; Broiler.JSeal.Vm ────────&gt; Broiler.JSeal, Broiler.VM.Runtime,
+                                                               Broiler.VM.Profile.JavaScript
+
+Broiler.Browser.Core (application) ──&gt; Broiler.HtmlBridge.Scripting, Broiler.Net, …</code></pre>
     </div>
 
     <h2 id="constraints">Shared component constraints</h2>
@@ -143,12 +209,12 @@ Broiler.CSS.Dom ─&gt; Broiler.CSS, Broiler.Dom</code></pre>
 
     <div class="grid grid-2">
       <div class="card">
-        <h3>Target .NET 10 only</h3>
-        <p>No multi-targeting, no compatibility shims for older runtimes. Platform assemblies target <code>net10.0-windows</code> only where they must.</p>
+        <h3>Target .NET 10</h3>
+        <p>No compatibility shims for older runtimes. Platform assemblies target <code>net10.0-windows</code> only where they must. One exception: Broiler.Unicode's three packages target both <code>net8.0</code> and <code>net10.0</code>.</p>
       </div>
       <div class="card">
         <h3>No third-party runtime dependencies</h3>
-        <p>Image codecs, PDF syntax, regular expressions, Unicode data and the JavaScript engine are implemented in the repository. Test tooling may use external packages; shipping assemblies may not.</p>
+        <p>Image codecs, PDF syntax, regular expressions, Unicode data, networking and the JavaScript engine are implemented in Broiler's own repositories. Test tooling may use external packages; shipping assemblies may not. Broiler.Net bundles the Public Suffix List as data, under MPL-2.0.</p>
       </div>
       <div class="card">
         <h3>Trimming- and AOT-friendly, safe code</h3>
@@ -160,24 +226,37 @@ Broiler.CSS.Dom ─&gt; Broiler.CSS, Broiler.Dom</code></pre>
       </div>
     </div>
 
-    <h2 id="nested">Components carried inside other components</h2>
+    <h2 id="nested">Where the newer components came from</h2>
 
     <p>
-      Three components ship inside <a href="/components/js.html">Broiler.JS</a> as nested
-      submodules rather than as top-level repositories. They are separately reviewed and
-      separately licensed where their data requires it.
+      Most of the seven without a page here are not new code. Three used to ship inside
+      <a href="/components/js.html">Broiler.JS</a> as nested submodules —
+      <code>Broiler.DateTime</code>, <code>Broiler.Regex</code> and <code>Broiler.Unicode</code>
+      — and have been promoted to top-level repositories and aggregate submodules of their own.
+      Broiler.JS now takes Regex and Unicode's CLDR locale data as nuget.org packages, and no
+      longer references DateTime at all.
     </p>
 
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Component</th><th>Role</th><th>Review status</th></tr></thead>
+        <thead><tr><th>Component</th><th>Where it came from</th><th class="nowrap">Date</th></tr></thead>
         <tbody>
-          <tr><td><code>Broiler.DateTime</code></td><td>Date and time parsing and semantics for the JavaScript <code>Date</code> surface</td><td><span class="pill pill-ok">Approved for preview</span></td></tr>
-          <tr><td><code>Broiler.Regex</code></td><td>ECMAScript-compatible regular expressions with a step budget against adversarial input</td><td><span class="pill pill-ok">Approved for preview</span></td></tr>
-          <tr><td><code>Broiler.Unicode</code></td><td>Unicode property data and algorithms; runtime libraries use committed data, and the refresh tools download Unicode/CLDR data under their own terms</td><td><span class="pill pill-ok">Approved, conditions</span></td></tr>
+          <tr><td><code>Broiler.DateTime</code></td><td>Own repository since June 2026, but still carried inside Broiler.JS as a nested submodule until Broiler.JS switched to packages</td><td>2026-09-18</td></tr>
+          <tr><td><code>Broiler.Regex</code></td><td>Own repository (<code>Broiler.RegEx</code>) since June 2026; nested in Broiler.JS until it switched to packages. Takes Unicode from NuGet rather than a nested copy</td><td>2026-09-18</td></tr>
+          <tr><td><code>Broiler.Unicode</code></td><td>Nested in Broiler.JS until it switched to packages; now consumed as packages by Broiler.JS and Broiler.Regex</td><td>2026-09-18</td></tr>
+          <tr><td><code>Broiler.HtmlBridge</code></td><td>Extracted from Broiler.Browser with its history — nothing in it was about being a browser, so the browser is now one embedder of it</td><td>2026-09-16</td></tr>
+          <tr><td><code>Broiler.JSeal</code></td><td>Split out of Broiler.HtmlBridge. The bridge's rule is that a binding never names an engine: it names JSEAL, and a provider names the engine</td><td>2026-09-19</td></tr>
+          <tr><td><code>Broiler.Native</code></td><td>New; the native declarations were extracted from Graphics, Input and Media (its ADR 0001, accepted)</td><td>2026-09-11</td></tr>
+          <tr><td><code>Broiler.Net</code></td><td>New; one profile-owned network session that Broiler.HTML, Broiler.HtmlBridge and Broiler.Browser all send through</td><td>2026-09-24</td></tr>
         </tbody>
       </table>
     </div>
+
+    <p class="small">
+      <a href="/components/layout.html">Broiler.Layout</a> made the same move shortly before: it
+      moved out of Broiler.Browser into its own repository on 2026-09-09, and is now an aggregate
+      submodule built from nuget.org packages.
+    </p>
 
     <div class="pager">
       <a href="/architecture.html"><span class="dir">Previous</span><span class="ttl">Architecture</span></a>

@@ -1,4 +1,4 @@
-{"title": "Broiler.Documents — Broiler Platform", "desc": "Broiler's document-format codec component: a UI-free rich-text model plus RTF, DOCX, ODT, HTML, Markdown and a deliberately unpublished PDF codec, with a scriptable round-trip and compare CLI.", "nav": "developers"}
+{"title": "Broiler.Documents — Broiler Platform", "desc": "Broiler's document-format codec component: a UI-free rich-text model plus RTF, DOCX, ODT, HTML, Markdown and a preview PDF codec, with a scriptable round-trip and compare CLI.", "nav": "developers"}
 ---
 <section class="page-head">
   <div class="wrap">
@@ -12,8 +12,8 @@
       or approximated.
     </p>
     <div class="tag-row" style="margin-top:1.4rem">
-      <span class="pill pill-preview">0.1.0-preview.1</span>
-      <span class="pill pill-plain">8 packages</span>
+      <span class="pill pill-preview">Consumers pin preview.21</span>
+      <span class="pill pill-plain">11 packages</span>
       <span class="pill pill-plain">Apache-2.0</span>
       <span class="pill pill-risk">Untrusted document input</span>
     </div>
@@ -28,9 +28,10 @@
 <h2 id="packages">Packages</h2>
 
 <p>
-  Eight packages ship. All target <code>net10.0</code>, ship XML documentation and a
-  <code>.snupkg</code>, and are built deterministically with SourceLink. There is
-  <strong>no meta-package</strong> — add a package per format you actually read or write.
+  Eleven preview packages ship, to nuget.org only. All target <code>net10.0</code>, ship XML
+  documentation and a <code>.snupkg</code>, and are built deterministically with SourceLink.
+  There is <strong>no meta-package</strong> — add a package per format you actually read or
+  write.
 </p>
 
 <div class="table-wrap">
@@ -45,28 +46,42 @@
     <tr><td><code>Broiler.Documents.Odt</code></td><td>ODT reader/writer for a safe OASIS OpenDocument text subset.</td></tr>
     <tr><td><code>Broiler.Documents.Html</code></td><td>HTML document/fragment codec over <code>Broiler.Dom</code> and <code>Broiler.Dom.Html</code>.</td></tr>
     <tr><td><code>Broiler.Documents.Markdown</code></td><td>Markdown codec for a safe CommonMark-oriented subset.</td></tr>
+    <tr><td><code>Broiler.Documents.Pdf</code></td><td>Preview PDF codec: logical text import and deterministic PDF 1.7 writing.</td></tr>
+    <tr><td><code>Broiler.Documents.Pdf.Fonts</code></td><td>Optional PDF font-program reader over <code>Broiler.Graphics</code>.</td></tr>
+    <tr><td><code>Broiler.Documents.Pdf.Images</code></td><td>Optional PDF image filters over the managed <a href="/components/media.html">Broiler.Media</a> image codecs.</td></tr>
   </tbody>
 </table>
 </div>
 
-<h2 id="pdf">The PDF codec is built, tested — and deliberately not published</h2>
+<h2 id="pdf">The PDF codec is published as a preview — its application gates are not lifted</h2>
 
 <div class="callout callout-warn">
-  <p class="callout-title"><code>Broiler.Documents.Pdf</code> is <code>IsPackable=false</code> and registered in no application catalog</p>
+  <p class="callout-title">A package is not a feature: application integration keeps the read-preview and write-preview gates</p>
   <p>
-    It is a base PDF codec — logical text import from ISO 32000-1 files and a deterministic PDF
-    1.7 writer, built only from what this repository implements itself, with no third-party
-    runtime dependency and no bundled font or codec asset. Syntax, cross-references, object
-    streams and the Flate / ASCIIHex / ASCII85 / RunLength filters are implemented. Every
-    remaining PDF technology is <strong>detected, skipped with its own stable diagnostic, and
-    reachable by composing a reviewed implementation</strong> into <code>PdfCodecServices</code>.
+    <code>Broiler.Documents.Pdf</code> is a base PDF codec — logical text import from ISO
+    32000-1 files and a deterministic PDF 1.7 writer, built only from what this repository
+    implements itself, with no third-party runtime dependency and no bundled font or codec asset.
+    Syntax, cross-references, object streams and the Flate / ASCIIHex / ASCII85 / RunLength
+    filters are implemented. Every remaining PDF technology is <strong>detected, skipped with its
+    own stable diagnostic, and reachable by composing a reviewed implementation</strong> into
+    <code>PdfCodecServices</code>.
+  </p>
+  <p>
+    It and its optional font and image providers are now in the normal pack and publish
+    workflows. The README is explicit that package generation <strong>does not enable
+    application features or certify PDF conformance</strong>: application integration retains
+    the roadmap's read-preview and write-preview gates. The document CLI composes the codec
+    <strong>read-only</strong> — it opens, converts from and renders PDF files, and writes none
+    until PDF output passes its write-preview gate.
   </p>
   <p style="margin-bottom:0">
-    It stays unpacked and unregistered until the roadmap's read-preview and write-preview gates
-    pass. The document CLI does not compose it either — a CLI that registered it would ship the
-    capability the gates exist to hold back. IP and licensing requirements in that roadmap are
-    engineering release controls, not a legal opinion; patent freedom-to-operate and
-    reciprocal-license decisions require approval by a qualified legal reviewer.
+    Recent reader work: encrypted documents open through the standard security handler
+    (revisions 2–4 and AES-256 revision 6) with the caller's password, and the public-key
+    handler through a caller-composed decryptor, none of which ships; image masks are carried as
+    alpha; ICC-based colour converts through a composed profile reader. IP and licensing
+    requirements in the roadmap are engineering release controls, not a legal opinion;
+    patent freedom-to-operate, reciprocal-license and jurisdiction questions need the project
+    reviewer's approval before the affected feature ships.
   </p>
 </div>
 
@@ -81,7 +96,9 @@ Broiler.Documents.Markdown -> Broiler.Documents -> Broiler.Documents.Model
 Broiler.Documents.Html     -> Broiler.Documents -> Broiler.Documents.Model
 Broiler.Documents.Html     -> Broiler.Dom, Broiler.Dom.Html
 Broiler.Documents.FormatCodes                   -> Broiler.Documents.Model
-Broiler.Documents.Pdf      -> Broiler.Documents -> Broiler.Documents.Model   (not packed)</code></pre>
+Broiler.Documents.Pdf      -> Broiler.Documents -> Broiler.Documents.Model
+Broiler.Documents.Pdf.Fonts  -> Broiler.Documents.Pdf, Broiler.Graphics
+Broiler.Documents.Pdf.Images -> Broiler.Documents.Pdf, Broiler.Media.Image, Broiler.Media.Image.Managed</code></pre>
 </div>
 
 <h2 id="conformance">Per-format conformance is documented, not implied</h2>
@@ -96,12 +113,13 @@ Broiler.Documents.Pdf      -> Broiler.Documents -> Broiler.Documents.Model   (no
 
 <p>
   The DOCX reader is a good illustration of what "best-effort plus diagnostics" means in
-  practice. Tables are walked recursively so their paragraphs are read rather than dropped,
-  then flattened into their cell paragraphs in row-major order with a
-  <code>docx.table.flattened</code> diagnostic — because <code>RichTextDocument</code> has no
-  table shape, and layout tables are how CV and letterhead templates hold their entire text.
-  Dropping them silently would lose the document; flattening them without saying so would be
-  a lie about fidelity.
+  practice. Tables used to be flattened into their cell paragraphs with a diagnostic, because
+  the model had no table shape. They are now read as a <code>DocumentTable</code> over the
+  paragraphs of their cells — column widths, spans, borders, shading, header rows, row heights
+  and nested tables — and written back as <code>w:tbl</code>. What the model still cannot hold
+  is said out loud: table styles are not applied (<code>docx.table.style</code>), and an
+  "exact" row height is read as a minimum (<code>docx.table.rowheight</code>), because a row
+  that clipped its own text would lose content the document has.
 </p>
 
 <div class="table-wrap">
@@ -165,14 +183,17 @@ Broiler.Documents.Pdf      -> Broiler.Documents -> Broiler.Documents.Model   (no
   </p>
 </div>
 
-<h2 id="adrs">Twelve ADRs</h2>
+<h2 id="adrs">Fifteen ADRs</h2>
 
 <p>
-  Eight of the twelve are PDF decisions — scope and delivery, request/result and commit
-  semantics, security and privacy, pagination units and fonts, standards and IP provenance, and
-  the base-implementation-plus-composed-extensions model. The other four fix component
-  topology, document-model ownership and promotion, the codec contract and signature probe, and
-  the RTF first-release subset.
+  Seven of the fifteen are PDF decisions — scope and delivery, request/result and commit
+  semantics, security and privacy, pagination units and fonts, standards and IP provenance, the
+  base-implementation-plus-composed-extensions model, and (ADR 0015, amending 0009) decryption:
+  credentials, permissions and the threat model. The other eight fix component topology,
+  document-model ownership and promotion, the codec contract and signature probe, read limits
+  and RTF sanitization, the RTF first-release subset, the Formatting Codes projection and
+  grammar, standards, IP, provenance and claims for every format beyond PDF, and API
+  deprecation and removal.
 </p>
 
 <p><a href="https://github.com/Broiler-Platform/Broiler.Documents/blob/main/docs/adr/README.md">ADR index →</a></p>

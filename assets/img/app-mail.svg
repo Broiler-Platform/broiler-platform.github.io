@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108" role="img" aria-label="Broiler Mail">
+  <path fill="#2464C8" d="M10,32 A12,12 0,0 1,22 20 L86,20 A12,12 0,0 1,98 32 L98,76 A12,12 0,0 1,86 88 L22,88 A12,12 0,0 1,10 76 Z"/>
+  <path fill="#A9CFF4" d="M10,76 L42,52 L47,57 L17,84 Z M98,76 L66,52 L61,57 L91,84 Z"/>
+  <path fill="#FFFFFF" d="M16,28 L54,58 L92,28 L92,38 L54,68 L16,38 Z"/>
+</svg>

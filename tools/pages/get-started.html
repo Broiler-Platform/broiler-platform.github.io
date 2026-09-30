@@ -1,4 +1,4 @@
-{"title": "Get started — Broiler Platform", "desc": "Clone, build, test and run Broiler: prerequisites, the solution map, per-application build commands, the Android setup step, and the CLI, WPT and diagnostics tooling.", "nav": "developers"}
+{"title": "Get started — Broiler Platform", "desc": "Clone, build, test and run Broiler: prerequisites, cloning one application or the whole aggregate, the solution map, build configurations, the Android setup step, and the CLI, WPT, document and review tooling.", "nav": "developers"}
 ---
 <section class="page-head">
   <div class="wrap">
@@ -6,9 +6,9 @@
     <span class="eyebrow">Get started</span>
     <h1>Clone it, build one slice, run the tools</h1>
     <p class="lede">
-      Broiler is a large graph, and the workspaces are deliberately split so you never load more
-      of it than you are working on. Pick the product, platform or validation slice you want and
-      build that.
+      Broiler is a large graph, and it is deliberately split so you never load more of it than
+      you are working on. Each application and component now builds from its own repository with
+      a plain clone; the aggregate repository composes all of them when you want the whole thing.
     </p>
   </div>
 </section>
@@ -18,6 +18,16 @@
     <div class="doc">
       <div class="doc-body">
 
+<div class="callout callout-info">
+  <p class="callout-title">Only want to try the apps? You don't need to build anything</p>
+  <p>
+    <a href="/applications/writer.html">Broiler Writer</a> and
+    <a href="/applications/plate.html">Broiler Plate</a> have public GitHub pre-releases — preview
+    builds for evaluation and testing, whose desktop executables are not code-signed. The
+    Browser's first release is still an unpublished draft, and Broiler Code has no release at all.
+  </p>
+</div>
+
 <h2 id="prerequisites">Prerequisites</h2>
 
 <div class="table-wrap">
@@ -25,7 +35,7 @@
   <thead><tr><th>Requirement</th><th>Needed for</th></tr></thead>
   <tbody>
     <tr><td><strong>.NET 10 SDK</strong></td><td>Everything. The repositories are developed against 10.0.400.</td></tr>
-    <tr><td><strong>Git</strong></td><td>Recursive submodules — the checkout is a composition, not a monolith.</td></tr>
+    <tr><td><strong>Git</strong></td><td>Cloning. A single application or component needs a plain clone; the aggregate repository composes the rest as submodules.</td></tr>
     <tr><td><strong>Windows</strong></td><td>The Direct2D backend and the Windows application heads.</td></tr>
     <tr><td><strong>.NET Android workload, JDK 21, Android SDK API 36</strong></td><td>The Android heads.</td></tr>
     <tr><td><strong><code>wasm-tools</code> workload</strong></td><td>The WebAssembly Writer head and the Broiler Code payload probes.</td></tr>
@@ -37,11 +47,33 @@
 
 <h2 id="clone">Get the source</h2>
 
-<p>Broiler uses recursive Git submodules.</p>
+<p>
+  To work on one application, clone just that repository. The Broiler components it is built on
+  arrive as NuGet packages from nuget.org on the first build.
+</p>
 
 <div class="code">
-  <div class="code-head"><span class="code-title">fresh clone</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>git clone --recurse-submodules https://github.com/MaiRat/Broiler.git
+  <div class="code-head"><span class="code-title">one application</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>git clone https://github.com/Broiler-Platform/Broiler.Browser.git
+cd Broiler.Browser
+dotnet build Broiler.Windows.Browser.slnx -c Release</code></pre>
+</div>
+
+<p>
+  Broiler.Writer builds the same way. Broiler.Code is the exception for now: only its Windows head
+  builds from packages — see <a href="/developers/code.html#start">its developer page</a>.
+</p>
+
+<p>
+  To have everything side by side, clone the aggregate repository. It composes
+  <strong>25 repositories</strong> as submodules — the components, the applications, and the
+  newer Layout, HtmlBridge, JSeal, Net, Native, RegEx, DateTime, Unicode, VM, Plate, Mail and
+  Fond repositories.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">fresh clone of the aggregate</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>git clone --recurse-submodules https://github.com/Broiler-Platform/Broiler.git
 cd Broiler</code></pre>
 </div>
 
@@ -51,22 +83,22 @@ cd Broiler</code></pre>
 </div>
 
 <div class="callout callout-info">
-  <p class="callout-title">One component wants its submodules initialised by name</p>
+  <p class="callout-title">No repository nests checkouts any more</p>
   <p>
-    <a href="/components/ui.html#build">Broiler.UI</a> asks you not to recurse: <code>--recursive</code>
-    would walk the Media→Graphics cycle and fetch an unused <code>Broiler.DOM</code> as well. A
-    project reference to a directory that is not there is only a <em>warning</em> during restore;
-    the build then fails on missing types, which is a confusing way to discover an uninitialised
-    submodule.
+    Between 2026-09-11 and 2026-09-18 every component except Broiler.DOM, which never had any,
+    replaced its nested submodules with nuget.org package references, and Writer and Code did the
+    same. At the commits the aggregate pins, none of the 25 records a submodule of its own.
+    Graphics, UI, Writer, Code and Plate still carry a leftover <code>.gitmodules</code> file, but
+    with no submodule commits behind it, so <code>--recursive</code> has nothing extra to fetch.
   </p>
 </div>
 
 <h2 id="solutions">The solution map</h2>
 
 <p>
-  The root workspaces are deliberately split so an IDE does not load unrelated applications,
-  platform backends, tests, samples, generators and benchmarks. Each contains only its declared
-  entry points and their transitive <code>ProjectReference</code> closure.
+  The aggregate's root workspaces are deliberately split so an IDE does not load unrelated
+  applications, platform backends, tests, samples, generators and benchmarks. Each contains only
+  its declared entry points and their transitive <code>ProjectReference</code> closure.
 </p>
 
 <div class="table-wrap">
@@ -76,31 +108,48 @@ cd Broiler</code></pre>
     <tr><td>Browser applications</td><td><code>Broiler.Browser/Broiler.{Windows,Linux,Android}.Browser.slnx</code></td></tr>
     <tr><td>Writer applications</td><td><code>Broiler.Writer/Broiler.{Windows,Linux,WebAssembly,Android}.Writer.slnx</code></td></tr>
     <tr><td>Broiler Code</td><td><code>Broiler.Code/Broiler.{Windows,Linux}.Code.slnx</code></td></tr>
+    <tr><td>Broiler Plate (viewer)</td><td><code>Broiler.Plate/Broiler.Windows.Plate.slnx</code></td></tr>
+    <tr><td>Broiler Mail (in development)</td><td><code>Broiler.Mail/Broiler.Mail.slnx</code></td></tr>
     <tr><td>Hosted Writer</td><td><code>Broiler.Office.Server.slnx</code></td></tr>
-    <tr><td>Rendering and WPT tools</td><td><code>Broiler.Cli.slnx</code>, <code>Broiler.Wpt.slnx</code></td></tr>
-    <tr><td>Developer tooling</td><td><code>Broiler.Tooling.slnx</code></td></tr>
-    <tr><td>Integration tests</td><td><code>Broiler.Tests.slnx</code></td></tr>
+    <tr><td>Rendering and WPT tools</td><td><code>Broiler.Cli.slnx</code>, <code>Broiler.Wpt.slnx</code> — <em>see the warning below</em></td></tr>
+    <tr><td>Developer tooling</td><td><code>Broiler.Tooling.slnx</code> — <em>see the warning below</em></td></tr>
+    <tr><td>Integration tests</td><td><code>Broiler.Tests.slnx</code> — <em>see the warning below</em></td></tr>
     <tr><td>Platform tests</td><td><code>Broiler.{Windows,Linux,WebAssembly,Android}.Tests.slnx</code></td></tr>
-    <tr><td>Performance harnesses</td><td><code>Broiler.Benchmarks.slnx</code></td></tr>
+    <tr><td>Performance harnesses</td><td><code>Broiler.Benchmarks.slnx</code> — <em>see the warning below</em></td></tr>
   </tbody>
 </table>
 </div>
 
+<div class="callout callout-warn">
+  <p class="callout-title">Five root solutions list projects that are no longer there</p>
+  <p>
+    The 2026-09-29 restructuring deleted <code>src/Broiler.HtmlBridge.*</code> from the aggregate
+    (HtmlBridge is its own repository now) and moved the JS and HTML pins past the removal of
+    Broiler.JS's nested <code>Broiler.{DateTime,Regex,Unicode}</code> checkouts and of
+    <code>Broiler.HTML.Headless</code>. The root solutions were not regenerated:
+    <code>Broiler.Cli.slnx</code>, <code>Broiler.Wpt.slnx</code> and
+    <code>Broiler.Tooling.slnx</code> each list 8 projects at paths that do not resolve,
+    <code>Broiler.Tests.slnx</code> 9, and <code>Broiler.Benchmarks.slnx</code> 5. The aggregate
+    has had no CI run on <code>main</code> since March 2026, so no build of them since the
+    restructuring is on record — treat them as unverified. The application solutions and the
+    platform-test solutions above resolve.
+  </p>
+</div>
+
 <p>
-  The Browser, Writer and Code applications live in their own repositories and are composed here
-  as submodules, so their solutions are read out of those checkouts rather than from the
-  aggregate root. Component-owned unit tests live in the component's own solution, inside its
-  submodule.
+  The applications live in their own repositories and are composed here as submodules, so their
+  solutions are read out of those checkouts rather than from the aggregate root.
+  Component-owned unit tests live in the component's own solution, inside its submodule.
 </p>
 
 <h2 id="build">Build and test</h2>
 
 <div class="code">
-  <div class="code-head"><span class="code-title">the common slices</span><button class="copy-btn" type="button">Copy</button></div>
+  <div class="code-head"><span class="code-title">the common slices, from the aggregate root</span><button class="copy-btn" type="button">Copy</button></div>
   <pre><code>dotnet build Broiler.Browser/Broiler.Windows.Browser.slnx
 dotnet build Broiler.Writer/Broiler.Linux.Writer.slnx
 dotnet build Broiler.Code/Broiler.Windows.Code.slnx
-dotnet test  Broiler.Tests.slnx</code></pre>
+dotnet test  Broiler.Browser/Broiler.Browser.Tests.slnx</code></pre>
 </div>
 
 <div class="code">
@@ -112,9 +161,9 @@ dotnet test  Broiler.Tests.slnx</code></pre>
 <div class="callout callout-warn">
   <p class="callout-title">Solution entry points are declared, not discovered</p>
   <p>
-    <code>eng/solutions.json</code> owns them. Regenerate and verify the dependency closures after
-    changing project references — a hand-edited <code>.slnx</code> is silently reverted by the
-    next generator run.
+    <code>eng/solutions.json</code> owns them — in the aggregate and in each application
+    repository. Regenerate and verify the dependency closures after changing project references —
+    a hand-edited <code>.slnx</code> is silently reverted by the next generator run.
   </p>
 </div>
 
@@ -122,6 +171,21 @@ dotnet test  Broiler.Tests.slnx</code></pre>
   <div class="code-head"><span class="code-title">regenerate and verify solutions</span><button class="copy-btn" type="button">Copy</button></div>
   <pre><code>./scripts/update-solutions.ps1
 ./scripts/verify-solution-projects.ps1</code></pre>
+</div>
+
+<h3 id="configurations">Configuration names differ by repository</h3>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Repository</th><th>Configurations</th></tr></thead>
+  <tbody>
+    <tr><td>Graphics, Media, Input, CSS, HTML, JS, DOM, Layout</td><td><code>Debug</code> and <code>Release</code> only — the platform-suffixed configurations are gone from Graphics, Media and Input, so a plain <code>-c Release</code> build is the one their READMEs give</td></tr>
+    <tr><td>UI, Documents</td><td>Their solutions still declare <code>Debug-Windows</code>, <code>Release-Windows</code>, <code>Debug-Linux</code> and <code>Release-Linux</code> beside <code>Debug</code>/<code>Release</code></td></tr>
+    <tr><td>Writer, Code</td><td>Each desktop head also declares its own runtime-identifier pair — <code>Debug-Windows</code>/<code>Release-Windows</code> or <code>Debug-Linux</code>/<code>Release-Linux</code>. The solutions declare only <code>Debug</code>/<code>Release</code>, so the suffixed ones are project-level builds</td></tr>
+    <tr><td>Browser</td><td>As Writer, plus <code>Debug-VM</code>/<code>Release-VM</code>, which the solutions do declare and which put the Broiler.VM JavaScript profile in front of Broiler.JS</td></tr>
+    <tr><td>HtmlBridge</td><td><code>Debug</code>/<code>Release</code> and <code>Debug-VM</code>/<code>Release-VM</code></td></tr>
+  </tbody>
+</table>
 </div>
 
 <h2 id="android">The one extra Android setup step</h2>
@@ -156,25 +220,54 @@ export ANDROID_HOME=/root/android-sdk ANDROID_SDK_ROOT=/root/android-sdk</code><
 
 <h2 id="tools">The tools</h2>
 
-<h3 id="cli">Broiler.Cli — render and evaluate a page</h3>
+<div class="callout callout-warn">
+  <p class="callout-title">The aggregate's own tools reference removed paths</p>
+  <p>
+    In the aggregate, <code>src/Broiler.Cli</code> and <code>src/Broiler.Wpt</code> still
+    reference <code>src/Broiler.HtmlBridge.*</code> and <code>Broiler.HTML.Headless</code>, and
+    <code>src/Broiler.DevConsole</code> references <code>src/Broiler.HtmlBridge.Core</code> — none
+    of which exist any more. The WPT, real-world and privacy runners below build or look for those
+    tools. The paths do not resolve, and no build since the restructuring is on record. The
+    working command line is the one in Broiler.Browser.
+  </p>
+</div>
+
+<h3 id="cli">Broiler.Cli — render, evaluate and analyse a page</h3>
 
 <p>
-  The command-line renderer captures a page and can evaluate expressions against the same
-  JavaScript context. <code>--diagnostic-dir</code> is what to reach for when a page misbehaves:
-  it writes every JavaScript failure to a <em>streamed</em> log — so a hang or timeout still
-  leaves one — archives every page, script, stylesheet, <code>fetch</code>/XHR response and
-  sub-document the run touched, and produces a <code>summary.md</code> ranking the distinct
-  failures and the platform features the page asked for and did not get.
+  The command-line renderer lives in the Browser repository now, at
+  <code>src/Broiler.Browser.Cli</code>, and runs pages on the browser window's own pipeline. It
+  captures a page and can evaluate expressions against the same JavaScript context.
+  <code>--diagnostic-dir</code> is what to reach for when a page misbehaves: it writes every
+  JavaScript failure to a <em>streamed</em> log — so a hang or timeout still leaves one — archives
+  every page, script, stylesheet, <code>fetch</code>/XHR response and sub-document the run
+  touched, and produces a <code>summary.md</code> ranking the distinct failures and the platform
+  features the page asked for and did not get. <code>--analyze</code> goes further and writes a
+  ranked report of what looks wrong with the page's HTML, CSS, JavaScript, layout, rendering and
+  network.
 </p>
 
 <div class="code">
-  <div class="code-head"><span class="code-title">capture with diagnostics</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>dotnet run --project src/Broiler.Cli -- \
+  <div class="code-head"><span class="code-title">capture with diagnostics, in a Broiler.Browser clone</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet run --project src/Broiler.Browser.Cli/Broiler.Browser.Cli.csproj -c Release -- \
   --capture-image https://example.com/ --output page.png \
-  --diagnostic-dir ./diagnostics</code></pre>
+  --diagnostic-dir ./diagnostics
+
+dotnet run --project src/Broiler.Browser.Cli/Broiler.Browser.Cli.csproj -c Release -- \
+  --analyze https://example.com/ --output-dir analysis</code></pre>
 </div>
 
+<p class="small">
+  The full command reference is
+  <a href="https://github.com/Broiler-Platform/Broiler.Browser/blob/main/docs/command-line.md"><code>docs/command-line.md</code></a>;
+  more on diagnosing pages is on the <a href="/developers/browser.html#tools">Browser developer page</a>.
+</p>
+
 <h3 id="wpt">Broiler.Wpt — the standards runners</h3>
+
+<p class="small">
+  These run from the aggregate root and are affected by the warning above.
+</p>
 
 <div class="code">
   <div class="code-head"><span class="code-title">golden-image suite</span><button class="copy-btn" type="button">Copy</button></div>
@@ -219,7 +312,8 @@ python scripts/run-real-world-render-tests.py --sites google-search,mediawiki</c
 
 <p class="small">
   This is an observational weekly/manual suite, not a standards-conformance rate. It writes JSON,
-  Markdown, HTML, screenshots and diffs under <code>artifacts/real-world-render-tests</code>.
+  Markdown, HTML, screenshots and diffs under <code>artifacts/real-world-render-tests</code>. It
+  drives the aggregate's <code>src/Broiler.Cli</code> build, so the warning above applies.
 </p>
 
 <h3 id="privacy">Privacy test pages</h3>
@@ -231,40 +325,60 @@ python scripts/run-privacy-test-pages.py --pages fingerprinting,gpc
 python scripts/run-privacy-test-pages.py --no-reference</code></pre>
 </div>
 
+<p class="small">
+  Like the real-world suite, this runner uses the aggregate's <code>src/Broiler.Cli</code>.
+</p>
+
 <h3 id="documents-cli">Document round-trips and comparison</h3>
 
+<p>
+  <code>broilerdoc</code> is <code>src/Broiler.Documents.Cli</code> in the Broiler.Documents
+  repository (<code>Broiler.Documents/src/Broiler.Documents.Cli</code> in the aggregate). It
+  composes the PDF codec read-only.
+</p>
+
 <div class="code">
-  <div class="code-head"><span class="code-title">broilerdoc</span><button class="copy-btn" type="button">Copy</button></div>
+  <div class="code-head"><span class="code-title">broilerdoc, in a Broiler.Documents clone</span><button class="copy-btn" type="button">Copy</button></div>
   <pre><code>dotnet run --project src/Broiler.Documents.Cli -- --help
 
 broilerdoc roundtrip report.docx --via docx --via odt --via rtf --via html --via markdown
 broilerdoc compare a.docx b.docx --render --continuous --diff diff.png --tolerance 2</code></pre>
 </div>
 
-<h3 id="review-cli">Human review coverage</h3>
+<h3 id="review-cli">Human review coverage and assurance</h3>
 
 <div class="code">
-  <div class="code-head"><span class="code-title">review coverage over any repository</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>dotnet run --project Broiler.Code/src/Broiler.Code.Review.Cli -- coverage --root .</code></pre>
+  <div class="code-head"><span class="code-title">review coverage and per-unit assurance status, from the aggregate root</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet run --project Broiler.Code/src/Broiler.Code.Review.Cli -- coverage --root .
+
+dotnet run --project Broiler.Code/src/Broiler.Code.Review.Cli -c Release -- \
+  assurance status --root Broiler.Code</code></pre>
 </div>
+
+<p class="small">
+  The <code>assurance</code> commands — <code>list</code>, <code>insert</code>,
+  <code>generate</code>, <code>check</code>, <code>status</code> — are described on the
+  <a href="/developers/code.html#assurance-cli">Broiler Code developer page</a>.
+</p>
 
 <h2 id="gotchas">Things that will trip you up</h2>
 
 <div class="grid grid-2">
   <div class="card">
-    <h3>A plain <code>dotnet build</code> skips the platform backends</h3>
+    <h3>A <code>PackageReference</code> version is a floor</h3>
     <p>
-      Platform projects build <strong>only</strong> under their own configuration. Pass
-      <code>-c Debug-Windows</code> when you mean to check Direct2D, and <code>-c Release-Linux</code>
-      for the OpenGL and Vulkan paths.
+      Restore takes the lowest version nuget.org has at or above it, and resolves upward with
+      <code>NU1603</code> when that exact preview was never published. Component versions are no
+      longer in lockstep either: each repository publishes its own next preview number. What a
+      project actually got is in its <code>obj/project.assets.json</code>.
     </p>
   </div>
   <div class="card">
     <h3>Three components have no <code>dotnet test</code></h3>
     <p>
       Graphics, Media and Input use self-hosted console runners rather than a test framework, so
-      there is nothing to discover. Build first, then run <code>./eng/run-tests.sh &lt;config&gt;</code>,
-      which starts the runners with <code>--no-build</code>.
+      there is nothing to discover. Build first, then run <code>./eng/run-tests.sh Release</code>,
+      which starts the runners.
     </p>
   </div>
   <div class="card">
@@ -287,8 +401,9 @@ broilerdoc compare a.docx b.docx --render --continuous --diff diff.png --toleran
 <h2 id="components-standalone">Building a component on its own</h2>
 
 <p>
-  Every component repository builds standalone, because it carries nested checkouts of what it
-  depends on. Its README holds the exact commands; the component pages here summarise them.
+  Every component repository builds standalone from a plain <code>git clone</code>: the other
+  Broiler components it uses are NuGet packages restored from nuget.org. Its README holds the exact
+  commands; the component pages here summarise them.
 </p>
 
 <div class="table-wrap">
@@ -296,13 +411,16 @@ broilerdoc compare a.docx b.docx --render --continuous --diff diff.png --toleran
   <thead><tr><th>Component</th><th>Build</th><th>Test</th></tr></thead>
   <tbody>
     <tr><td><a href="/components/dom.html">Broiler.DOM</a></td><td><code>dotnet build Broiler.Dom.slnx</code></td><td><code>dotnet test Broiler.Dom.slnx</code></td></tr>
-    <tr><td><a href="/components/css.html">Broiler.CSS</a></td><td><code>dotnet build Broiler.CSS.slnx</code></td><td><code>dotnet test Broiler.CSS.slnx</code></td></tr>
-    <tr><td><a href="/components/graphics.html">Broiler.Graphics</a></td><td><code>dotnet build Broiler.Graphics.slnx -c Release-Windows</code></td><td><code>bash ./eng/run-tests.sh Release-Windows</code></td></tr>
-    <tr><td><a href="/components/media.html">Broiler.Media</a></td><td><code>dotnet build Broiler.Media.slnx -c Release-Linux</code></td><td><code>./eng/run-tests.sh</code></td></tr>
-    <tr><td><a href="/components/input.html">Broiler.Input</a></td><td><code>dotnet build Broiler.Input.slnx -c Release-Windows</code></td><td><code>bash ./eng/run-tests.sh Release-Windows</code></td></tr>
-    <tr><td><a href="/components/ui.html">Broiler.UI</a></td><td><code>dotnet build Broiler.UI.slnx -c Release</code></td><td><code>dotnet test Broiler.UI.slnx -c Release</code></td></tr>
-    <tr><td><a href="/components/html.html">Broiler.HTML</a></td><td><code>cd Source &amp;&amp; dotnet build Broiler.HTML.slnx</code></td><td><code>npm test</code></td></tr>
+    <tr><td><a href="/components/css.html">Broiler.CSS</a></td><td><code>dotnet build Broiler.CSS.slnx -c Release</code></td><td><code>pwsh -File eng/run-tests.ps1 -Configuration Release</code></td></tr>
+    <tr><td><a href="/components/graphics.html">Broiler.Graphics</a></td><td><code>dotnet build Broiler.Graphics.slnx -c Release</code></td><td><code>bash ./eng/run-tests.sh Release</code></td></tr>
+    <tr><td><a href="/components/media.html">Broiler.Media</a></td><td><code>dotnet build Broiler.Media.slnx -c Release</code></td><td><code>./eng/run-tests.sh Release</code></td></tr>
+    <tr><td><a href="/components/input.html">Broiler.Input</a></td><td><code>dotnet build Broiler.Input.slnx -c Release</code></td><td><code>bash ./eng/run-tests.sh Release</code></td></tr>
+    <tr><td><a href="/components/ui.html">Broiler.UI</a></td><td><code>dotnet build Broiler.UI.slnx -c Release</code></td><td><code>./eng/run-tests.ps1 -Configuration Release</code></td></tr>
+    <tr><td><a href="/components/html.html">Broiler.HTML</a></td><td><code>dotnet build Broiler.HTML.slnx</code> (from the repository root)</td><td><code>dotnet test Broiler.HTML.slnx -c Release</code>; <code>npm test</code> for the WPT scripts</td></tr>
     <tr><td><a href="/components/js.html">Broiler.JS</a></td><td><code>dotnet build Broiler.JS.slnx</code></td><td><code>dotnet test Broiler.JS.slnx</code></td></tr>
+    <tr><td><a href="/components/documents.html">Broiler.Documents</a></td><td><code>dotnet build Broiler.Documents.slnx -c Release</code></td><td><code>pwsh -File ./eng/run-tests.ps1 -Configuration Release</code></td></tr>
+    <tr><td><a href="/components/layout.html">Broiler.Layout</a></td><td><code>dotnet build Broiler.Layout.slnx -c Release</code></td><td><code>pwsh -File eng/run-tests.ps1 -Configuration Release</code></td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.HtmlBridge">Broiler.HtmlBridge</a></td><td><code>dotnet build Broiler.HtmlBridge.slnx -c Release</code></td><td><code>dotnet test Broiler.HtmlBridge.slnx -c Release</code></td></tr>
   </tbody>
 </table>
 </div>

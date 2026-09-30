@@ -1,13 +1,13 @@
-{"title": "Where Broiler stands — what works and what doesn't", "desc": "An honest account of the Broiler preview: what the three apps can do today, what they can't, why there is no download yet, and what has to happen before there is one.", "nav": "status"}
+{"title": "Where Broiler stands — what works and what doesn't", "desc": "An honest account of the Broiler preview: what the apps can do today, what they can't, which previews you can download and what they are missing, and what has to happen before a release you can trust.", "nav": "status"}
 ---
 <section class="page-head">
   <div class="wrap">
     <span class="eyebrow">Status</span>
     <h1>Where Broiler actually stands</h1>
     <p class="lede">
-      Early preview. The apps run and do real work; there is nothing to download yet, and
-      nothing here should be trusted with anything that matters. This page says why, in
-      detail, without the usual softening.
+      Early preview. The apps run and do real work, and two of them can now be downloaded as
+      previews — but nothing here should be trusted with anything that matters. This page says
+      why, in detail, without the usual softening.
     </p>
   </div>
 </section>
@@ -20,23 +20,74 @@
 <h2 id="download">Can I download it?</h2>
 
 <div class="status-band">
-  <h3>Not yet — and that is deliberate.</h3>
+  <h3>Two of the apps, as early previews — read the small print first.</h3>
   <p>
-    Every push builds all three apps, and the project can produce installable files on demand.
-    What it will not do is publish them: there is <strong>no released, signed installer</strong>,
-    because the checks that ought to happen before handing software to the public have not
-    finished.
+    Since 22 September 2026 the project has published preview builds of the
+    <a href="/applications/writer.html#get">Writer</a> and of
+    <a href="/applications/plate.html#get">Plate</a> as GitHub pre-releases. Each describes
+    itself as "a preview build for evaluation and testing, not for production use". There is
+    still <strong>no installer</strong>: the desktop downloads are single files you unzip and
+    run, and the Android one is a package you install by hand.
   </p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>App</th><th>What you can get</th><th>Signed?</th><th>Human review</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Writer</strong></td>
+        <td><a href="https://github.com/Broiler-Platform/Broiler.Writer/releases">0.1.0-preview.5</a>, 30 Sep — Windows, Linux, Android</td>
+        <td>Windows and Linux: <strong>no</strong>. Android: yes, with the Broiler release key.</td>
+        <td><span class="pill pill-risk">No review record</span></td>
+      </tr>
+      <tr>
+        <td><strong>Plate</strong></td>
+        <td><a href="https://github.com/Broiler-Platform/Broiler.Plate/releases">0.1.0-preview.2</a>, 22 Sep — Windows</td>
+        <td><strong>No</strong></td>
+        <td><span class="pill pill-pending">Pending · 0 of 248</span></td>
+      </tr>
+      <tr>
+        <td><strong>Browser</strong></td>
+        <td>Nothing yet. 0.1.0-preview.1 was built on 30 Sep and waits, unpublished, as a draft.</td>
+        <td>—</td>
+        <td><span class="pill pill-pending">Pending</span></td>
+      </tr>
+      <tr>
+        <td><strong>Code</strong></td>
+        <td>Nothing. Its automated build has been failing since 17 Sep.</td>
+        <td>—</td>
+        <td><span class="pill pill-pending">Pending · 0 of 1,499</span></td>
+      </tr>
+      <tr>
+        <td><strong>Mail</strong></td>
+        <td>Nothing. It builds only on a developer's machine.</td>
+        <td>—</td>
+        <td><span class="pill pill-pending">Pending · 0 of 420</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
   <p style="margin-bottom:0">
-    Anyone can build Broiler from source today. If you would rather wait for something you can
-    install and trust, the honest answer is: watch the repository, and check back.
+    Unsigned means Windows SmartScreen may warn you before the first start, and that nothing
+    but GitHub vouches for where the file came from.
+  </p>
+</div>
+
+<div class="callout callout-warn">
+  <p class="callout-title">These previews went out ahead of the project's own release plan</p>
+  <p style="margin-bottom:0">
+    The project's roadmap says a release should come from an exact commit that has passed
+    human, dependency, licence, static-analysis and vulnerability review, should build
+    reproducibly, and should be signed. None of that is recorded for the Writer or Plate
+    previews: the Writer has no human-review record at all, Plate's reads pending with nothing
+    reviewed, and the Writer's latest preview was published from a version whose automated
+    tests were failing. Use them to look around, on copies of files that do not matter.
   </p>
 </div>
 
 <div class="progress-row">
-  <div class="stage done"><b>Done</b><span>Three apps that build and run on their supported systems, with continuous testing</span></div>
-  <div class="stage now"><b>In progress</b><span>Human review of the code; packaging and signing the first preview</span></div>
-  <div class="stage"><b>Next</b><span>A downloadable, signed preview release</span></div>
+  <div class="stage done"><b>Done</b><span>Apps that build and run on their supported systems; first preview downloads of the Writer and Plate</span></div>
+  <div class="stage now"><b>In progress</b><span>The Browser's first preview; human review of the code</span></div>
+  <div class="stage"><b>Next</b><span>Releases that have passed review, built reproducibly and signed</span></div>
   <div class="stage"><b>Later</b><span>Automatic updates, native installers, a stable 1.0</span></div>
 </div>
 
@@ -54,7 +105,9 @@
       <li>Favourites</li>
       <li>Forms — text fields, checkboxes, radio buttons, drop-downs, file pickers</li>
       <li>Runs the page's JavaScript</li>
+      <li>Cookies, while the browser is open</li>
       <li>Images, and video on Windows</li>
+      <li class="no">Forgets every cookie when you close it</li>
       <li class="no">No tabs, extensions, sync, bookmarks import or password manager</li>
       <li class="no">No video calling, WebRTC or WebSockets</li>
     </ul>
@@ -65,14 +118,15 @@
       Writer
     </h3>
     <ul class="does" style="grid-template-columns:1fr">
-      <li>Open, edit and save Word (.docx), RTF, HTML and Markdown</li>
-      <li>Open PDFs for reading, on Windows and Linux</li>
+      <li>Open, edit and save DOCX, ODT, RTF, HTML and Markdown</li>
+      <li>Tables, headers and footers in those files are shown</li>
+      <li>Open PDFs for reading, with their pictures, on Windows and Linux</li>
       <li>Bold, italic, underline, strikethrough, fonts, colours</li>
-      <li>Alignment, bullet and numbered lists, indenting</li>
-      <li>Insert pictures</li>
+      <li>Alignment including justify, lists, indenting, page breaks</li>
+      <li>Insert pictures; zoom from 25&nbsp;% to 400&nbsp;%</li>
       <li>Reveal-codes view showing exactly what formatting is where</li>
-      <li>Undo, redo, cut, copy, paste, find your way around</li>
-      <li class="no">No tables, footnotes, track changes, spell check or mail merge</li>
+      <li>Undo, redo, cut, copy, paste, and a prompt before unsaved work is lost</li>
+      <li class="no">No creating tables, footnotes, track changes, spell check or mail merge</li>
     </ul>
   </div>
   <div>
@@ -85,9 +139,38 @@
       <li>C# syntax colouring, and live errors and warnings</li>
       <li>A Problems list you can click through</li>
       <li>Build, rebuild, publish, cancel</li>
-      <li>A review pane that records what has been read, per file</li>
+      <li>A review pane that records what has been read, per file or per declaration</li>
       <li class="no">C# only — no other languages, no extensions marketplace</li>
       <li class="no">No debugger</li>
+      <li class="no">Its current source does not build in the project's automation</li>
+    </ul>
+  </div>
+  <div>
+    <h3 style="margin-top:0">
+      <img src="/assets/img/app-plate.svg" alt="" width="22" height="22" style="vertical-align:-4px;margin-right:.4rem">
+      Plate
+    </h3>
+    <ul class="does" style="grid-template-columns:1fr">
+      <li>Opens RTF, DOCX, HTML, Markdown and PDF documents</li>
+      <li>Opens PNG, JPEG, GIF, BMP, TIFF and WebP pictures</li>
+      <li>Zoom, fit to window, select and copy</li>
+      <li class="no">Read-only — no editing or saving, by design</li>
+      <li class="no">One file at a time; no panning around large pictures</li>
+      <li class="no">Windows only</li>
+    </ul>
+  </div>
+  <div>
+    <h3 style="margin-top:0">
+      <img src="/assets/img/app-mail.svg" alt="" width="22" height="22" style="vertical-align:-4px;margin-right:.4rem">
+      Mail
+    </h3>
+    <ul class="does" style="grid-template-columns:1fr">
+      <li>One IMAP account, password kept in Windows Credential Manager</li>
+      <li>Receive and read mail as plain text</li>
+      <li>Writing, replying and sending — newly landed, tested only against the project's own test servers</li>
+      <li class="no">No attachments, folders, search or HTML mail</li>
+      <li class="no">Mail is not kept between runs</li>
+      <li class="no">Not tested with any real mail provider; Windows only</li>
     </ul>
   </div>
 </div>
@@ -149,7 +232,7 @@
     <tr>
       <td><strong>Windows</strong></td>
       <td><span class="pill pill-ok">Most complete</span></td>
-      <td>The best-developed path. Hardware-accelerated drawing, real system windows for dialogs, video playback.</td>
+      <td>The best-developed path. Hardware-accelerated drawing, real system windows for dialogs, video playback. The only platform Plate and Mail run on.</td>
     </tr>
     <tr>
       <td><strong>Linux</strong></td>
@@ -159,12 +242,12 @@
     <tr>
       <td><strong>Android</strong></td>
       <td><span class="pill pill-pending">Emulator only</span></td>
-      <td>Browser and Writer build and run on an emulated Android 16 device. <strong>Nobody has verified them on a physical phone yet.</strong></td>
+      <td>Browser and Writer build and run on an emulated Android 16 device. The Writer preview includes a signed package you can install on a phone, but <strong>nobody has verified the apps on a physical phone yet.</strong></td>
     </tr>
     <tr>
       <td><strong>In a web browser</strong></td>
-      <td><span class="pill pill-preview">Writer only</span></td>
-      <td>The Writer runs inside another browser as a web app. The Broiler Browser does not — running a browser engine inside a browser is a separate project.</td>
+      <td><span class="pill pill-pending">Paused</span></td>
+      <td>The Writer was built to run inside another browser as a web app, but since 14 September that version is not being built while it moves onto the platform's new packages, and no preview includes it. The Broiler Browser does not run this way — a browser engine inside a browser is a separate project.</td>
     </tr>
     <tr>
       <td><strong>macOS</strong></td>
@@ -175,12 +258,17 @@
 </table>
 </div>
 
-<h2 id="next">What has to happen before there's a download</h2>
+<h2 id="next">What has to happen before a release you can trust</h2>
+
+<p>
+  The previews above skip most of this list. The project's roadmap still sets it as the bar
+  for a real release:
+</p>
 
 <ol>
-  <li><strong>Human review of the release code.</strong> The project's own rule is that nothing ships while any part of it is unreviewed — and that gate is currently red on purpose.</li>
+  <li><strong>Human review of the release code.</strong> An exact commit, reviewed by a person — along with its dependencies, licences, static analysis and known vulnerabilities. For every app that gate is still red.</li>
   <li><strong>Reproducible packaging.</strong> Building the exact reviewed version twice has to produce byte-identical packages, and installing them on a clean machine has to work.</li>
-  <li><strong>Signing.</strong> Release keys, a signed manifest format, and a documented owner for updates on each platform.</li>
+  <li><strong>Signing.</strong> Release keys, a signed manifest format, and a documented owner for updates on each platform. Only the Android packages are signed today.</li>
   <li><strong>A published smoke test.</strong> Proof that the thing you downloaded actually starts and works on the systems it claims.</li>
 </ol>
 
@@ -197,14 +285,15 @@
     <h3>Watch the repository</h3>
     <p>
       Releases and progress land on GitHub first.
-      <a href="https://github.com/MaiRat/Broiler">MaiRat/Broiler</a> is the main one.
+      <a href="https://github.com/Broiler-Platform/Broiler">Broiler-Platform/Broiler</a> is the main one.
     </p>
   </div>
   <div class="feature">
-    <h3>Build it and break it</h3>
+    <h3>Try it and break it</h3>
     <p>
-      If you can run a build, you can run all three apps today, and bug reports from real use
-      are worth a lot. <a href="/get-started.html">How to build →</a>
+      Download the Writer or Plate preview, or build the Browser yourself, and report what
+      breaks — bug reports from real use are worth a lot.
+      <a href="/get-started.html">How to build →</a>
     </p>
   </div>
   <div class="feature">

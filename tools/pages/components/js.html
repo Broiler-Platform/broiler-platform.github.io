@@ -102,15 +102,55 @@
 </table>
 </div>
 
-<h2 id="nested">Three components ship inside it</h2>
+<p>
+  A host does not have to bind to this engine directly.
+  <a href="https://github.com/Broiler-Platform/Broiler.JSeal">Broiler.JSeal</a>, the JavaScript
+  Engine Abstraction Layer, defines engine-neutral contracts (<code>IJsRealm</code>,
+  <code>JsValue</code>, <code>JsEngineRegistry</code>) in an assembly with no references at
+  all; its <code>Broiler.JSeal.BroilerJs</code> provider serves them over Broiler.JS and
+  <code>Broiler.JSeal.Vm</code> over the <a href="/components/vm.html">Broiler.VM</a> JavaScript
+  profile. Which engine serves a realm is a runtime registration — this is how HtmlBridge's
+  scripting layer reaches either one. JSeal's own review record is <code>PENDING</code>.
+</p>
+
+<h2 id="packages">Packages</h2>
+
+<p>
+  Broiler.JS publishes to <strong>nuget.org and nowhere else</strong> — there is no GitHub
+  Packages feed and no per-feed switch in the build. The public API reference lists twenty
+  packages, from <code>Broiler.JavaScript.All</code> down to <code>.Storage</code> and the
+  portable compiler, and every package in the solution ships at one version. The version in
+  <code>eng/Broiler.Packaging.props</code> is a floor: a publish takes one past the highest
+  preview number the repository has ever spent, counting both nuget.org and its own
+  <code>v*</code> tags. The latest tag is <code>v0.1.0-preview.5</code>.
+</p>
+
+<p>
+  The 2026-09-22 API change is worth knowing about if you consume a published preview: module
+  semantics are now implemented with the specification's module records, and the old plumbing —
+  <code>JSModuleExports</code>, <code>ModuleCache</code> and <code>JSModuleExportsBuilder</code>
+  — is gone, which is <strong>source-breaking</strong>. The replacement surface
+  (<code>JSModuleNamespace</code>, <code>JSModuleImportBinding</code>, <code>ModuleStatus</code>
+  and friends) is listed in the
+  <a href="https://github.com/Broiler-Platform/Broiler.JS/blob/main/docs/public-api.md">public API reference</a>.
+</p>
+
+<h2 id="nested">Three components that used to ship inside it</h2>
+
+<p>
+  <code>Broiler.DateTime</code>, <code>Broiler.Regex</code> and <code>Broiler.Unicode</code>
+  were nested checkouts inside this repository until 2026-09-18, when the submodules were
+  replaced by nuget.org packages. Each is now a top-level repository of its own, and
+  <code>Broiler.JavaScript.BuiltIns</code> references the two it still needs as packages.
+</p>
 
 <div class="table-wrap">
 <table>
-  <thead><tr><th>Component</th><th>Role</th></tr></thead>
+  <thead><tr><th>Component</th><th>Role, and how Broiler.JS uses it</th><th>Review</th></tr></thead>
   <tbody>
-    <tr><td><code>Broiler.DateTime</code></td><td>Date and time parsing and semantics behind the JavaScript <code>Date</code> surface. Approved for preview; residual risk is normal parser/date-time semantics and caller misuse in critical domains.</td></tr>
-    <tr><td><code>Broiler.Regex</code></td><td>ECMAScript-compatible regular expressions. Approved for preview, with resource-exhaustion risk from large or adversarial input remaining <em>despite</em> a step budget.</td></tr>
-    <tr><td><code>Broiler.Unicode</code></td><td>Unicode property data and algorithms. Runtime libraries use committed data; the developer-operated data tools download Unicode/CLDR data and require review for refreshes.</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.RegEx"><code>Broiler.Regex</code></a></td><td>ECMAScript-compatible regular expressions. Referenced as the <code>Broiler.Regex</code> package. Resource-exhaustion risk from large or adversarial input remains <em>despite</em> a step budget.</td><td><span class="pill pill-pending">Approval covers 2026-07-01 only</span> Approved for preview for commit <code>d5b07a0</code> (2026-07-01), and the record says any source change after it invalidates the approval — the engine source has changed since. The new per-unit record reads <code>PENDING</code>, 0 of 222 relevant units reviewed.</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.DateTime"><code>Broiler.DateTime</code></a></td><td>ISO-8601/RFC-3339-like date-time values beyond the .NET year range, with fixed UTC offsets only. <strong>Broiler.JS no longer references it at all.</strong></td><td><span class="pill pill-pending">Approval covers 2026-07-01 only</span> Approved for preview for commit <code>3decee8</code> (2026-07-01); the source has changed since. Per-unit record: <code>PENDING</code>, 0 of 64.</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.Unicode"><code>Broiler.Unicode</code></a></td><td>Unicode property, emoji string-property and CLDR locale data. Referenced as the <code>Broiler.Unicode.Cldr.LocaleData</code> package. Runtime libraries use committed data; the developer-operated data tools download Unicode/CLDR data and require review for refreshes.</td><td><span class="pill pill-pending">Approval covers 2026-07-01 only</span> Approved with conditions for commit <code>89f134e</code> (2026-07-01); the source has changed since. No per-unit record.</td></tr>
   </tbody>
 </table>
 </div>
@@ -230,10 +270,12 @@ python scripts/compliance/run_test262.py \
     <code>Broiler.JS</code> is a <strong>legacy component</strong> in the platform's own
     terminology — and the engine every current consumer uses.
     <a href="/components/vm.html">Broiler.VM</a> does not depend on it, wrap it or replace it on
-    any published schedule, and no VM gate may cite its results as evidence. A future JavaScript
-    VM profile is expected to begin from a snapshot <em>copy</em> taken after this component's
-    in-flight fix programme lands — a fork used as a base, with no dependency edge in either
-    direction.
+    any published schedule, and no VM gate may cite its results as evidence. The VM's own
+    JavaScript profile — which now exists there as a product project family — is expected to
+    begin from a snapshot <em>copy</em> taken after this component's in-flight fix programme
+    lands: a fork used as a base, with no dependency edge in either direction. This
+    repository's own bytecode/VM phases were retired for the same reason; it remains the IL
+    engine.
   </p>
 </div>
 

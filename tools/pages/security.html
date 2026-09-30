@@ -41,13 +41,15 @@
   <thead><tr><th>Boundary</th><th>Owner</th><th>What crosses it</th></tr></thead>
   <tbody>
     <tr><td>Image decoding</td><td><a href="/components/media.html">Broiler.Media</a>, injected into <a href="/components/graphics.html">Broiler.Graphics</a></td><td>Arbitrary PNG/APNG, JPEG, BMP, GIF and WebP bytes</td></tr>
-    <tr><td>Native graphics interop</td><td>Broiler.Graphics.Windows</td><td>Direct2D, DirectWrite, DXGI and D3D — correct and security-relevant usage of every involved API is not guaranteed by a first-preview review</td></tr>
+    <tr><td>Native graphics interop</td><td>Broiler.Graphics.Windows, over the shared <a href="https://github.com/Broiler-Platform/Broiler.Native">Broiler.Native</a> bindings</td><td>Direct2D, DirectWrite, DXGI and D3D — correct and security-relevant usage of every involved API is not guaranteed by a first-preview review. Broiler.Native, which now owns the entry points and ABI structures for Graphics, Input and Media, has no review record at all.</td></tr>
     <tr><td>Document codecs</td><td><a href="/components/documents.html">Broiler.Documents</a></td><td>RTF control words, Open XML and OpenDocument packages, HTML, PDF object graphs</td></tr>
     <tr><td>HTML and CSS parsing</td><td><a href="/components/dom.html">Broiler.DOM</a>, <a href="/components/css.html">Broiler.CSS</a></td><td>Hostile markup and stylesheets. Renderer paths are <strong>not hardened</strong> for hostile input.</td></tr>
-    <tr><td>Regular expressions</td><td>Broiler.Regex</td><td>Resource-exhaustion risk from large or adversarial patterns remains <em>despite</em> a step budget</td></tr>
+    <tr><td>Networking and cookies</td><td><a href="https://github.com/Broiler-Platform/Broiler.Net">Broiler.Net</a></td><td>HTTP responses and redirects, <code>Set-Cookie</code> headers, CORS decisions and the Public Suffix List — 185 code units at <em>High</em> security risk, none reviewed</td></tr>
+    <tr><td>Regular expressions</td><td><a href="https://github.com/Broiler-Platform/Broiler.RegEx">Broiler.Regex</a></td><td>Resource-exhaustion risk from large or adversarial patterns remains <em>despite</em> a step budget</td></tr>
     <tr><td>Layout</td><td><a href="/components/layout.html">Broiler.Layout</a></td><td>CPU and memory consumption under malformed and adversarial documents — baselines and stress coverage are still open work</td></tr>
     <tr><td>Device input</td><td><a href="/components/input.html">Broiler.Input</a></td><td>Win32 Raw Input, WASAPI, Media Foundation, and libc reads over <code>/dev/input/event*</code></td></tr>
-    <tr><td>Verified bytecode</td><td><a href="/components/vm.html">Broiler.VM</a></td><td>A parser over untrusted bytes and a budget enforcer — 47 code units at <em>High</em> security risk, all unreviewed</td></tr>
+    <tr><td>Verified bytecode</td><td><a href="/components/vm.html">Broiler.VM</a></td><td>A parser over untrusted bytes and a budget enforcer — 1,576 code units at <em>High</em> and 253 at <em>Critical</em> security risk, all unreviewed</td></tr>
+    <tr><td>Mail protocols</td><td><a href="/applications/mail.html">Broiler Mail</a></td><td>IMAP and SMTP traffic from the server a user configures, parsed by the third-party MailKit library, and a saved password in Windows Credential Manager</td></tr>
   </tbody>
 </table>
 </div>
@@ -108,6 +110,7 @@
   <li>Background Raw Input and evdev event streaming require <strong>explicit acknowledgement</strong>.</li>
   <li>Diagnostics must not emit typed text, movement timelines or native device paths by default — a keylogger-shaped diagnostic is not an acceptable default even in a debug build.</li>
   <li>On Android, only the Browser declares <code>INTERNET</code>, and cleartext traffic is disabled for both applications.</li>
+  <li>The Browser's cookies live in memory only: there is no cookie persistence yet, so every cookie ends when the process does.</li>
   <li>The Android input providers make no native or Java calls at all: the host reads the real Android objects and forwards primitives.</li>
 </ul>
 
@@ -126,7 +129,7 @@
 <div class="callout callout-warn">
   <p class="callout-title">No component records any of the following</p>
   <ul style="margin-bottom:0">
-    <li>A dedicated fuzzing campaign <span class="small">(one fuzz <em>target</em> exists, in Broiler.VM, unreviewed)</span></li>
+    <li>A dedicated fuzzing campaign <span class="small">(one fuzz <em>target</em> exists in Broiler.VM, unreviewed; Broiler.Documents now runs a nightly mutation-based PDF fuzz job, which its own workflow says is weak evidence and must not become a required check, and its README still records no campaign)</span></li>
     <li>A SAST report</li>
     <li>A dependency scan</li>
     <li>An independent security audit</li>
@@ -174,6 +177,15 @@
 </ul>
 
 <p>
+  That position now applies to files people can download. The Writer and Plate previews on
+  GitHub describe themselves as builds "for evaluation and testing, not for production use", and
+  the Browser's first preview — still an unpublished draft — adds that Broiler.JS is not a
+  security sandbox and only controlled content should be opened. None of those builds is
+  covered by a human review: the Writer has no review record, and Plate's reads
+  <code>PENDING</code>. <a href="/status.html#download">What can be downloaded →</a>
+</p>
+
+<p>
   Each applicable license supplies the covered software on an <strong>“AS IS”</strong> basis,
   without warranties or conditions.
 </p>
@@ -184,7 +196,7 @@
   Security-relevant issues belong with the component that owns the code. The component
   repositories live under
   <a href="https://github.com/Broiler-Platform">github.com/Broiler-Platform</a>, and the aggregate
-  repository is <a href="https://github.com/MaiRat/Broiler">MaiRat/Broiler</a>. If you are not
+  repository is <a href="https://github.com/Broiler-Platform/Broiler">Broiler-Platform/Broiler</a>. If you are not
   sure which component owns a boundary, the
   <a href="/architecture.html#owners">canonical-owners table</a> is the fastest way to find out.
 </p>

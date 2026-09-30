@@ -1,7 +1,8 @@
 # broiler-platform.github.io
 
-The public website for [Broiler](https://github.com/MaiRat/Broiler) — an open-source
-browser, word processor and code editor built on one platform written from scratch in .NET.
+The public website for [Broiler](https://github.com/Broiler-Platform/Broiler) — an open-source
+browser, word processor, viewer, code editor and mail app built on one platform written from
+scratch in .NET.
 
 Live at **<https://broiler-platform.github.io/>**.
 
@@ -53,18 +54,21 @@ tools/verify.py           Checks a built site: links, anchors, markup, metadata
 tools/pages/              Page sources, mirroring their output paths:
 
   === for everyone ===
-  index.html              What Broiler is, the three apps, the honest status, FAQ
-  applications.html       The apps, side by side
-  applications/*.html     Browser, Writer, Code — what each one does for a user
+  index.html              What Broiler is, the apps, the honest status, FAQ
+  applications.html       The apps, side by side, and what is planned
+  applications/*.html     Browser, Writer, Plate, Code, Mail — what each one does for a user
   about.html              Why it exists, how it is made, where it came from
-  status.html             What works, what doesn't, why there is no download yet
+  status.html             What works, what doesn't, which previews can be downloaded and
+                          what they are missing
   404.html                Not-found page (GitHub Pages serves this automatically)
 
   === for developers ===
   developers.html         The entry point: component map, rules, packages, evidence
   developers/*.html       Browser, Writer, Code — repository and build detail
   architecture.html       Layering, canonical owners, HtmlBridge, submodule topology
-  components.html         Component catalogue
+  components.html         Component catalogue — all eighteen, including those without a
+                          page of their own (HtmlBridge, JSeal, Net, Native, Regex,
+                          DateTime, Unicode), which link to their repositories
   components/*.html       One page per component (DOM, CSS, Layout, Graphics, Media,
                           Input, HTML, JS, UI, Documents, VM)
   conformance.html        Every evidence suite: two WPT suites, test262, HTML 5.2,
@@ -144,6 +148,7 @@ Wide content must sit inside its own scrolling container — `.table-wrap` for t
 | `broiler-mark.png` | The shared component package icon, the orange "B". |
 | `app-browser.svg`, `app-writer.svg` | Converted from the Android app icons (`Resources/drawable/appicon.xml`) in the Browser and Writer repositories, path for path. |
 | `app-code.svg` | **Not from the project.** Broiler Code has no icon of its own, so this one was drawn to match the other two — same blue, same flat style. Replace it if the project gains a real one. |
+| `app-plate.svg`, `app-mail.svg` | **Not from the project** either. Broiler Plate and Broiler.Mail have no icons in their repositories, so these were drawn in the same style. Replace them if the projects gain real ones. |
 
 All of it is Apache-2.0, from the same organisation as the site. The site's own header mark is
 an inline SVG in `tools/shell.html` that matches `broiler-mark.png`.
@@ -192,6 +197,12 @@ This matters more now that the site talks to end users. Plain language is not pe
 round anything up. "Emulator-tested" must not become "runs on Android"; "no signed release
 exists" must not become "coming soon"; and the pages that say what the apps *cannot* do are
 load-bearing, not filler.
+
+The same goes for downloads now that some exist. A GitHub pre-release is not a reviewed or
+signed release: say which files are unsigned, say which apps have no human-review record, and
+keep the note that the previews went out ahead of the project's own release plan until that
+stops being true. A draft release is not a download. Name formats the way the project does —
+"DOCX", never "Word" (its decision DOCX-IP-006 forbids labels that name a vendor's product).
 
 ## License
 

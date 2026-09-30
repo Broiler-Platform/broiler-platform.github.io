@@ -31,9 +31,11 @@
 
 <ul class="does">
   <li>Type an address and load a page</li>
-  <li>Follow links, go back and forward</li>
+  <li>Follow links, go back and forward — including links that jump to a spot on the same page</li>
   <li>Reload, stop, and a home button</li>
-  <li>Keep favourites</li>
+  <li>Keep favourites — a new install starts with six</li>
+  <li>Cookies, so a site can remember you while the browser is open — with the web's usual rules about which site may read which</li>
+  <li>Pages that move you on by themselves: a script redirect, a timed refresh, a form a page submits for you</li>
   <li>See loading progress, and a clear error page when a site fails</li>
   <li>Fill in forms — text fields, checkboxes, radio buttons, drop-downs</li>
   <li>Upload files through a page's file picker</li>
@@ -50,7 +52,9 @@
   <li class="no">Tabs</li>
   <li class="no">Extensions or add-ons</li>
   <li class="no">A password manager or autofill</li>
-  <li class="no">Sync, profiles or a sign-in of any kind</li>
+  <li class="no">Remember anything after you close it — cookies are kept only while the browser is running, so every site signs you out when you quit</li>
+  <li class="no">Cookie settings — no way yet to block third-party cookies or clear them by site</li>
+  <li class="no">Sync, or a Broiler sign-in of any kind</li>
   <li class="no">History search, or importing bookmarks</li>
   <li class="no">Video calls, screen sharing or WebRTC</li>
   <li class="no">WebSockets</li>
@@ -85,7 +89,7 @@
     <span class="stat-label">Known rendering gaps still open, each written up with what is missing and who owns it</span>
   </div>
   <div class="stat">
-    <span class="stat-num">167</span>
+    <span class="stat-num">170</span>
     <span class="stat-label">HTML conformance cases in the project's own suite, none quarantined</span>
   </div>
 </div>
@@ -119,7 +123,7 @@
     </tr>
     <tr>
       <td><strong>Android</strong></td>
-      <td>One full-screen surface with touch, pen, keyboard and international text input, and correct spacing around the system bars. <strong>Verified on an emulator only — not yet on a physical phone.</strong></td>
+      <td>One full-screen surface with touch, pen, keyboard and international text input, and correct spacing around the system bars. <strong>Verified on an emulator only — not yet on a physical phone.</strong> Unencrypted <code>http://</code> pages are blocked, which includes two of the default favourites.</td>
     </tr>
   </tbody>
 </table>
@@ -128,8 +132,9 @@
 <h2 id="privacy">Privacy</h2>
 
 <ul class="checklist">
-  <li>No account, no profile, no sign-in.</li>
+  <li>No Broiler account and no sign-in — the browser keeps one local profile on your machine, and nothing about it leaves it.</li>
   <li>No telemetry or usage reporting of any kind.</li>
+  <li>Cookies are held in memory only, and are gone when you close the browser.</li>
   <li>On Android, unencrypted <code>http://</code> traffic is switched off.</li>
   <li>Favourites are stored on your machine.</li>
 </ul>
@@ -145,11 +150,17 @@
 <h2 id="get">Getting it</h2>
 
 <div class="status-band">
-  <h3>No download yet</h3>
+  <h3>No download yet — the first one is being prepared</h3>
+  <p>
+    A first preview, <strong>0.1.0-preview.1</strong>, was built on 30 September for Windows,
+    Linux and Android. It is still an unpublished draft: nobody outside the project can download
+    it until someone reviews and releases it. The draft holds Windows and Linux files that are
+    <strong>not code-signed</strong> and an Android package signed with the project's release
+    key, and its own notes say to open controlled content only, because the JavaScript engine is
+    not a security sandbox.
+  </p>
   <p style="margin-bottom:0">
-    The browser builds on every change and can be packaged on demand, but nothing has been
-    signed and published for people to install. Until then you can build it from source —
-    which takes a .NET 10 SDK and one command.
+    Until then you can build it from source, which takes a .NET 10 SDK and one command.
     <a href="/get-started.html">How to build →</a>
   </p>
 </div>
@@ -161,9 +172,9 @@
       For developers
     </h3>
     <p>
-      Three platform heads over a shared chrome, with the HtmlBridge layer binding the DOM,
-      the renderer and the JavaScript engine into one page lifecycle. 80 projects per head,
-      eight component submodules, generated solutions.
+      Three platform heads over a shared chrome, embedding the HtmlBridge control that binds
+      the DOM, the renderer and the JavaScript engine into one page lifecycle. A plain
+      <code>git clone</code> builds it — every component arrives as a NuGet package.
     </p>
   </div>
   <div class="dev-links">

@@ -5,12 +5,12 @@
     <span class="eyebrow">For developers</span>
     <h1>Start here</h1>
     <p class="lede">
-      Broiler is one dependency graph split across more than a dozen repositories, published
+      Broiler is one dependency graph split across more than twenty repositories, published
       as reusable .NET&nbsp;10 packages. This page maps it in one screen; everything below
       goes deeper. The source is the real documentation — this site indexes it.
     </p>
     <div class="hero-actions" style="margin-top:1.6rem">
-      <a class="btn btn-primary" href="https://github.com/MaiRat/Broiler">
+      <a class="btn btn-primary" href="https://github.com/Broiler-Platform/Broiler">
         <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.35-1.29-1.71-1.29-1.71-1.06-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.76.4-1.28.74-1.57-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.23 2.76.12 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.26 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
         Aggregate repository
       </a>
@@ -31,10 +31,10 @@
 <table>
   <thead><tr><th></th><th></th></tr></thead>
   <tbody>
-    <tr><td><strong>Language / runtime</strong></td><td>C# on .NET 10, single-targeted. No third-party runtime dependencies in shipping assemblies.</td></tr>
-    <tr><td><strong>Licence</strong></td><td>Apache-2.0, with inherited HTML Renderer material under BSD 3-Clause.</td></tr>
-    <tr><td><strong>Shape</strong></td><td>11 components, 3 applications, each its own repository, composed with git submodules.</td></tr>
-    <tr><td><strong>Distribution</strong></td><td>Components ship as NuGet packages at <code>0.1.0-preview.1</code>, versioned in lockstep. The applications are not packaged.</td></tr>
+    <tr><td><strong>Language / runtime</strong></td><td>C# on .NET 10, single-targeted — except Broiler.Unicode, which also targets .NET 8. No third-party runtime dependencies in component packages; the Broiler Mail app uses the third-party MailKit.</td></tr>
+    <tr><td><strong>Licence</strong></td><td>Apache-2.0, with inherited HTML Renderer material under BSD 3-Clause, and the Public Suffix List data in Broiler.Net under MPL-2.0.</td></tr>
+    <tr><td><strong>Shape</strong></td><td>18 components and 5 applications, with a sixth application, Broiler Fond, planned — each its own repository. The aggregate repository gathers them as git submodules; the repositories themselves consume each other as nuget.org packages.</td></tr>
+    <tr><td><strong>Distribution</strong></td><td>Components ship to nuget.org as <code>0.1.0-preview.N</code> prereleases, each repository advancing its own number — no longer in lockstep. The applications are not packages; the Writer and Plate have downloadable preview builds, and the others have no public release. <a href="/status.html#download">Where to get them →</a></td></tr>
     <tr><td><strong>Build</strong></td><td><code>dotnet build</code> against a generated, focused <code>.slnx</code> per product and platform.</td></tr>
     <tr><td><strong>Tests</strong></td><td>xUnit for most components; self-hosted console runners for Graphics, Media and Input; test262 for JavaScript; two independent WPT suites for rendering.</td></tr>
     <tr><td><strong>State</strong></td><td>Preview. Public API unstable, most code not human-reviewed, no security audit. <a href="/status.html">Details →</a></td></tr>
@@ -57,12 +57,16 @@
       <a class="stack-item is-app" href="/applications/browser.html">Broiler.Browser<span>Windows · Linux · Android</span></a>
       <a class="stack-item is-app" href="/applications/writer.html">Broiler.Writer<span>Windows · Linux · Android · WebAssembly</span></a>
       <a class="stack-item is-app" href="/applications/code.html">Broiler.Code<span>Windows · Linux</span></a>
+      <a class="stack-item is-app" href="/applications/plate.html">Broiler.Plate<span>Windows</span></a>
+      <a class="stack-item is-app" href="/applications/mail.html">Broiler.Mail<span>Windows · in development</span></a>
+      <a class="stack-item is-app is-plan" href="https://github.com/Broiler-Platform/Broiler.Fond">Broiler.Fond<span>Planned</span></a>
     </div>
   </div>
   <div class="stack-row">
     <div class="stack-tier">Integration</div>
     <div class="stack-items">
       <a class="stack-item" href="/architecture.html#htmlbridge">Broiler.HtmlBridge<span>DOM ↔ renderer ↔ JavaScript</span></a>
+      <a class="stack-item" href="https://github.com/Broiler-Platform/Broiler.JSeal">Broiler.JSeal<span>JavaScript engine abstraction</span></a>
       <a class="stack-item" href="/components/ui.html">Broiler.UI<span>Retained-mode toolkit</span></a>
       <a class="stack-item" href="/components/documents.html">Broiler.Documents<span>RTF · DOCX · ODT · HTML · MD · PDF</span></a>
     </div>
@@ -75,6 +79,7 @@
       <a class="stack-item" href="/components/layout.html">Broiler.Layout<span>CSS box model</span></a>
       <a class="stack-item" href="/components/html.html">Broiler.HTML<span>Renderer</span></a>
       <a class="stack-item" href="/components/js.html">Broiler.JS<span>JavaScript → IL</span></a>
+      <a class="stack-item" href="/components.html">Regex · Unicode · DateTime<span>Standalone libraries</span></a>
     </div>
   </div>
   <div class="stack-row">
@@ -83,7 +88,9 @@
       <a class="stack-item" href="/components/graphics.html">Broiler.Graphics<span>Raster · text · backends</span></a>
       <a class="stack-item" href="/components/media.html">Broiler.Media<span>Image · audio · video</span></a>
       <a class="stack-item" href="/components/input.html">Broiler.Input<span>Keyboard · mouse · pen · touch</span></a>
-      <a class="stack-item is-plan" href="/components/vm.html">Broiler.VM<span>Bytecode profile host</span></a>
+      <a class="stack-item" href="https://github.com/Broiler-Platform/Broiler.Native">Broiler.Native<span>Native API bindings</span></a>
+      <a class="stack-item" href="https://github.com/Broiler-Platform/Broiler.Net">Broiler.Net<span>Cookies · HTTP transport</span></a>
+      <a class="stack-item is-plan" href="/components/vm.html">Broiler.VM<span>Profile host · published, unaccepted</span></a>
     </div>
   </div>
   <div class="stack-row">
@@ -163,7 +170,7 @@ dotnet add package Broiler.Graphics.Windows --prerelease         # + the Direct2
   <a href="/packages.html">The full package index →</a>
 </p>
 
-<h2 id="components">The eleven components</h2>
+<h2 id="components">The eighteen components</h2>
 
 <div class="art-grid">
   <a class="art-tile" href="/components/graphics.html">
@@ -172,7 +179,7 @@ dotnet add package Broiler.Graphics.Windows --prerelease         # + the Direct2
   </a>
   <a class="art-tile" href="/components/ui.html">
     <img src="/assets/img/component-ui.png" alt="" width="72" height="72" loading="lazy">
-    <b>Broiler.UI</b><span>56 control packages</span>
+    <b>Broiler.UI</b><span>60 packages</span>
   </a>
   <a class="art-tile" href="/components/media.html">
     <img src="/assets/img/component-media.png" alt="" width="72" height="72" loading="lazy">
@@ -189,6 +196,10 @@ dotnet add package Broiler.Graphics.Windows --prerelease         # + the Direct2
   <a class="art-tile" href="/components.html">
     <img src="/assets/img/broiler-mark.png" alt="" width="72" height="72" loading="lazy">
     <b>DOM · CSS · Layout<br>HTML · JS · VM</b><span>The engine components</span>
+  </a>
+  <a class="art-tile" href="/components.html">
+    <img src="/assets/img/broiler-mark.png" alt="" width="72" height="72" loading="lazy">
+    <b>HtmlBridge · JSeal · Net<br>Native · Regex · Unicode · DateTime</b><span>The newer seven</span>
   </a>
 </div>
 
@@ -241,16 +252,19 @@ dotnet add package Broiler.Graphics.Windows --prerelease         # + the Direct2
 
 <p>
   A fix usually belongs in a component repository rather than the aggregate one — the renderer,
-  CSS engine, DOM, JS engine, graphics, input, media, document codecs, UI toolkit and all three
-  applications each live under
+  CSS engine, layout engine, DOM, JS engine and its regex and Unicode libraries, the HTML bridge
+  and its engine abstraction, networking, native bindings, graphics, input, media, document
+  codecs, UI toolkit, the VM, and all five applications each live under
   <a href="https://github.com/Broiler-Platform">the Broiler-Platform organisation</a>, and the
-  aggregate repository composes them as submodules. Write the fix at its correct layer rather
-  than contorting it into the top level.
+  aggregate repository gathers them as submodules. Write the fix at its correct layer rather
+  than contorting it into the top level — and remember that the repositories consume each other
+  as published packages, so a fix in one reaches another only once it is published and the
+  consumer moves to that version.
 </p>
 
 <ul class="checklist">
   <li>Solutions are <strong>generated</strong> from <code>eng/solutions.json</code>. Change the project-reference graph, then regenerate — a hand-edited <code>.slnx</code> is reverted by the next run.</li>
-  <li>Component-owned tests live in the component's own solution, inside its submodule.</li>
+  <li>Component-owned tests live in the component's own repository and solution.</li>
   <li>Some <code>Broiler.HTML</code> and <code>Broiler.CSS</code> files are CRLF, and a few are mixed within one file. If a two-line change reports two thousand, your editor rewrote the line endings.</li>
   <li>Each component's roadmap is the source of truth for its own work; the root roadmap holds only what crosses component boundaries.</li>
 </ul>

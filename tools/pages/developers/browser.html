@@ -1,4 +1,4 @@
-{"title": "Broiler.Browser — technical detail", "desc": "The browser application repository: platform heads, generated solutions, the HtmlBridge layer, component submodules, CI and known composition issues.", "nav": "developers"}
+{"title": "Broiler.Browser — technical detail", "desc": "The browser application repository: platform heads, configurations, generated solutions, the NuGet packages it composes, network and cookies, the command line, CI, and the draft release.", "nav": "developers"}
 ---
 <section class="page-head">
   <div class="wrap">
@@ -7,13 +7,14 @@
     <h1>Broiler.Browser</h1>
     <p class="lede">
       Three platform heads — Windows, Linux and Android — over the shared
-      <code>Broiler.Browser.Core</code> chrome, plus the <code>Broiler.HtmlBridge</code> layer
-      that binds the DOM, the renderer and the JavaScript engine into one page lifecycle.
+      <code>Broiler.Browser.Core</code> chrome, embedding the <code>Broiler.HtmlBridge</code>
+      control that binds the DOM, the renderer and the JavaScript engine into one page lifecycle.
+      <code>Broiler.Cli</code>, a headless command line, loads pages through the same pipeline.
     </p>
     <div class="tag-row" style="margin-top:1.4rem">
       <span class="pill pill-pending">HUMAN_REVIEW pending</span>
       <span class="pill pill-plain">3 heads</span>
-      <span class="pill pill-plain">8 submodules</span>
+      <span class="pill pill-plain">No submodules — 11 NuGet components</span>
       <span class="pill pill-plain">Apache-2.0</span>
     </div>
   </div>
@@ -38,9 +39,14 @@
 
 <h2 id="start">Getting started</h2>
 
+<p>
+  The dependency components are NuGet packages, restored from nuget.org by the first build, so a
+  plain clone is the whole checkout.
+</p>
+
 <div class="code">
   <div class="code-head"><span class="code-title">clone, build, run</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>git clone --recurse-submodules https://github.com/Broiler-Platform/Broiler.Browser.git
+  <pre><code>git clone https://github.com/Broiler-Platform/Broiler.Browser.git
 cd Broiler.Browser
 
 dotnet build Broiler.Windows.Browser.slnx -c Release
@@ -57,19 +63,55 @@ dotnet test  Broiler.Browser.Tests.slnx -c Release</code></pre>
   <li><strong>Android head</strong> — needs the <code>android</code> workload. Targets <code>net10.0-android36.0</code> with a minimum SDK of 24, builds <code>android-arm64</code> and <code>android-x64</code>, and produces an <code>.aab</code> in <code>Release</code> and an <code>.apk</code> otherwise. Override <code>BroilerAndroidAbis</code> to package a single ABI.</li>
 </ul>
 
+<h3 id="configurations">Configurations</h3>
+
+<p>
+  Every configuration name decomposes into a base — <code>Debug</code> or <code>Release</code> —
+  and one axis, in <code>eng/Broiler.Configurations.props</code>.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Configuration</th><th>What it adds</th><th>Built through</th></tr></thead>
+  <tbody>
+    <tr><td><code>Debug</code> / <code>Release</code></td><td>—</td><td>solution or project</td></tr>
+    <tr><td><code>Debug-Linux</code> / <code>Release-Linux</code></td><td>pins <code>linux-x64</code> on the Linux head</td><td>project only</td></tr>
+    <tr><td><code>Debug-Windows</code> / <code>Release-Windows</code></td><td>pins <code>win-x64</code> on the Windows head</td><td>project only</td></tr>
+    <tr><td><code>Debug-VM</code> / <code>Release-VM</code></td><td>runs script on the Broiler.VM JavaScript profile</td><td>solution or project</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  The runtime-identifier pairs are absent from the solutions on purpose, so a solution-level
+  build with one fails <code>MSB4126</code>. The <code>-VM</code> pair is declared and works both
+  ways, but it is narrower than its name: it does <strong>not</strong> remove Broiler.JS, and
+  the repository says no page load runs on the VM yet —
+  <code>VmScriptEngine</code> runs the script-only paths on Broiler.VM and delegates everything
+  that touches a document to Broiler.JS. See
+  <a href="https://github.com/Broiler-Platform/Broiler.Browser/blob/main/docs/vm-javascript-profile.md"><code>docs/vm-javascript-profile.md</code></a>.
+</p>
+
 <h2 id="solutions">Solutions</h2>
 
 <div class="table-wrap">
 <table>
   <thead><tr><th>Solution</th><th>Entry point</th><th class="num">Projects</th></tr></thead>
   <tbody>
-    <tr><td><code>Broiler.Windows.Browser.slnx</code></td><td><code>src/Broiler.Browser.Windows</code></td><td class="num">80</td></tr>
-    <tr><td><code>Broiler.Linux.Browser.slnx</code></td><td><code>src/Broiler.Browser.Linux</code></td><td class="num">80</td></tr>
-    <tr><td><code>Broiler.Android.Browser.slnx</code></td><td><code>src/Broiler.Browser.Android</code></td><td class="num">81</td></tr>
-    <tr><td><code>Broiler.Browser.Tests.slnx</code></td><td><code>src/Broiler.Browser.Core.Tests</code></td><td class="num">75</td></tr>
+    <tr><td><code>Broiler.Windows.Browser.slnx</code></td><td><code>src/Broiler.Browser.Windows</code></td><td class="num">2</td></tr>
+    <tr><td><code>Broiler.Linux.Browser.slnx</code></td><td><code>src/Broiler.Browser.Linux</code></td><td class="num">2</td></tr>
+    <tr><td><code>Broiler.Android.Browser.slnx</code></td><td><code>src/Broiler.Browser.Android</code></td><td class="num">3</td></tr>
+    <tr><td><code>Broiler.Browser.Tests.slnx</code></td><td><code>src/Broiler.Browser.Core.Tests</code>, <code>src/Broiler.Browser.Cli.Tests</code></td><td class="num">4</td></tr>
   </tbody>
 </table>
 </div>
+
+<p>
+  The components are packages, and a package is not a project a solution lists, so each
+  solution holds only this repository's own projects. The solutions are generated from
+  <code>eng/solutions.json</code> by <code>scripts/update-solutions.ps1</code>; a hand-edited
+  <code>.slnx</code> is silently reverted by the next run.
+</p>
 
 <h2 id="layout">Repository layout</h2>
 
@@ -80,20 +122,30 @@ dotnet test  Broiler.Browser.Tests.slnx -c Release</code></pre>
     <tr><td><code>src/Broiler.Browser.Windows</code></td><td>Windows head — <code>WinExe</code>, Direct2D, Win32 input</td></tr>
     <tr><td><code>src/Broiler.Browser.Linux</code></td><td>Linux head — X11 clipboard and input coordination</td></tr>
     <tr><td><code>src/Broiler.Browser.Android</code></td><td>Android head — activity, manifest, resources</td></tr>
-    <tr><td><code>src/Broiler.Browser.Core</code></td><td>Shared browser chrome, palette, HTML form hosting</td></tr>
+    <tr><td><code>src/Broiler.Browser.Core</code></td><td>Shared browser chrome, palette, HTML form hosting, and the <code>BrowserProfile</code></td></tr>
+    <tr><td><code>src/Broiler.Browser.Core.Tests</code></td><td>xUnit suite for the shared chrome</td></tr>
+    <tr><td><code>src/Broiler.Browser.Cli</code></td><td><code>Broiler.Cli</code>, the headless command line — see <a href="#tools">below</a></td></tr>
+    <tr><td><code>src/Broiler.Browser.Cli.Tests</code></td><td>xUnit suite for the command line</td></tr>
     <tr><td><code>src/Broiler.App</code></td><td>Source-only directory shared by the heads — rendering pipeline, page loader, favourites, per-platform clipboards. No project of its own; each head links the files it needs.</td></tr>
     <tr><td><code>src/Broiler.App.Android</code></td><td>Android view, canvas renderer, input connection</td></tr>
-    <tr><td><code>src/Broiler.HtmlBridge.Core</code></td><td>Bridge models, logging, CSP and script-extraction support</td></tr>
-    <tr><td><code>src/Broiler.HtmlBridge.Dom</code></td><td>DOM bridge, tree building, JavaScript DOM objects</td></tr>
-    <tr><td><code>src/Broiler.HtmlBridge.Scripting</code></td><td>JavaScript execution integration</td></tr>
-    <tr><td><code>Broiler.Layout</code></td><td>Vendored layout engine — see below</td></tr>
+    <tr><td><code>eng/</code>, <code>scripts/</code></td><td>Solution manifest, configuration mapping and generator; the release's version resolver, Android signing and draft-release scripts</td></tr>
   </tbody>
 </table>
 </div>
 
+<p class="small">
+  <code>src/Broiler.HtmlBridge.*</code> and the vendored <code>Broiler.Layout</code> directory are
+  gone. Both are components with repositories of their own now — see below.
+</p>
+
 <h2 id="dependencies">Dependencies</h2>
 
-<p>Eight components are submodules, pinned to <code>main</code>:</p>
+<p>
+  Every component is a NuGet package from nuget.org, referenced from the projects under
+  <code>src/</code>. <strong>There are no submodules</strong>: the last ones — Broiler.HTML,
+  Broiler.HtmlBridge, Broiler.JS, Broiler.Layout and Broiler.VM — were replaced by their packages
+  in September 2026.
+</p>
 
 <div class="table-wrap">
 <table>
@@ -106,93 +158,178 @@ dotnet test  Broiler.Browser.Tests.slnx -c Release</code></pre>
     <tr><td><a href="/components/input.html"><code>Broiler.Input</code></a></td><td>Keyboard, mouse, pen, touch and text input abstractions</td></tr>
     <tr><td><a href="/components/ui.html"><code>Broiler.UI</code></a></td><td>Platform-neutral retained-mode UI toolkit</td></tr>
     <tr><td><a href="/components/html.html"><code>Broiler.HTML</code></a></td><td>Modular HTML/CSS renderer</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.Net"><code>Broiler.Net</code></a></td><td>Cookie engine, site resolution and the profile's HTTP transport (<code>BrowserNetworkSession</code>). Broiler.HTML and Broiler.HtmlBridge depend on it too</td></tr>
+    <tr><td><a href="https://github.com/Broiler-Platform/Broiler.HtmlBridge"><code>Broiler.HtmlBridge</code></a></td><td>The HTML control: the DOM bridge, JSEAL and the two engine providers. Extracted from this repository's <code>src/</code> on 2026-09-16 (<code>439fa2d</code>), so the browser is now one embedder of it rather than its owner</td></tr>
     <tr><td><a href="/components/js.html"><code>Broiler.JS</code></a></td><td>JavaScript parser, compiler, runtime and built-ins</td></tr>
+    <tr><td><a href="/components/vm.html"><code>Broiler.VM</code></a></td><td>Generic execution core — a host for language profiles. Reached <strong>only under <code>Debug-VM</code>/<code>Release-VM</code></strong>, through the <code>Broiler.HtmlBridge.Scripting.Vm</code> package</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  <a href="/components/layout.html"><code>Broiler.Layout</code></a> is no longer vendored here.
+  It has been its own repository,
+  <a href="https://github.com/Broiler-Platform/Broiler.Layout">Broiler-Platform/Broiler.Layout</a>,
+  since 2026-09-09, and arrives as a package like everything else.
+</p>
+
+<div class="callout callout-warn">
+  <p class="callout-title">A <code>PackageReference</code> version is a minimum</p>
+  <p>
+    Restore takes the lowest version nuget.org has at or above it, and several minimums name a
+    preview nuget.org does not have, so restore resolves them upward and warns
+    <code>NU1603</code> for each one. What a project actually restored is in its
+    <code>obj/project.assets.json</code> — not in the <code>.csproj</code>.
+  </p>
+</div>
+
+<h3 id="network">Network and cookies</h3>
+
+<p>
+  Every head creates one <code>BrowserProfile</code> and hands it to its
+  <code>BrowserApp</code>: a cookie store and one Broiler.Net <code>BrowserNetworkSession</code>
+  over it. That session is the only network the browser uses for a page — navigations, the
+  scripts the extractor fetches, the DOM bridge's loaders (<code>fetch</code>, XHR,
+  <code>sendBeacon</code>, module imports, stylesheets, frames) and the renderer's images,
+  stylesheets and fonts. A cookie a navigation receives is what every one of them carries, under
+  Fetch's credentials, CORS and SameSite rules, and <code>document.cookie</code> reads the same
+  store without ever seeing an <code>HttpOnly</code> cookie. No loader keeps a jar of its own.
+</p>
+
+<p>
+  The work is staged, and the stage reports are the record of what is and is not done:
+</p>
+
+<ul class="checklist neutral">
+  <li><strong>Stages 1–3 complete</strong> (2026-09-24) — audit, the cookie engine, and the shared transport — with most of stage 4's script gates shipped alongside. <a href="https://github.com/Broiler-Platform/Broiler.Browser/blob/main/docs/cookie-support-stage-3.md">Stage 3 report</a>.</li>
+  <li><strong>Stage 4 has open items</strong> — among them an independent VM provider test, the pinned WPT <code>cookies</code>/<code>fetch</code>/<code>xhr</code> suites, and header CSP.</li>
+  <li><strong>No third-party cookie settings</strong> (stage 5) and <strong>no persistence</strong> (stage 6): in the report's words, every cookie ends with the process.</li>
+</ul>
+
+<p class="small">
+  The plan is <a href="https://github.com/Broiler-Platform/Broiler.Browser/blob/main/docs/cookie-support-implementation-plan.md"><code>docs/cookie-support-implementation-plan.md</code></a>;
+  the <a href="https://github.com/Broiler-Platform/Broiler.Browser/blob/main/docs/cookie-support-stage-1.md">stage 1</a>
+  and <a href="https://github.com/Broiler-Platform/Broiler.Browser/blob/main/docs/cookie-support-stage-2.md">stage 2</a>
+  reports hold the original request inventory and the engine.
+</p>
+
+<h2 id="known">Known issues</h2>
+
+<p>
+  This page used to describe three consequences of building the components from checkouts:
+  <code>Broiler.Layout</code> vendored as a directory, Broiler.HTML's pre-<code>src/</code>
+  reference paths, and components compiled more than once. The repository's README says all of
+  them <strong>ended with the checkouts</strong> — nothing here compiles a component any more.
+  What remains worth knowing before filing a bug is the <code>NU1603</code> behaviour above and the
+  stage limits under <a href="#network">Network and cookies</a>.
+</p>
+
+<h2 id="ci">Continuous integration</h2>
+
+<p><code>ci.yml</code> runs on every push to <code>main</code> and every pull request. Every job checks out without submodules — there are none.</p>
+
+<ul class="checklist neutral">
+  <li><strong>Solution manifest</strong> — <code>scripts/update-solutions.ps1 -Verify</code>, which fails if a checked-in <code>.slnx</code> no longer matches the reference graph.</li>
+  <li><strong>Component graph</strong> — one assembly per name across each solution's whole closure, projects <em>and</em> restored packages, in <code>Debug</code> and again in <code>Debug-VM</code>, which restores a different closure. Also that every project declares every build type its solution offers, and that the configuration mapping reaches every project exactly once.</li>
+  <li><strong>Build</strong> — the Windows head on <code>windows-latest</code>, the Linux head on <code>ubuntu-latest</code>.</li>
+  <li><strong>Tests</strong> — the shared chrome's suite and the command line's, on <em>both</em> hosts, because the shared chrome does clipboard and file-dialog work that is easy to make accidentally platform-specific.</li>
+  <li><strong>VM profile</strong> — the suite on Linux and the Windows head under <code>Release-VM</code>: the browser's host code run against the VM script engine that configuration selects.</li>
+  <li><strong>Android head</strong> — a separate job, since it pays for the <code>android</code> workload; it runs the two graph checks for its own solution.</li>
+  <li><strong>Publish</strong> — <code>Release-Windows</code> and <code>Release-Linux</code>, self-contained and single-file as the release ships them. Project-level builds by necessity: no solution declares them.</li>
+</ul>
+
+<h2 id="releases">Releases</h2>
+
+<p>
+  <code>release.yml</code> is dispatch-only. Each run picks the next preview version, builds every
+  head with it, tags the commit <code>browser-v&lt;version&gt;</code> and drafts a GitHub
+  pre-release. <strong>The release stays a draft until someone reviews and publishes it.</strong>
+</p>
+
+<div class="callout callout-warn">
+  <p class="callout-title"><code>browser-v0.1.0-preview.1</code> exists as a tag — its release is a draft, not published</p>
+  <p>
+    The tag was cut on 2026-09-30. Its GitHub release has not been published, so there is no
+    public Broiler Browser download.
+  </p>
+</div>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Asset</th><th>What it is</th></tr></thead>
+  <tbody>
+    <tr><td><code>…-win-x64.zip</code>, <code>…-linux-x64.zip</code></td><td>One self-contained single-file executable each — the .NET runtime and every assembly in one file. <strong>Not NativeAOT</strong>, as Broiler.Writer's are, because Broiler.JS does not start under NativeAOT. <strong>Not code-signed</strong>, so Windows SmartScreen may ask before the first start.</td></tr>
+    <tr><td><code>…-arm64.apk</code>, <code>….aab</code></td><td>The Android APK for sideloading and the app bundle (arm64 + x86_64), signed with the Broiler release key by <code>eng/sign-android-packages.ps1</code>.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  The release optimisations live in the head projects, so CI and a publish from Visual Studio get
+  them too — and the README records what they cost as well as what they buy:
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Head</th><th>Optimisations</th><th>Measured</th></tr></thead>
+  <tbody>
+    <tr><td>Windows, Linux</td><td>ReadyToRun for a release publish with a runtime identifier; tiered compilation with dynamic PGO</td><td>A script-driven page finishes in 1.46&nbsp;s instead of 2.11&nbsp;s, first render 62&nbsp;ms instead of 273&nbsp;ms; the executable grows to <strong>115&nbsp;MB</strong> from 84&nbsp;MB</td></tr>
+    <tr><td>Android</td><td>Profiled AOT (the SDK's startup profile) for Release, with the partial trimming AOT requires</td><td>Cold start 1.98&nbsp;s instead of 3.15&nbsp;s <em>on the API 36 emulator</em>; APK 10&nbsp;MB instead of 24&nbsp;MB</td></tr>
   </tbody>
 </table>
 </div>
 
 <p class="small">
-  <code>Broiler.JS</code> carries <code>Broiler.DateTime</code>, <code>Broiler.Regex</code> and
-  <code>Broiler.Unicode</code> as its own nested submodules.
+  Nothing is fully trimmed: Broiler.JS reflects over its own members, and one of its assemblies,
+  <code>Broiler.JavaScript.Expressions</code>, declares itself trimmable wrongly. The Android head
+  roots it; without that, every page with a script fails to load there.
 </p>
-
-<h3 id="vendored">Broiler.Layout is vendored, not a submodule</h3>
-
-<p>
-  The graphics-independent layout engine has <strong>no standalone repository</strong>. It exists
-  only as a directory inside the aggregate <code>Broiler</code> monorepo, and both
-  <code>Broiler.HTML.Core</code> and <code>Broiler.HtmlBridge.Core</code> need it — so it is
-  checked in here as ordinary tracked files. Should the component ever be published, this
-  directory can be replaced by a submodule at the same path with <strong>no reference
-  changes</strong>: <code>Broiler.HTML.Core</code> already reaches it as
-  <code>..\..\..\Broiler.Layout\</code>, which resolves to the repository root either way.
-</p>
-
-<h2 id="known">Known issues</h2>
-
-<p>Two consequences of composing independently released components, worth knowing before filing a bug.</p>
-
-<h3 id="stale-paths">Broiler.HTML still uses the pre-<code>src/</code> paths</h3>
-
-<p>
-  It spells its top-level <code>Broiler.Media</code> and <code>Broiler.Graphics</code> references
-  in the flat layout those components used while they were vendored inside the monorepo. Both now
-  publish under <code>src/</code>, so the references as written resolve nowhere.
-  <code>Directory.Build.targets</code> rewrites exactly those two references onto the top-level
-  checkouts, and both blocks are marked for deletion once Broiler.HTML follows the components
-  into <code>src/</code>.
-</p>
-
-<h3 id="duplicates">Some components compile more than once</h3>
-
-<p>
-  Each component repository carries nested checkouts of its own dependencies so it still builds
-  standalone, and references them by literal relative path. Composed here that means
-  <code>Broiler.Media</code> is compiled three times and <code>Broiler.Graphics</code> and
-  <code>Broiler.Input</code> twice. Every nested gitlink points at the same commit as the
-  top-level one, so the duplicates are assembly-identical and no reference conflict is reported —
-  but it is wasted work, and it violates the one-project-per-assembly-identity rule.
-  <code>Broiler.CSS</code> and <code>Broiler.HTML</code> already avoid it with a
-  <code>$(BroilerDomPath)</code>/<code>$(BroilerGraphicsPath)</code> property hook; the fix is to
-  give the rest the same hook upstream. The solution generator already folds nested paths onto the
-  top-level ones, so each <code>.slnx</code> lists an assembly once.
-</p>
-
-<h2 id="ci">Continuous integration</h2>
-
-<p><code>ci.yml</code> runs on every push to <code>main</code> and every pull request:</p>
-
-<ul class="checklist neutral">
-  <li><strong>Solution manifest</strong> — <code>scripts/update-solutions.ps1 -Verify</code>, which fails if a checked-in <code>.slnx</code> no longer matches the reference graph. This is what catches a new <code>ProjectReference</code> that was never folded into a solution.</li>
-  <li><strong>Build</strong> — the Windows head on <code>windows-latest</code>, the Linux head on <code>ubuntu-latest</code>.</li>
-  <li><strong>Tests</strong> — the suite on <em>both</em> hosts, because the shared chrome does clipboard and file-dialog work that is easy to make accidentally platform-specific.</li>
-  <li><strong>Android head</strong> — a separate job, since it pays for the <code>android</code> workload.</li>
-  <li><strong>Publish</strong> — <code>Release-Windows</code> and <code>Release-Linux</code>. These are project-level builds by necessity: the solutions declare only <code>Debug</code> and <code>Release</code>, so a solution-level build with either fails <code>MSB4126</code>.</li>
-</ul>
 
 <h2 id="tools">Diagnosing a page</h2>
 
 <p>
-  The aggregate repository's <code>Broiler.Cli</code> is the tool for understanding why a page
-  misbehaves. <code>--diagnostic-dir</code> writes every JavaScript failure to a
-  <em>streamed</em> log — so a hang or timeout still leaves one — archives every page, script,
-  stylesheet, <code>fetch</code>/XHR response and sub-document the run touched, and produces a
-  <code>summary.md</code> ranking the distinct failures and the platform features the page asked
-  for and did not get.
+  <code>Broiler.Cli</code> lives in this repository now, at <code>src/Broiler.Browser.Cli</code>.
+  It came over from the aggregate repository on 2026-09-24 and on the way stopped running pages
+  its own way: it runs them on the window's pipeline. <code>--diagnostic-dir</code> records a
+  bundle for a capture — every JavaScript failure as it happens, streamed so a hang still leaves
+  one, the page's console, every document, script, stylesheet, fetch and sub-document it loaded,
+  and a <code>summary.md</code> ranking the distinct failures and the platform features the page
+  asked for and did not get.
 </p>
 
 <div class="code">
   <div class="code-head"><span class="code-title">capture with diagnostics</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>dotnet run --project src/Broiler.Cli -- \
+  <pre><code>dotnet run --project src/Broiler.Browser.Cli/Broiler.Browser.Cli.csproj -c Release -- \
   --capture-image https://example.com/ --output page.png \
   --diagnostic-dir ./diagnostics</code></pre>
 </div>
 
+<p>
+  <code>--analyze</code> is for the page that renders or runs wrong and gives no clue why. It
+  loads, runs and renders the page, and writes one directory holding everything the run produced
+  and a report ranking what looks wrong with its HTML, CSS, JavaScript, layout, rendering and
+  network — including a render with no scripts run, one with every layout box outlined, and one
+  of the page as the browser window itself paints it. It always runs the page on Broiler.JS,
+  whatever the configuration.
+</p>
+
+<div class="code">
+  <div class="code-head"><span class="code-title">analyse one page</span><button class="copy-btn" type="button">Copy</button></div>
+  <pre><code>dotnet run --project src/Broiler.Browser.Cli/Broiler.Browser.Cli.csproj -c Release -- \
+  --analyze https://example.com/ --output-dir analysis --verbose</code></pre>
+</div>
+
+<p class="small">
+  Everything else it does — <code>--evaluate-page</code>, the layout fuzzer, the engine smoke test —
+  is in <a href="https://github.com/Broiler-Platform/Broiler.Browser/blob/main/docs/command-line.md"><code>docs/command-line.md</code></a>.
+</p>
+
 <h2 id="cases">Investigations worth reading</h2>
 
 <p>
-  The aggregate repository keeps case studies of real pages that went wrong, written to be read
-  by whoever hits the same symptom next.
+  Case studies of real pages that went wrong, written to be read by whoever hits the same symptom
+  next. Three of them moved into the Browser repository's <code>docs/</code>; the mediawiki study
+  is still in the aggregate repository.
 </p>
 
 <div class="table-wrap">
@@ -200,19 +337,23 @@ dotnet test  Broiler.Browser.Tests.slnx -c Release</code></pre>
   <thead><tr><th>Case</th><th>What it turned out to be</th></tr></thead>
   <tbody>
     <tr>
-      <td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/browser-load-window-pump.md">The browser hung on pages the CLI rendered fine</a></td>
+      <td><a href="https://github.com/Broiler-Platform/Broiler.Browser/blob/main/docs/browser-load-window-pump.md">The browser hung on pages the CLI rendered fine</a></td>
       <td>The render pump asked "are any timers queued" — never false on a page holding an interval — where the drains ask "is anything due in the load window". It also re-parsed the whole document per tick, on the UI thread.</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/browser-connection-pool-aborts.md">IOException about a minute after a page loads</a></td>
+      <td><a href="https://github.com/Broiler-Platform/Broiler.Browser/blob/main/docs/browser-connection-pool-aborts.md">IOException about a minute after a page loads</a></td>
       <td>Pooled-connection aborts (Windows 995). Costs nothing — but an <code>HttpClient</code>-per-navigation bug used to add one per load.</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/html5test-exceptions.md">html5test.com's four JavaScript exceptions</a></td>
+      <td><a href="https://github.com/Broiler-Platform/Broiler.Browser/blob/main/docs/html5test-exceptions.md">html5test.com's four JavaScript exceptions</a></td>
       <td>Three were real and fixed. The remaining one is html5test's own WebRTC probe deliberately provoking a throw to detect an absent feature — <strong>it must not be suppressed</strong>; it disappears when WebRTC ships.</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/MaiRat/Broiler/blob/main/docs/mediawiki-vector-rendering.md">mediawiki.org did not look like the reference</a></td>
+      <td><a href="https://github.com/Broiler-Platform/Broiler.Browser/blob/main/docs/google-search-post-consent-challenge.md">Google Search, after the consent page</a></td>
+      <td>The consent form went out with two <code>Content-Type</code> values and was rejected with 400. Past that, the page's anti-abuse interpreter surfaces one wrong binding much later as a <code>TypeError</code> that names nothing recognisable — the reported error is rarely the bug.</td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/Broiler-Platform/Broiler/blob/main/docs/mediawiki-vector-rendering.md">mediawiki.org did not look like the reference</a> <span class="small">(aggregate repository)</span></td>
       <td>Twenty-odd general engine defects: a <code>calc()</code> breakpoint that made 25 <code>@media</code> blocks malformed, floated flex items taken out of flow, a margin collapse spent twice, bold and italic resolving to the regular face. 38.9% → 82.7% of pixels.</td>
     </tr>
   </tbody>

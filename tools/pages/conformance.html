@@ -38,7 +38,7 @@
     <tr><td><a href="#wpt">WPT golden images</a></td><td>Every discovered WPT document</td><td>Chromium screenshot</td><td>A feature Chromium lacks scores zero permanently</td></tr>
     <tr><td><a href="#reftests">WPT reftests</a></td><td>Only tests declaring a reference</td><td>Broiler's own render of that reference</td><td>A bug that damages test and reference alike</td></tr>
     <tr><td><a href="#test262">test262</a></td><td>The TC39 ECMAScript suite</td><td>The suite's own expectations</td><td>Says nothing about security or the DOM</td></tr>
-    <tr><td><a href="#html52">HTML 5.2 suite</a></td><td>167 repository-owned plain-HTML cases</td><td>Declared expectations per case</td><td>Scoped to what the manifest covers</td></tr>
+    <tr><td><a href="#html52">HTML 5.2 suite</a></td><td>170 repository-owned plain-HTML cases</td><td>Declared expectations per case</td><td>Scoped to what the manifest covers</td></tr>
     <tr><td><a href="#real-world">Real-world renders</a></td><td>Nine public websites</td><td>Chromium, live and replayed</td><td>Live pages change without a Broiler commit</td></tr>
     <tr><td><a href="#privacy">Privacy test pages</a></td><td>Nine DuckDuckGo pages</td><td>Chromium answering the same probes</td><td>Measures coverage, never privacy quality</td></tr>
     <tr><td><a href="#unit">Unit suites</a></td><td>Repository xUnit projects</td><td>Hand-written assertions</td><td>Most of them are not gated in CI</td></tr>
@@ -229,7 +229,7 @@ dotnet run --project src/Broiler.Wpt -- --wpt-dir &lt;dir&gt; --reftests-only</c
 </p>
 
 <div class="stats" style="margin:1.6rem 0">
-  <div class="stat"><span class="stat-num accent">167</span><span class="stat-label">Manifest cases, all active</span></div>
+  <div class="stat"><span class="stat-num accent">170</span><span class="stat-label">Manifest cases, all active</span></div>
   <div class="stat"><span class="stat-num">0</span><span class="stat-label">Quarantined cases</span></div>
   <div class="stat"><span class="stat-num">175 / 176</span><span class="stat-label">Coverage items covered or classified</span></div>
   <div class="stat"><span class="stat-num">131</span><span class="stat-label">CSS module registry rows, none uncovered</span></div>
@@ -241,20 +241,23 @@ dotnet run --project src/Broiler.Wpt -- --wpt-dir &lt;dir&gt; --reftests-only</c
   <tbody>
     <tr><td>css-modules</td><td class="num">42</td><td>syntax</td><td class="num">8</td></tr>
     <tr><td>embedded-content</td><td class="num">19</td><td>text-i18n</td><td class="num">8</td></tr>
-    <tr><td>forms</td><td class="num">13</td><td>elements</td><td class="num">8</td></tr>
-    <tr><td>tables</td><td class="num">12</td><td>css</td><td class="num">8</td></tr>
+    <tr><td>forms</td><td class="num">14</td><td>elements</td><td class="num">8</td></tr>
+    <tr><td>tables</td><td class="num">12</td><td>css</td><td class="num">9</td></tr>
     <tr><td>tree-construction</td><td class="num">12</td><td>layout</td><td class="num">4</td></tr>
     <tr><td>painting</td><td class="num">9</td><td>regressions</td><td class="num">4</td></tr>
     <tr><td>stress</td><td class="num">4</td><td>user-interaction</td><td class="num">4</td></tr>
-    <tr><td>document-metadata</td><td class="num">3</td><td>obsolete · resources · xhtml</td><td class="num">2 each</td></tr>
+    <tr><td>document-metadata</td><td class="num">3</td><td>resources</td><td class="num">3</td></tr>
+    <tr><td>obsolete · xhtml</td><td class="num">2 each</td><td>input-document-setup · links · microsyntaxes</td><td class="num">1 each</td></tr>
   </tbody>
 </table>
 </div>
 
 <p class="small">
   Expectations are declared per case and counted separately: <code>render</code> 85,
-  <code>dom</code> 31, <code>css</code> 23, <code>layout</code> 13, <code>resourceLog</code> 13,
-  <code>computedStyle</code> 8, <code>tokens</code> 8, <code>displayList</code> 4.
+  <code>dom</code> 31, <code>css</code> 23, <code>layout</code> 15, <code>resourceLog</code> 13,
+  <code>computedStyle</code> 9, <code>tokens</code> 8, <code>displayList</code> 6. Figures from
+  the generated dashboard (<code>docs/compliance.md</code>) on 2026-09-30; the component roadmap's
+  baseline paragraph still says 168 cases, and names the dashboard as the source of truth.
 </p>
 
 <h2 id="real-world">Real-world website renders</h2>
@@ -456,7 +459,7 @@ dotnet run --project src/Broiler.Wpt -- --wpt-dir &lt;dir&gt; --reftests-only</c
 <table>
   <thead><tr><th>Project group</th><th class="num">Projects</th><th>Result</th></tr></thead>
   <tbody>
-    <tr><td><code>Broiler.Layout.Tests</code></td><td class="num">1</td><td><span class="pill pill-ok">green</span> — 1,317 tests</td></tr>
+    <tr><td><code>Broiler.Layout.Tests</code></td><td class="num">1</td><td><span class="pill pill-plain">moved out</span> — 1,317 tests, green, when last measured in the aggregate</td></tr>
     <tr><td><code>src/*.Tests</code> except the two below</td><td class="num">6</td><td><span class="pill pill-ok">green</span></td></tr>
     <tr><td><code>src/Broiler.Wpt.Tests</code></td><td class="num">1</td><td><span class="pill pill-risk">84 failing</span> of 1,194</td></tr>
     <tr><td><code>src/Broiler.Cli.Tests</code></td><td class="num">1</td><td><span class="pill pill-risk">45 failing</span> of 4,190 (42 distinct tests)</td></tr>
@@ -465,14 +468,28 @@ dotnet run --project src/Broiler.Wpt -- --wpt-dir &lt;dir&gt; --reftests-only</c
 </div>
 
 <p class="small">
-  Measured on Linux, 4 cores, 16 GB, .NET SDK 10.0.302, submodules at the pinned pointers. The
+  These are the aggregate's <code>docs/xunit-suite-status.md</code> figures, measured on Linux,
+  4 cores, 16 GB, .NET SDK 10.0.302, submodules at the pinned pointers — and that file has not
+  changed since the site was written, so it predates the September topology change.
+  <strong>The Layout suite now lives in the <a href="https://github.com/Broiler-Platform/Broiler.Layout">Broiler.Layout</a>
+  repository</strong>, which records no test count — its test script only enforces a floor,
+  failing the run if fewer than 1,200 tests execute. The aggregate's <code>src/Broiler.Cli</code>, <code>src/Broiler.DevConsole</code> and
+  <code>src/Broiler.Wpt</code> still reference the <code>src/Broiler.HtmlBridge.*</code> projects
+  that left the tree on 2026-09-29, so the <code>src/</code> figures cannot be reproduced as
+  recorded until those references are repointed (not build-tested). The
   <code>Broiler.Documents.*</code> and <code>Broiler.UI.*</code> suites moved out with their
-  components and are now run by those submodules' own solutions; the application suites live with
+  components and are run by those repositories' own solutions; the application suites live with
   the applications. Some <code>Wpt_*_MatchesReference</code> tests can fail in a bare container
   because of font differences — baseline before attributing a failure to your change.
 </p>
 
 <h2 id="reproduce">Reproducing a run</h2>
+
+<p class="small">
+  These commands run in the aggregate checkout. The runners they drive — <code>src/Broiler.Wpt</code>
+  and <code>src/Broiler.Cli</code> — are among the projects whose references still point at the
+  removed in-tree HtmlBridge (see <a href="#unit">unit-test status</a>).
+</p>
 
 <div class="code">
   <div class="code-head"><span class="code-title">WPT golden images</span><button class="copy-btn" type="button">Copy</button></div>

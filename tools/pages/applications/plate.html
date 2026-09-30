@@ -1,0 +1,129 @@
+{"title": "Broiler Plate — a viewer that opens a file and shows it", "desc": "Broiler Plate opens documents (RTF, DOCX, HTML, Markdown, PDF) and pictures (PNG, JPEG, GIF, BMP, TIFF, WebP) and shows them — nothing else. A Windows preview you can download.", "nav": "apps"}
+---
+<section class="app-head">
+  <div class="wrap">
+    <div class="app-head-row">
+      <img class="app-icon" src="/assets/img/app-plate.svg" alt="" width="76" height="76">
+      <div style="flex:1 1 320px">
+        <span class="eyebrow">App</span>
+        <h1>Broiler Plate</h1>
+        <p class="lede">
+          A viewer. It opens a document or a picture and shows it — nothing else. The read-only
+          half of the Writer: the same file readers and the same page, with editing and saving
+          taken out.
+        </p>
+        <div class="tag-row" style="margin-top:1.2rem;margin-bottom:0">
+          <span class="plat on">Windows</span>
+          <span class="pill pill-preview">Preview download</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="opens">What it opens</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Kind</th><th>Formats</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Documents</strong></td><td>RTF, DOCX, HTML, Markdown and PDF</td></tr>
+    <tr><td><strong>Pictures</strong></td><td>PNG, JPEG, GIF, BMP, TIFF and WebP</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  A document looks the same here as it does in the <a href="/applications/writer.html">Writer</a>,
+  because it is drawn by the same control. Plate decides what a file is by looking at its
+  contents first and its name last, so a picture saved with the wrong extension still opens as
+  a picture.
+</p>
+
+<h2 id="does">What it does</h2>
+
+<ul class="does">
+  <li>Open a file from the toolbar, the File menu or <kbd>Ctrl</kbd>+<kbd>O</kbd></li>
+  <li>Zoom from 25&nbsp;% to 400&nbsp;% — the same steps as the Writer</li>
+  <li>Fit a picture to the window, which is where every picture starts</li>
+  <li>Select and copy text from a document</li>
+  <li>If a file can't be opened, keep showing what was already there, and say why</li>
+  <li>Notes on anything the file's reader had to approximate</li>
+</ul>
+
+<h2 id="doesnt">What it doesn't do</h2>
+
+<ul class="does">
+  <li class="no">Edit or save anything — that is the Writer's job</li>
+  <li class="no">Open more than one file at a time</li>
+  <li class="no">Move around a picture that is bigger than the window — it is cut off at the edges, with nothing to scroll or pan it yet</li>
+  <li class="no">Play sound or video</li>
+  <li class="no">Browse or manage your files</li>
+  <li class="no">Run anywhere but Windows</li>
+</ul>
+
+<p class="small">
+  The project lists the missing pieces on its roadmap without dates.
+</p>
+
+<div class="callout callout-warn">
+  <p class="callout-title">Opening a file is not risk-free</p>
+  <p style="margin-bottom:0">
+    Reading a document means parsing whatever is inside it, and the code that does that has had
+    no fuzzing, no dependency scan and no independent security audit. The project says plainly
+    that Plate is meant "for evaluation, testing and contribution — not production,
+    security-critical or safety-critical use". Open files you trust.
+  </p>
+</div>
+
+<h2 id="get">Getting it</h2>
+
+<div class="status-band">
+  <h3>A Windows preview you can download</h3>
+  <p>
+    <a href="https://github.com/Broiler-Platform/Broiler.Plate/releases/tag/plate-v0.1.0-preview.2">Broiler Plate 0.1.0-preview.2</a>
+    was published on 22 September 2026 as a GitHub pre-release, "a preview build for evaluation
+    and testing, not for production use".
+  </p>
+  <ul class="checklist">
+    <li>One zip for 64-bit Windows, about 4.4&nbsp;MB, holding a single program file. Unzip it and run it — there is nothing to install.</li>
+    <li>It is <strong>not code-signed</strong>, so Windows SmartScreen may ask before the first start.</li>
+    <li>No person has reviewed its code yet: its review record reads <strong>pending, 0 of 248</strong> relevant units reviewed.</li>
+  </ul>
+  <p style="margin-bottom:0">
+    <a href="/status.html#download">What "preview" means here →</a>
+  </p>
+</div>
+
+<div class="dev-strip">
+  <div class="dev-text">
+    <h3>
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+      For developers
+    </h3>
+    <p>
+      One Windows head over a shared core, taking the document codecs, the UI toolkit and the
+      graphics stack as versioned NuGet packages. CI builds, tests and publishes a NativeAOT
+      executable, then starts it to check it stays up.
+    </p>
+  </div>
+  <div class="dev-links">
+    <a class="btn" href="https://github.com/Broiler-Platform/Broiler.Plate">Repository</a>
+  </div>
+</div>
+
+<div class="pager">
+  <a href="/applications/writer.html"><span class="dir">Previous</span><span class="ttl">Broiler Writer</span></a>
+  <a class="next" href="/applications/code.html"><span class="dir">Next</span><span class="ttl">Broiler Code</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

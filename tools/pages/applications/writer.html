@@ -1,4 +1,4 @@
-{"title": "Broiler Writer — a word processor that opens the files you already have", "desc": "Broiler Writer writes and formats documents and opens Word, RTF, HTML and Markdown files, with a reveal-codes view. Runs on Windows, Linux, Android and inside a web browser.", "nav": "apps"}
+{"title": "Broiler Writer — a word processor that opens the files you already have", "desc": "Broiler Writer writes and formats documents and opens DOCX, ODT, RTF, HTML and Markdown files, with a reveal-codes view. Preview downloads for Windows, Linux and Android.", "nav": "apps"}
 ---
 <section class="app-head">
   <div class="wrap">
@@ -15,8 +15,8 @@
           <span class="plat on">Windows</span>
           <span class="plat on">Linux</span>
           <span class="plat on">Android · emulator-tested</span>
-          <span class="plat on">In a browser</span>
-          <span class="pill pill-preview">Early preview</span>
+          <span class="plat">In a browser · paused</span>
+          <span class="pill pill-preview">Preview download</span>
         </div>
       </div>
     </div>
@@ -34,12 +34,12 @@
 <table>
   <thead><tr><th>Format</th><th class="center">Open</th><th class="center">Save</th><th></th></tr></thead>
   <tbody>
-    <tr><td><strong>Word document</strong> <code>.docx</code></td><td class="center">Yes</td><td class="center">Yes</td><td>Text, formatting and lists. Tables are read and their text kept, but flattened into paragraphs — the app tells you when that happens rather than losing them quietly.</td></tr>
+    <tr><td><strong>DOCX</strong> <code>.docx</code></td><td class="center">Yes</td><td class="center">Yes</td><td>Text, formatting, lists, pictures — including ones the text wraps around — and the document's headers and footers. Tables open as real tables and are saved back as tables.</td></tr>
     <tr><td><strong>Rich Text</strong> <code>.rtf</code></td><td class="center">Yes</td><td class="center">Yes</td><td>The best-documented format here; the reader never fails on a malformed file.</td></tr>
     <tr><td><strong>HTML</strong></td><td class="center">Yes</td><td class="center">Yes</td><td>Uses the same HTML engine as the browser.</td></tr>
     <tr><td><strong>Markdown</strong></td><td class="center">Yes</td><td class="center">Yes</td><td>A safe CommonMark-style subset.</td></tr>
-    <tr><td><strong>PDF</strong></td><td class="center">Read only</td><td class="center">—</td><td>Windows and Linux only, and text only. Deliberately switched off elsewhere until it has been reviewed further.</td></tr>
-    <tr><td><strong>OpenDocument</strong> <code>.odt</code></td><td class="center">—</td><td class="center">—</td><td>The platform can read and write it, but the Writer does not register it yet.</td></tr>
+    <tr><td><strong>OpenDocument</strong> <code>.odt</code></td><td class="center">Yes</td><td class="center">Yes</td><td>On every platform, tables included.</td></tr>
+    <tr><td><strong>PDF</strong></td><td class="center">Read only</td><td class="center">—</td><td>Windows and Linux only. Text and pictures are shown, and a password-protected file asks for its password. You can save what you opened in any of the formats above, but not back to PDF. Deliberately switched off elsewhere until it has been reviewed further.</td></tr>
   </tbody>
 </table>
 </div>
@@ -51,13 +51,18 @@
   <li>Bold, italic, underline, strikethrough</li>
   <li>Choose fonts and sizes through a font dialog</li>
   <li>Text and background colour</li>
-  <li>Align left, centre, right</li>
+  <li>Align left, centre, right, or justify</li>
   <li>Bullet and numbered lists</li>
   <li>Indent and outdent</li>
   <li>Clear formatting</li>
   <li>Insert pictures</li>
+  <li>Insert a page break</li>
+  <li>Zoom from 25&nbsp;% to 400&nbsp;% without changing the document</li>
+  <li>Follow web and email links in a document, on Windows and Linux</li>
   <li>Undo and redo</li>
   <li>Cut, copy, paste, select all</li>
+  <li>Asks whether to save, discard or cancel before unsaved changes are lost</li>
+  <li>Notes on what it had to approximate when opening a file</li>
   <li>A document toolbar and a status line</li>
 </ul>
 
@@ -96,14 +101,15 @@
 <h2 id="doesnt">What it doesn't do yet</h2>
 
 <ul class="does">
-  <li class="no">Tables — text inside them is read, but you cannot create or edit one</li>
-  <li class="no">Footnotes, endnotes, headers and footers</li>
+  <li class="no">Adding a new table, header or footer — the ones already in a file are shown, but there is no command to create one</li>
+  <li class="no">Footnotes and endnotes</li>
   <li class="no">Track changes or comments</li>
   <li class="no">Spell check or grammar check</li>
   <li class="no">Mail merge</li>
   <li class="no">Styles as a managed, reusable set</li>
   <li class="no">Printing</li>
   <li class="no">Saving to PDF</li>
+  <li class="no">On Linux, closing the window from its title bar does not ask about unsaved changes — use File → Exit</li>
 </ul>
 
 <h2 id="platforms">On each platform</h2>
@@ -118,15 +124,15 @@
     </tr>
     <tr>
       <td><strong>Linux</strong></td>
-      <td>Same features, with PDF reading, on X11. Also a single self-contained binary. Dialogs stay inside the main window.</td>
+      <td>Same features, with PDF reading, on X11. Also a single self-contained binary. Dialogs stay inside the main window, and closing from the window's title bar skips the unsaved-changes question.</td>
     </tr>
     <tr>
       <td><strong>Android</strong></td>
-      <td>Touch, pen, on-screen keyboard and international text input, and it uses Android's own file picker so it can open documents from wherever you keep them. <strong>Emulator-verified only.</strong> No PDF reading.</td>
+      <td>Touch, pen, on-screen keyboard and international text input, and it uses Android's own file picker so it can open documents from wherever you keep them. The preview includes an Android package you can install by hand, but the project has <strong>verified the app on an emulator only — not yet on a physical phone.</strong> No PDF reading.</td>
     </tr>
     <tr>
       <td><strong>In a web browser</strong></td>
-      <td>The whole Writer runs as a web page — editing, formatting, undo, clipboard where the browser allows it, and opening and saving through the browser's own file picker and downloads. No PDF reading.</td>
+      <td><strong>Paused.</strong> The Writer was built to run as a web page — editing, formatting, undo, and opening and saving through the browser's own file picker. Since 14 September its automatic build has been switched off while that version is moved onto the platform's new packages, and no preview includes it. Treat it as not currently available.</td>
     </tr>
   </tbody>
 </table>
@@ -136,6 +142,7 @@
 
 <ul class="checklist">
   <li>No account, no cloud, no sign-in. Files stay where you put them.</li>
+  <li>The only network use is opening a link you click, in your own web browser or mail program.</li>
   <li>Documents are saved in ordinary formats other software can open.</li>
   <li>No telemetry.</li>
 </ul>
@@ -152,11 +159,27 @@
 <h2 id="get">Getting it</h2>
 
 <div class="status-band">
-  <h3>No download yet</h3>
+  <h3>A preview you can download — with caveats</h3>
+  <p>
+    Preview builds are published on the
+    <a href="https://github.com/Broiler-Platform/Broiler.Writer/releases">Writer's GitHub releases page</a>.
+    The newest is <strong>0.1.0-preview.5</strong>, from 30 September 2026. Each one is a
+    pre-release that the project describes as "for evaluation and testing, not for production use".
+  </p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Download</th><th>What it is</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Windows</strong> <code>…-win-x64.zip</code></td><td>One program file, about 5&nbsp;MB zipped. Unzip and run it; nothing to install. <strong>Not code-signed</strong>, so Windows SmartScreen may warn you before the first start.</td></tr>
+      <tr><td><strong>Linux</strong> <code>…-linux-x64.zip</code></td><td>One program file for X11, about 6&nbsp;MB zipped. Also not code-signed.</td></tr>
+      <tr><td><strong>Android</strong> <code>…-arm64.apk</code></td><td>Installed by hand (sideloaded). Signed with the Broiler release key, whose fingerprint the release notes quote. Emulator-tested only.</td></tr>
+    </tbody>
+  </table>
+  </div>
   <p style="margin-bottom:0">
-    The Writer builds on every change for all four platforms, but nothing has been signed and
-    published to install. You can build it from source today.
-    <a href="/get-started.html">How to build →</a>
+    Be aware of what is <em>not</em> behind these files yet: the Writer has no human review
+    record, and the latest preview was published from a version whose automated tests were
+    failing. <a href="/status.html#download">What that means →</a>
   </p>
 </div>
 
@@ -168,7 +191,8 @@
     </h3>
     <p>
       Four heads over a shared core, NativeAOT desktop publishes with zero trim warnings, a
-      codec policy asserted by tests, and generated per-platform solutions.
+      codec policy asserted by tests, and components consumed as NuGet packages — a plain
+      <code>git clone</code> builds it.
     </p>
   </div>
   <div class="dev-links">
@@ -179,7 +203,7 @@
 
 <div class="pager">
   <a href="/applications/browser.html"><span class="dir">Previous</span><span class="ttl">Broiler Browser</span></a>
-  <a class="next" href="/applications/code.html"><span class="dir">Next</span><span class="ttl">Broiler Code</span></a>
+  <a class="next" href="/applications/plate.html"><span class="dir">Next</span><span class="ttl">Broiler Plate</span></a>
 </div>
 
       </div>

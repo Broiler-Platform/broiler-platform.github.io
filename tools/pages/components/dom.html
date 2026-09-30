@@ -11,7 +11,7 @@
       builds on.
     </p>
     <div class="tag-row" style="margin-top:1.4rem">
-      <span class="pill pill-pending">HUMAN_REVIEW pending</span>
+      <span class="pill pill-pending">PENDING review for preview.2</span>
       <span class="pill pill-plain">net10.0</span>
       <span class="pill pill-plain">Apache-2.0</span>
       <span class="pill pill-plain">2 assemblies</span>
@@ -70,13 +70,30 @@
 <div class="callout callout-info">
   <p class="callout-title">The size gap, and what it is not</p>
   <p>
-    <code>Broiler.Dom</code> is about 2,473 lines and <code>Broiler.Dom.Html</code> about
-    1,180; the bridge assembly that adapts them is about 36,080. That gap is
+    The roadmap puts <code>Broiler.Dom</code> at about 2,473 lines and
+    <code>Broiler.Dom.Html</code> at about 1,180, against about 36,080 for the bridge assembly
+    that adapts them — figures it has not restated since the additions below. That gap is
     <strong>not a size target</strong>. Closing the open items moves roughly 2,000 lines of
     neutral algorithm into this component and lets the bridge delete roughly 500 lines of
     compatibility shims outright — which is the actual goal.
   </p>
 </div>
+
+<h3 id="new">Recent additions</h3>
+
+<ul class="checklist">
+  <li><strong>The node-relationship API from roadmap item D3</strong> — a <code>TextContent</code> setter, <code>CompareDocumentPosition</code>, and the element-traversal members (<code>ParentElement</code>, <code>ChildElements</code>, first/last element child and element siblings).</li>
+  <li><strong>Template contents</strong> — a <code>template</code> element gets the contents fragment its children belong in, including foster-parented and adopted content.</li>
+  <li><strong>Declarative shadow roots</strong>, attached while the tree is being built, and <strong>shadow slotting</strong>.</li>
+  <li><strong>Parse errors on request</strong>, each reported with a code, a line and a column.</li>
+</ul>
+
+<p class="small">
+  The qualified-name attribute accessors of item D1 and the character-data methods of item D2
+  now exist in <code>Broiler.Dom</code> as well, from a 2026-09-19 refactor. The roadmap still
+  lists both as open and has not said whether their exit gates — which also require the bridge's
+  copies to be deleted — are met. None of this is reviewed; see below.
+</p>
 
 <h3 id="admission">Admission rules</h3>
 
@@ -106,23 +123,33 @@
 dotnet test Broiler.Dom.slnx</code></pre>
 </div>
 
+<p>
+  CI builds both libraries and runs both suites on Linux and Windows — deliberately, because a
+  tokenizer is where two hosts disagree about newlines, string comparison and culture. The
+  repository restores from nuget.org only, and the packages are there: consumers currently pin
+  <code>Broiler.Dom</code> at <code>0.1.0-preview.8</code> and <code>Broiler.Dom.Html</code> at
+  <code>0.1.0-preview.11</code>. This is the one component whose packaging document still also
+  offers GitHub Packages as a publish target.
+</p>
+
 <h2 id="status">Status and known issues</h2>
 
 <div class="callout callout-warn">
-  <p class="callout-title">Not approved for preview use</p>
+  <p class="callout-title">PENDING HUMAN REVIEW for <code>0.1.0-preview.2</code></p>
   <p>
-    This component's <code>HUMAN_REVIEW.md</code> is <code>PENDING</code>. A pending record is
-    not an approval, and no checkout of this component should be described as human-approved.
-    See <a href="/assurance.html">Assurance</a>.
+    <code>0.1.0-preview.2</code> was published to GitHub Packages on 2026-09-14, from commit
+    <code>8252dbd</code>, <strong>before</strong> its review round opened. The previous approval
+    — first preview, commit <code>2a1e370</code>, 2026-07-01 — does not cover that revision.
+    Until a human reviewer completes the decision, neither the published preview nor the current
+    checkout may be described as approved. See <a href="/assurance.html">Assurance</a>.
   </p>
 </div>
 
 <p>
-  One packaging defect is tracked openly by a consumer: the nested <code>Broiler.DOM</code>
-  checkout lists <code>Microsoft.SourceLink.GitHub</code> twice, so restore reports
-  <code>NU1504</code> for <code>Broiler.Dom</code> and <code>Broiler.Dom.Html</code>. The Writer
-  repository leaves that warning deliberately unsuppressed, because it is a real upstream
-  defect and the fix belongs here.
+  An earlier packaging defect — <code>Microsoft.SourceLink.GitHub</code> listed twice, so that
+  restore reported <code>NU1504</code> in consumers — is gone: the explicit reference was removed
+  in <code>812277d</code>, which takes Source Link from the SDK instead. The Writer repository,
+  which had tracked the warning, now records its old known issues as fixed.
 </p>
 
 <div class="pager">

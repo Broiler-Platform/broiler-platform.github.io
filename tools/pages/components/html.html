@@ -1,4 +1,4 @@
-{"title": "Broiler.HTML — Broiler Platform", "desc": "Broiler's modular HTML/CSS renderer, split into parsing, CSS, DOM, orchestration, rendering, graphics and image assemblies. Derived in part from HTML Renderer, maintained independently.", "nav": "developers"}
+{"title": "Broiler.HTML — Broiler Platform", "desc": "Broiler's modular HTML/CSS renderer: parsing, orchestration, graphics and image assemblies over the Broiler CSS, DOM, Layout and Graphics packages. Derived in part from HTML Renderer, maintained independently.", "nav": "developers"}
 ---
 <section class="page-head">
   <div class="wrap">
@@ -48,24 +48,36 @@
 
 <h2 id="assemblies">Solution layout</h2>
 
+<p>
+  <code>Broiler.HTML.slnx</code> sits at the repository root. CSS, the DOM, layout and graphics
+  are no longer compiled here: they come from the <a href="/components/css.html">Broiler.CSS</a>,
+  <a href="/components/dom.html">Broiler.DOM</a>, <a href="/components/layout.html">Broiler.Layout</a>
+  and <a href="/components/graphics.html">Broiler.Graphics</a> packages. The in-repository
+  <code>Broiler.HTML.CSS</code> and <code>Broiler.HTML.Headless</code> projects were deleted.
+</p>
+
 <div class="table-wrap">
 <table>
-  <thead><tr><th>Assembly</th><th>Role</th></tr></thead>
+  <thead><tr><th>Project</th><th>Role</th></tr></thead>
   <tbody>
-    <tr><td><code>Broiler.HTML.Primitives</code></td><td>Shared primitive types</td></tr>
-    <tr><td><code>Broiler.HTML.Utils</code></td><td>Common utilities and resource helpers</td></tr>
-    <tr><td><code>Broiler.HTML.Adapters</code></td><td>Backend-neutral adapter abstractions</td></tr>
-    <tr><td><code>Broiler.HTML.Core</code></td><td>Core entities and deterministic IR helpers</td></tr>
-    <tr><td><code>Broiler.HTML.CSS</code></td><td>CSS parsing and stylesheet handling</td></tr>
-    <tr><td><code>Broiler.HTML.Dom</code></td><td>DOM and layout processing</td></tr>
-    <tr><td><code>Broiler.HTML.Orchestration</code></td><td>HTML parsing and renderer orchestration</td></tr>
-    <tr><td><code>Broiler.HTML.Rendering</code></td><td>Paint-time handlers and rendering logic</td></tr>
-    <tr><td><code>Broiler.HTML.Graphics</code></td><td><a href="/components/graphics.html">Broiler.Graphics</a> bitmap and render-list frontend</td></tr>
+    <tr><td><code>Broiler.HTML.Core</code></td><td>Shared entities, handler contracts, and image download and loading</td></tr>
+    <tr><td><code>Broiler.HTML.Dom</code></td><td>HTML parsing into the Broiler DOM, and the layout environment</td></tr>
+    <tr><td><code>Broiler.HTML.Orchestration</code></td><td>Box-tree construction, the HTML container, and painting into a display list</td></tr>
+    <tr><td><code>Broiler.HTML.Graphics</code></td><td><a href="/components/graphics.html">Broiler.Graphics</a> render-list frontend</td></tr>
+    <tr><td><code>Broiler.HTML.Graphics.Win32.Demo</code></td><td>A simple Win32 URL-rendering demo on the Direct2D backend in <code>Broiler.Graphics.Windows</code></td></tr>
     <tr><td><code>Broiler.HTML.Image</code> / <code>.Image.Compat</code></td><td>Image rendering, deterministic comparison, and the remaining backend-neutral compatibility seam</td></tr>
-    <tr><td><code>Broiler.HTML</code></td><td>Shared public surface used by platform adapters</td></tr>
+    <tr><td><code>Broiler.HTML.Tool</code></td><td>The cross-platform command-line renderer and image-diff reporting</td></tr>
   </tbody>
 </table>
 </div>
+
+<p>
+  Six of these publish to nuget.org, as one <code>0.1.0-preview.N</code> version:
+  <code>Broiler.HTML.Image</code>, <code>.Graphics</code>, <code>.Image.Compat</code>,
+  <code>.Orchestration</code>, <code>.Dom</code> and <code>.Core</code>. The publish workflow
+  takes one past the highest preview already on nuget.org, never below a floor that records the
+  numbers spent on the retired GitHub Packages feed.
+</p>
 
 <h2 id="api">Public API highlights</h2>
 
@@ -76,7 +88,21 @@
   <li><code>Broiler.HTML.Image.PixelDiffRunner</code> — compares rendered output to a baseline image.</li>
   <li><code>Broiler.HTML.Image.MismatchClassifier</code> — classifies visual mismatches for compliance triage.</li>
   <li><code>Broiler.HTML.Adapters.RAdapter</code> — the backend extension point for graphics, fonts, images, clipboard and context-menu services.</li>
+  <li><code>HtmlContainer.RequestTransport</code> and <code>HtmlContainer.DocumentContext</code> — route a container's images, stylesheets and fonts through a host's <a href="https://github.com/Broiler-Platform/Broiler.Net">Broiler.Net</a> network session.</li>
 </ul>
+
+<h3 id="subresources">Subresources load through Broiler.Net</h3>
+
+<p>
+  A browser host hands each container its profile's Broiler.Net session and the request context
+  of the document it renders. Images, <code>&lt;link&gt;</code> stylesheets and
+  <code>@font-face</code> fonts then go out as Fetch subresource requests of that document —
+  honouring <code>crossorigin</code>, CORS and the stylesheet MIME rules — so they carry and store
+  the profile's cookies. A web page's subresources never come off the local file system or a UNC
+  share. Without a transport — <code>HtmlRender</code>, the command-line tool, the WPT runner —
+  the renderer loads through process-wide clients that send the Broiler User-Agent but
+  <strong>send and store no cookies</strong>.
+</p>
 
 <h2 id="tool">The command-line renderer</h2>
 
@@ -148,8 +174,13 @@ npm run wpt:run -- --wpt-root ./artifacts/wpt-source \
 
 <p>
   A second, repository-owned suite tracks plain-HTML conformance with a generated dashboard. At
-  the last regeneration it held <strong>167 active cases and zero quarantined</strong>, with 175
+  the last regeneration it held <strong>170 active cases and zero quarantined</strong>, with 175
   of 176 coverage items covered or classified and no uncovered CSS module rows.
+</p>
+
+<p class="small">
+  The figure is the generated dashboard's. The component's roadmap baseline still says 168;
+  where the two disagree, the dashboard is the one regenerated from the manifest.
 </p>
 
 <p><a href="/conformance.html#html52">Full cluster and expectation breakdown →</a></p>
@@ -158,35 +189,38 @@ npm run wpt:run -- --wpt-root ./artifacts/wpt-source \
 
 <div class="code">
   <div class="code-head"><span class="code-title">build</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>cd Source
+  <pre><code>git clone https://github.com/Broiler-Platform/Broiler.HTML.git
 dotnet build Broiler.HTML.slnx
-dotnet test  Broiler.HTML.slnx</code></pre>
+dotnet test  Broiler.HTML.slnx -c Release
+npm test</code></pre>
 </div>
+
+<p>
+  Run everything from the repository root. The Broiler components the renderer builds on —
+  Broiler.CSS, Broiler.Dom.Html, Broiler.Graphics, Broiler.Layout, Broiler.Media and
+  Broiler.Net — are nuget.org packages pinned in <code>Directory.Packages.props</code>, and
+  <code>NuGet.config</code> restores from nuget.org only, so no credentials and no nested
+  checkouts are needed.
+</p>
 
 <div class="callout callout-info">
-  <p class="callout-title">What <code>dotnet test</code> means here</p>
+  <p class="callout-title">What <code>dotnet test</code> covers</p>
   <p>
-    The solution contains no checked-in .NET test projects yet, so <code>dotnet test</code> acts
-    as a repository validation command rather than a substantive renderer test suite. The
-    checked-in automated tests are the Node ones under <code>scripts/wpt/*.test.mjs</code>, run
-    with <code>npm test</code>.
+    There is now one checked-in .NET test project, <code>tests/Broiler.HTML.Tests</code>. It
+    covers <em>subresource loading</em> against loopback HTTP servers — cookies through a
+    Broiler.Net session, CORS, redirects, the cache, cancellation and the cookie-less legacy
+    path — not rendering as a whole. The WPT tooling keeps its Node tests under
+    <code>scripts/wpt/*.test.mjs</code>, run with <code>npm test</code>.
   </p>
 </div>
 
-<h2 id="known">Known structural issue</h2>
-
-<div class="callout callout-warn">
-  <p class="callout-title">Broiler.HTML still uses the pre-<code>src/</code> layout</p>
-  <p>
-    It spells its top-level <code>Broiler.Media</code> and <code>Broiler.Graphics</code>
-    references in the flat layout those components used while they were vendored inside the
-    monorepo. Both now publish under <code>src/</code>, so the references as written resolve
-    nowhere, and consuming repositories carry a <code>Directory.Build.targets</code> that
-    rewrites exactly those two references onto the top-level checkouts. Those rewrites — and the
-    solution generator's <code>$staleLayoutMappings</code> table — drop out once this component
-    follows the others into <code>src/</code>.
-  </p>
-</div>
+<p>
+  CI builds <code>Release</code> on Ubuntu and Windows for every push and pull request, runs the
+  .NET tests, the script tests and the HTML 5.2 corpus consistency checks, then packs and
+  verifies every package. The structural issue this page used to record — references spelled in
+  the pre-<code>src/</code> layout, rewritten by every consumer — ended when the component
+  switched to building from packages.
+</p>
 
 <h2 id="status">Preview status</h2>
 
@@ -195,6 +229,13 @@ dotnet test  Broiler.HTML.slnx</code></pre>
   paths are <strong>not hardened for hostile HTML/CSS</strong>, and obsolete and transitional
   APIs remain. Passing tests or compliance cases does not replace source-level human review and
   is not a security guarantee.
+</p>
+
+<p>
+  That approval is revision-scoped: it names commit <code>a9915ed</code> of 2026-07-01. The
+  component has changed a great deal since — package builds, deleted projects, network loading
+  through Broiler.Net — and its README asks that the record be consulted before any current
+  checkout is described as approved.
 </p>
 
 <div class="pager">

@@ -1,0 +1,129 @@
+{"title": "Broiler Mail — a small mail app, in development", "desc": "Broiler Mail is a Windows mail app for one account: receive and read mail over IMAP, and — in the version now being built — write and send it. In development; nothing to download yet.", "nav": "apps"}
+---
+<section class="app-head">
+  <div class="wrap">
+    <div class="app-head-row">
+      <img class="app-icon" src="/assets/img/app-mail.svg" alt="" width="76" height="76">
+      <div style="flex:1 1 320px">
+        <span class="eyebrow">App</span>
+        <h1>Broiler Mail</h1>
+        <p class="lede">
+          A small, straightforward mail app for one account, built on the same toolkit as the
+          other Broiler apps. It receives and reads mail today; sending is the version being
+          built now.
+        </p>
+        <div class="tag-row" style="margin-top:1.2rem;margin-bottom:0">
+          <span class="plat on">Windows</span>
+          <span class="pill pill-pending">In development</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="does">What it does</h2>
+
+<p>
+  The project builds Mail in numbered versions, each with one clear outcome. The first — "I can
+  configure one account and read incoming mail" — is implemented.
+</p>
+
+<ul class="does">
+  <li>Set up one mail account that uses IMAP, with your provider's settings</li>
+  <li>Keep its password in Windows' own Credential Manager, not in a file</li>
+  <li>Test the connection before you rely on it</li>
+  <li>Receive mail into your inbox, a page at a time, and read it as plain text</li>
+  <li>Leave messages on the server exactly as they were — reading marks nothing</li>
+  <li>Light, dark or system theme, a keyboard shortcut for every tab, and clipboard support</li>
+</ul>
+
+<h3 id="v2">Being built now: sending</h3>
+
+<p>
+  The second version adds writing mail: a plain-text editor with Reply, Reply all and Forward,
+  sending over an encrypted connection to your provider, and a draft that is saved on your
+  machine and comes back if the app closes. That code has landed, but it has only been checked
+  against test servers the project controls — not against a real mail provider yet.
+</p>
+
+<h2 id="doesnt">What it doesn't do yet</h2>
+
+<ul class="does">
+  <li class="no">Sign in to providers that only allow browser-based (OAuth) sign-in — a password or app password is the only option</li>
+  <li class="no">Open or save attachments</li>
+  <li class="no">Keep your mail — messages are held in memory and must be received again after you restart it</li>
+  <li class="no">Folders other than the inbox, search, or offline reading</li>
+  <li class="no">More than one account</li>
+  <li class="no">Show formatted (HTML) email</li>
+  <li class="no">Run on Linux or anywhere but Windows</li>
+</ul>
+
+<p class="small">
+  These are deliberate limits of the early versions, not oversights: multiple accounts,
+  attachments, folders, search, offline use and Linux are each a later version on the
+  <a href="https://github.com/Broiler-Platform/Broiler.Mail/blob/main/docs/roadmap.md">Mail roadmap</a>,
+  which gives no dates.
+</p>
+
+<h2 id="privacy">Your mail and your password</h2>
+
+<ul class="checklist">
+  <li>Mail talks only to the mail server you configure. There is no Broiler account and nothing goes to the project.</li>
+  <li>Certificate errors cannot be clicked away, and a connection set up to be encrypted never falls back to sending your password in the clear.</li>
+  <li>Your password is kept in Windows Credential Manager, and changing the server details invalidates it.</li>
+</ul>
+
+<div class="callout callout-warn">
+  <p class="callout-title">Not tested with your provider</p>
+  <p style="margin-bottom:0">
+    The project states that no public mail provider is claimed as certified: testing against a
+    live provider has been deferred. No person has reviewed the code yet either — its review
+    record reads <strong>pending, 0 of 420</strong> relevant units reviewed.
+  </p>
+</div>
+
+<h2 id="get">Getting it</h2>
+
+<div class="status-band">
+  <h3>No download</h3>
+  <p style="margin-bottom:0">
+    Nothing has been released. The repository can produce a self-contained Windows build on a
+    developer's machine, but none has been published, and it has no automated build or signing
+    yet. If you can build .NET software, the
+    <a href="https://github.com/Broiler-Platform/Broiler.Mail">repository</a> explains how — including
+    a demo mode that shows the whole app with made-up messages and no account at all.
+  </p>
+</div>
+
+<div class="dev-strip">
+  <div class="dev-text">
+    <h3>
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+      For developers
+    </h3>
+    <p>
+      A platform-neutral core with a Windows host on Broiler.UI and the Direct2D backend, taking
+      every Broiler component from nuget.org. Unlike the rest of the platform it uses one
+      third-party library, MailKit, for the mail protocols.
+    </p>
+  </div>
+  <div class="dev-links">
+    <a class="btn" href="https://github.com/Broiler-Platform/Broiler.Mail">Repository</a>
+  </div>
+</div>
+
+<div class="pager">
+  <a href="/applications/code.html"><span class="dir">Previous</span><span class="ttl">Broiler Code</span></a>
+  <a class="next" href="/about.html"><span class="dir">Next</span><span class="ttl">About Broiler</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

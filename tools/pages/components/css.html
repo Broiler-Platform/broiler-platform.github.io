@@ -11,7 +11,7 @@
       computed values over the canonical tree.
     </p>
     <div class="tag-row" style="margin-top:1.4rem">
-      <span class="pill pill-ok">Approved for first preview</span>
+      <span class="pill pill-pending">PENDING review for next preview</span>
       <span class="pill pill-plain">net10.0</span>
       <span class="pill pill-plain">Apache-2.0</span>
       <span class="pill pill-plain">2 assemblies</span>
@@ -54,7 +54,8 @@
 
 <p>
   The CSS extraction and the renderer/bridge cutover are both complete; their history lives in
-  Git rather than in the roadmap. Two items remain.
+  Git rather than in the <a href="https://github.com/Broiler-Platform/Broiler.CSS/blob/main/docs/roadmap.md">roadmap</a>.
+  Three items remain.
 </p>
 
 <h3 id="dpi">Device-pixel and high-DPI length handling</h3>
@@ -72,45 +73,74 @@
   <li>Broiler.HTML consumes the result without applying the scale twice.</li>
 </ul>
 
-<h3 id="review">Preview review</h3>
+<h3 id="ua-display">User-agent display defaults that depart from the HTML stylesheet</h3>
 
 <p>
-  The recorded human review applies to a specific revision. Before a new preview claim, the
-  changes since that revision have to be reviewed and <code>HUMAN_REVIEW.md</code> updated with
-  the exact commit and scope. The current record approves the component for first preview, with
-  dead and transitional code and preview instability recorded as accepted limitations.
+  <code>CssUserAgentDefaults.DisplayValues</code> maps each tag name to one
+  <code>display</code> value, and departs from the HTML Standard's user-agent stylesheet in three
+  places: <code>dialog</code> is always <code>none</code>, because a one-value-per-tag table
+  cannot express <code>dialog:not([open])</code>; <code>basefont</code> has no entry, because
+  Broiler.Dom.Html does not yet parse it as a void element; and <code>rp</code> has no entry,
+  because Broiler.HTML has no ruby layout and paints the <code>rp</code> parentheses as the only
+  separator. Broiler.HTML's own defaults make the same two choices, so both sheets change
+  together.
 </p>
+
+<p><strong>Exit gate:</strong></p>
+<ul class="checklist">
+  <li>An open <code>dialog</code> computes to <code>block</code> and a closed one to <code>none</code> for every consumer of the shared defaults.</li>
+  <li><code>basefont</code> and <code>rp</code> are <code>none</code> in both sheets, and the tests that pin their absence are replaced.</li>
+</ul>
+
+<h3 id="review">Preview review</h3>
+
+<div class="callout callout-warn">
+  <p class="callout-title">PENDING HUMAN REVIEW for the next preview</p>
+  <p>
+    The earlier first-preview approval named commit <code>44e5444</code> (2026-07-01). The
+    review target is now <code>517358f</code>, 179 commits later, and the previous approval does
+    not cover it: until a human reviewer completes the decision and attestation, the current
+    checkout <strong>must not be described as approved</strong>. Reviewer, handle and date are
+    still blank in <code>HUMAN_REVIEW.md</code>.
+  </p>
+</div>
 
 <h2 id="build">Build and test</h2>
 
 <p>
-  The repository carries a nested <code>Broiler.DOM</code> checkout so it builds standalone.
-  Initialise it first.
+  There is no nested checkout any more. <code>Broiler.CSS.Dom</code>'s dependency on the DOM is
+  the <code>Broiler.Dom</code> package, and every dependency restores from nuget.org, with
+  versions pinned in <code>Directory.Packages.props</code>.
 </p>
 
 <div class="code">
   <div class="code-head"><span class="code-title">standalone</span><button class="copy-btn" type="button">Copy</button></div>
-  <pre><code>git submodule update --init --recursive
-dotnet build Broiler.CSS.slnx
-dotnet test Broiler.CSS.slnx</code></pre>
+  <pre><code>dotnet build Broiler.CSS.slnx -c Release
+pwsh -File eng/run-tests.ps1 -Configuration Release</code></pre>
 </div>
+
+<p>
+  CI builds and tests <code>Release</code> on Ubuntu and Windows, then packs and verifies both
+  packages. Publishing goes to nuget.org only, at one past the highest preview either package
+  has ever had there — never below a floor that records the numbers spent on the retired GitHub
+  Packages feed.
+</p>
 
 <h2 id="notes">Notes</h2>
 
 <p>
-  Broiler.CSS is one of two components that already avoid the platform's duplicate-compilation
-  problem: it reaches its dependency through a <code>$(BroilerDomPath)</code> property hook
-  rather than a literal relative path, so a consumer can point it at the top-level checkout
-  instead of compiling the nested copy a second time. That hook is the pattern the other
-  components are expected to adopt — see
-  <a href="/architecture.html#nesting">repository topology</a>.
+  Broiler.CSS used to reach its nested DOM checkout through a <code>$(BroilerDomPath)</code>
+  property hook so a consumer could avoid compiling the DOM twice. With the nested checkout
+  replaced by the <code>Broiler.Dom</code> package, that hook is obsolete — see
+  <a href="/architecture.html#nesting">repository topology</a> for where nesting still exists.
 </p>
 
 <p>
-  One CSS fix currently sits outside the pinned pointers as a pending change — resolving
-  absolute length units in <code>ParseToPixels</code>, which belongs to the
-  <a href="/conformance.html#reftests">reftest suite's</a> work rather than to the pixel-gap
-  documents.
+  The absolute-length fix in <code>ParseToPixels</code> — <code>pt</code>, <code>pc</code>,
+  <code>in</code>, <code>cm</code>, <code>mm</code> and <code>Q</code> used to answer "not a
+  length", which broke the <code>border</code> shorthand — is no longer a pending patch. It
+  landed in this repository as <code>8db920a</code>, and the
+  <a href="/conformance.html#reftests">reftest suite's</a> patch list is empty.
 </p>
 
 <div class="pager">
