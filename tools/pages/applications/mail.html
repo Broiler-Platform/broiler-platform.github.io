@@ -1,4 +1,4 @@
-{"title": "Broiler Mail — a small mail app, in development", "desc": "Broiler Mail is a Windows mail app for one account: receive and read mail over IMAP, and — in the version now being built — write and send it. In development; nothing to download yet.", "nav": "apps"}
+{"title": "Broiler Mail — a small mail app, in development", "desc": "Broiler Mail is a mail app for one account, on Windows and in development for Android: receive and read mail over IMAP, formatted mail included, and — in the version now being finished — write and send it. Unsigned test builds only.", "nav": "apps"}
 ---
 <section class="app-head">
   <div class="wrap">
@@ -9,11 +9,12 @@
         <h1>Broiler Mail</h1>
         <p class="lede">
           A small, straightforward mail app for one account, built on the same toolkit as the
-          other Broiler apps. It receives and reads mail today; sending is the version being
-          built now.
+          other Broiler apps. It receives and reads mail today, formatted messages included;
+          sending is the version being finished now.
         </p>
         <div class="tag-row" style="margin-top:1.2rem;margin-bottom:0">
           <span class="plat on">Windows</span>
+          <span class="plat on">Android</span>
           <span class="pill pill-pending">In development</span>
         </div>
       </div>
@@ -51,6 +52,12 @@
   against test servers the project controls — not against a real mail provider yet.
 </p>
 
+<p>
+  The same version adds a preview of formatted (HTML) email, drawn by Broiler's own renderer.
+  Running that renderer in a separate, locked-down process is still an open release
+  condition.
+</p>
+
 <h2 id="doesnt">What it doesn't do yet</h2>
 
 <ul class="does">
@@ -59,8 +66,7 @@
   <li class="no">Keep your mail — messages are held in memory and must be received again after you restart it</li>
   <li class="no">Folders other than the inbox, search, or offline reading</li>
   <li class="no">More than one account</li>
-  <li class="no">Show formatted (HTML) email</li>
-  <li class="no">Run on Linux or anywhere but Windows</li>
+  <li class="no">Run on Linux — that version is a placeholder; the Android version is newer and less tested than Windows</li>
 </ul>
 
 <p class="small">
@@ -92,9 +98,9 @@
 <div class="status-band">
   <h3>No download</h3>
   <p style="margin-bottom:0">
-    Nothing has been released. The repository can produce a self-contained Windows build on a
-    developer's machine, but none has been published, and it has no automated build or signing
-    yet. If you can build .NET software, the
+    Nothing has been released for everyday use. The repository's automated builds produce
+    unsigned test packages for Windows (x64 and ARM64) and Android, and a draft release is not a
+    download. If you can build .NET software, the
     <a href="https://github.com/Broiler-Platform/Broiler.Mail">repository</a> explains how — including
     a demo mode that shows the whole app with made-up messages and no account at all.
   </p>
@@ -107,7 +113,7 @@
       For developers
     </h3>
     <p>
-      A platform-neutral core with a Windows host on Broiler.UI and the Direct2D backend, taking
+      A platform-neutral core with Windows and Android hosts on Broiler.UI and Broiler.Hosting, taking
       every Broiler component from nuget.org. Unlike the rest of the platform it uses one
       third-party library, MailKit, for the mail protocols.
     </p>
@@ -119,7 +125,7 @@
 
 <div class="pager">
   <a href="/applications/code.html"><span class="dir">Previous</span><span class="ttl">Broiler Code</span></a>
-  <a class="next" href="/about.html"><span class="dir">Next</span><span class="ttl">About Broiler</span></a>
+  <a class="next" href="/applications/cells.html"><span class="dir">Next</span><span class="ttl">Broiler Cells</span></a>
 </div>
 
       </div>

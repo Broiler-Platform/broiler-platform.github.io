@@ -1,11 +1,11 @@
-{"title": "About Broiler — what it is and why it exists", "desc": "What Broiler is in plain language: an open-source browser, word processor, viewer, code editor and mail app built on one platform written from scratch in .NET, how it is made, and where it came from.", "nav": "about"}
+{"title": "About Broiler — what it is and why it exists", "desc": "What Broiler is in plain language: an open-source browser, word processor, viewer, code editor, mail app and spreadsheet built on one platform written from scratch in .NET, how it is made, and where it came from.", "nav": "about"}
 ---
 <section class="page-head">
   <div class="wrap">
     <span class="eyebrow">About</span>
     <h1>What Broiler is</h1>
     <p class="lede">
-      A browser, a word processor, a viewer, a code editor and a mail app — plus the platform
+      A browser, a word processor, a viewer, a code editor, a mail app and a spreadsheet — plus the platform
       underneath them, which is the actual project. Everything is open source, and everything was written from
       scratch rather than wrapped around somebody else's engine.
     </p>
@@ -63,7 +63,12 @@
   <a class="app-card" href="/applications/mail.html">
     <img class="app-icon" src="/assets/img/app-mail.svg" alt="" width="56" height="56">
     <h3>Mail</h3>
-    <p>Receives and reads mail for one account; sending is being built. In development.</p>
+    <p>Receives and reads mail for one account, formatted mail included; sending is being finished. In development.</p>
+  </a>
+  <a class="app-card" href="/applications/cells.html">
+    <img class="app-icon" src="/assets/img/app-cells.svg" alt="" width="56" height="56">
+    <h3>Cells</h3>
+    <p>A minimal spreadsheet: a grid of named cells, saved as CSV. In development.</p>
   </a>
 </div>
 
@@ -95,13 +100,13 @@
 
 <div class="table-wrap">
 <table>
-  <thead><tr><th>Runs on</th><th>Browser</th><th>Writer</th><th>Plate</th><th>Code</th><th>Mail</th></tr></thead>
+  <thead><tr><th>Runs on</th><th>Browser</th><th>Writer</th><th>Plate</th><th>Code</th><th>Mail</th><th>Cells</th></tr></thead>
   <tbody>
-    <tr><td><strong>Windows</strong></td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-    <tr><td><strong>Linux</strong></td><td>Yes</td><td>Yes</td><td>—</td><td>Yes</td><td>Planned</td></tr>
-    <tr><td><strong>Android</strong></td><td>Yes — tested on an emulator, not yet on a real phone</td><td>Yes — same</td><td>—</td><td>Planned</td><td>—</td></tr>
-    <tr><td><strong>Inside a web browser</strong></td><td>—</td><td>Paused</td><td>—</td><td>Experimental</td><td>—</td></tr>
-    <tr><td><strong>macOS</strong></td><td colspan="5">Not yet. It needs work on windowing, graphics, input and Apple's signing process first.</td></tr>
+    <tr><td><strong>Windows</strong></td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td><strong>Linux</strong></td><td>Yes</td><td>Yes</td><td>—</td><td>Yes</td><td>Planned</td><td>—</td></tr>
+    <tr><td><strong>Android</strong></td><td>Yes — tested on an emulator, not yet on a real phone</td><td>Yes — same</td><td>—</td><td>Planned</td><td>In development</td><td>—</td></tr>
+    <tr><td><strong>Inside a web browser</strong></td><td>—</td><td>Paused</td><td>—</td><td>Experimental</td><td>—</td><td>—</td></tr>
+    <tr><td><strong>macOS</strong></td><td colspan="6">Not yet. It needs work on windowing, graphics, input and Apple's signing process first.</td></tr>
   </tbody>
 </table>
 </div>
@@ -216,7 +221,7 @@
       The technical version
     </h3>
     <p>
-      Eighteen components, the dependency rules between them, and the evidence for every claim
+      Nineteen components, the dependency rules between them, and the evidence for every claim
       on this page.
     </p>
   </div>

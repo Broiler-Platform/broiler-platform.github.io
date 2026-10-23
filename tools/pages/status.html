@@ -60,9 +60,15 @@
       </tr>
       <tr>
         <td><strong>Mail</strong></td>
+        <td>Nothing for everyday use. Its automated builds make unsigned test packages for Windows and Android.</td>
+        <td><strong>No</strong></td>
+        <td><span class="pill pill-pending">Pending</span></td>
+      </tr>
+      <tr>
+        <td><strong>Cells</strong></td>
         <td>Nothing. It builds only on a developer's machine.</td>
         <td>—</td>
-        <td><span class="pill pill-pending">Pending · 0 of 420</span></td>
+        <td><span class="pill pill-risk">No review record</span></td>
       </tr>
     </tbody>
   </table>
@@ -167,11 +173,23 @@
     </h3>
     <ul class="does" style="grid-template-columns:1fr">
       <li>One IMAP account, password kept in Windows Credential Manager</li>
-      <li>Receive and read mail as plain text</li>
-      <li>Writing, replying and sending — newly landed, tested only against the project's own test servers</li>
-      <li class="no">No attachments, folders, search or HTML mail</li>
-      <li class="no">Mail is not kept between runs</li>
-      <li class="no">Not tested with any real mail provider; Windows only</li>
+      <li>Receive and read mail, with a preview of formatted (HTML) mail</li>
+      <li>Writing, replying and sending — tested only against the project's own test servers</li>
+      <li class="no">No attachments, folders or search</li>
+      <li class="no">Not tested with any real mail provider; Android newer than Windows, Linux a placeholder</li>
+    </ul>
+  </div>
+  <div>
+    <h3 style="margin-top:0">
+      <img src="/assets/img/app-cells.svg" alt="" width="22" height="22" style="vertical-align:-4px;margin-right:.4rem">
+      Cells
+    </h3>
+    <ul class="does" style="grid-template-columns:1fr">
+      <li>A grid of up to 100 × 100 cells, addressed A1 to CV100</li>
+      <li>Edit in place; select rows, columns and ranges; resize rows and columns</li>
+      <li>Open and save CSV files</li>
+      <li class="no">No formulas or calculation — cells hold text</li>
+      <li class="no">Windows only; nothing to download</li>
     </ul>
   </div>
 </div>
@@ -233,7 +251,7 @@
     <tr>
       <td><strong>Windows</strong></td>
       <td><span class="pill pill-ok">Most complete</span></td>
-      <td>The best-developed path. Hardware-accelerated drawing, real system windows for dialogs, video playback. The only platform Plate and Mail run on.</td>
+      <td>The best-developed path. Hardware-accelerated drawing, real system windows for dialogs, video playback. The only platform Plate and Cells run on.</td>
     </tr>
     <tr>
       <td><strong>Linux</strong></td>

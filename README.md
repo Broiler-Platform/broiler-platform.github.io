@@ -1,8 +1,8 @@
 # broiler-platform.github.io
 
 The public website for [Broiler](https://github.com/Broiler-Platform/Broiler) — an open-source
-browser, word processor, viewer, code editor and mail app built on one platform written from
-scratch in .NET.
+browser, word processor, viewer, code editor, mail app and spreadsheet built on one platform
+written from scratch in .NET.
 
 Live at **<https://broiler-platform.github.io/>**.
 
@@ -56,7 +56,7 @@ tools/pages/              Page sources, mirroring their output paths:
   === for everyone ===
   index.html              What Broiler is, the apps, the honest status, FAQ
   applications.html       The apps, side by side, and what is planned
-  applications/*.html     Browser, Writer, Plate, Code, Mail — what each one does for a user
+  applications/*.html     Browser, Writer, Plate, Code, Mail, Cells — what each one does for a user
   about.html              Why it exists, how it is made, where it came from
   status.html             What works, what doesn't, which previews can be downloaded and
                           what they are missing
@@ -66,9 +66,9 @@ tools/pages/              Page sources, mirroring their output paths:
   developers.html         The entry point: component map, rules, packages, evidence
   developers/*.html       Browser, Writer, Code — repository and build detail
   architecture.html       Layering, canonical owners, HtmlBridge, submodule topology
-  components.html         Component catalogue — all eighteen, including those without a
-                          page of their own (HtmlBridge, JSeal, Net, Native, Regex,
-                          DateTime, Unicode), which link to their repositories
+  components.html         Component catalogue — all nineteen, including those without a
+                          page of their own (HtmlBridge, JSeal, Hosting, Net, Native,
+                          Regex, DateTime, Unicode), which link to their repositories
   components/*.html       One page per component (DOM, CSS, Layout, Graphics, Media,
                           Input, HTML, JS, UI, Documents, VM)
   conformance.html        Every evidence suite: two WPT suites, test262, HTML 5.2,
@@ -148,7 +148,7 @@ Wide content must sit inside its own scrolling container — `.table-wrap` for t
 | `broiler-mark.png` | The shared component package icon, the orange "B". |
 | `app-browser.svg`, `app-writer.svg` | Converted from the Android app icons (`Resources/drawable/appicon.xml`) in the Browser and Writer repositories, path for path. |
 | `app-code.svg` | **Not from the project.** Broiler Code has no icon of its own, so this one was drawn to match the other two — same blue, same flat style. Replace it if the project gains a real one. |
-| `app-plate.svg`, `app-mail.svg` | **Not from the project** either. Broiler Plate and Broiler.Mail have no icons in their repositories, so these were drawn in the same style. Replace them if the projects gain real ones. |
+| `app-plate.svg`, `app-mail.svg`, `app-cells.svg` | **Not from the project** either. Broiler Plate, Broiler.Mail and Broiler Cells have no icons in their repositories, so these were drawn in the same style. Replace them if the projects gain real ones. |
 
 All of it is Apache-2.0, from the same organisation as the site. The site's own header mark is
 an inline SVG in `tools/shell.html` that matches `broiler-mark.png`.

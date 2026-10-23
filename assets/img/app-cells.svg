@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108" role="img" aria-label="Broiler Cells">
+  <path fill="#2464C8" d="M14,24 A14,14 0,0 1,28 10 L80,10 A14,14 0,0 1,94 24 L94,84 A14,14 0,0 1,80 98 L28,98 A14,14 0,0 1,14 84 Z"/>
+  <path fill="#A9CFF4" d="M24,24 L84,24 L84,38 L24,38 Z"/>
+  <path fill="#FFFFFF" d="M24,42 L44,42 L44,54 L24,54 Z M48,42 L84,42 L84,54 L48,54 Z M24,58 L44,58 L44,70 L24,70 Z M48,58 L84,58 L84,70 L48,70 Z M24,74 L44,74 L44,86 L24,86 Z M48,74 L84,74 L84,86 L48,86 Z"/>
+</svg>

@@ -1,0 +1,102 @@
+{"title": "Broiler Cells — a minimal spreadsheet", "desc": "Broiler Cells is a minimal spreadsheet for Windows: a grid of up to 100 by 100 cells with addresses like A1, in-place editing, row and column selection and resizing, and CSV files. In development; nothing to download yet.", "nav": "apps"}
+---
+<section class="app-head">
+  <div class="wrap">
+    <div class="app-head-row">
+      <img class="app-icon" src="/assets/img/app-cells.svg" alt="" width="76" height="76">
+      <div style="flex:1 1 320px">
+        <span class="eyebrow">App</span>
+        <h1>Broiler Cells</h1>
+        <p class="lede">
+          The newest and smallest app in the family: a grid you can type into, with every cell
+          named by its column and row, saved as a plain CSV file. A spreadsheet without the
+          formulas — deliberately.
+        </p>
+        <div class="tag-row" style="margin-top:1.2rem;margin-bottom:0">
+          <span class="plat on">Windows</span>
+          <span class="pill pill-pending">In development</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-body">
+
+<h2 id="does">What it does</h2>
+
+<p>
+  Cells was built in three small, numbered versions — show cells, edit cells, then label
+  rows and columns — and all three are implemented, plus a menu bar and CSV files on top.
+  That is where its roadmap ends.
+</p>
+
+<ul class="does">
+  <li>A sheet of up to 100 rows by 100 columns, labelled A–CV and 1–100</li>
+  <li>The address of the cell you are on, such as A1 or B2, always shown</li>
+  <li>Type to replace a cell, or double-click or press F2 to edit it in place; Enter keeps the change, Escape drops it</li>
+  <li>Move with the arrow keys, Tab, Page Up and Page Down, the mouse wheel and the scrollbars</li>
+  <li>Click a row number or column letter to select it; Shift and Ctrl extend the selection, and dragging selects a range or a rectangle of cells</li>
+  <li>Drag the edge of a row or column to resize it; double-click a column edge to fit its contents</li>
+  <li>New, Open, Save and Save as for CSV files, with the usual keyboard shortcuts</li>
+  <li>Text with commas, quotes and several lines in one cell survives the round trip through CSV</li>
+</ul>
+
+<h2 id="doesnt">What it doesn't do</h2>
+
+<ul class="does">
+  <li class="no">Formulas, sums or any calculation — cells hold text</li>
+  <li class="no">Formatting, charts, several sheets, or spreadsheet formats other than CSV</li>
+  <li class="no">Sheets larger than 100 × 100</li>
+  <li class="no">Run anywhere but Windows</li>
+</ul>
+
+<p class="small">
+  The same grid control is meant to be reusable — for example so the Writer could one day embed
+  a small table. The project calls that a design consideration, not a promise.
+</p>
+
+<h2 id="get">Getting it</h2>
+
+<div class="status-band">
+  <h3>No download</h3>
+  <p style="margin-bottom:0">
+    Nothing has been released, and the code carries no human-review record. If you can build
+    .NET software on Windows, the
+    <a href="https://github.com/Broiler-Platform/Broiler.Cells">repository</a> explains how to
+    build, run and test it.
+  </p>
+</div>
+
+<div class="dev-strip">
+  <div class="dev-text">
+    <h3>
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+      For developers
+    </h3>
+    <p>
+      Two platform-neutral libraries — the sheet model and CSV serializer
+      (<code>Broiler.Cells.Core</code>) and the reusable cell control
+      (<code>Broiler.Cells.Controls</code>) — and a Windows head, on
+      Broiler.UI, Broiler.Hosting and the Direct2D backend. CSV goes through
+      <code>Broiler.Documents.Csv</code>. Every Broiler component comes from nuget.org.
+    </p>
+  </div>
+  <div class="dev-links">
+    <a class="btn" href="https://github.com/Broiler-Platform/Broiler.Cells">Repository</a>
+  </div>
+</div>
+
+<div class="pager">
+  <a href="/applications/mail.html"><span class="dir">Previous</span><span class="ttl">Broiler Mail</span></a>
+  <a class="next" href="/about.html"><span class="dir">Next</span><span class="ttl">About Broiler</span></a>
+</div>
+
+      </div>
+      <aside class="toc" data-toc aria-label="On this page"><p class="toc-title">On this page</p></aside>
+    </div>
+  </div>
+</section>

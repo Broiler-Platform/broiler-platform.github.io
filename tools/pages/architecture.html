@@ -80,13 +80,13 @@
   <thead><tr><th>Tier</th><th>Owns</th><th>Deliberately does not own</th></tr></thead>
   <tbody>
     <tr>
-      <td><strong>Applications</strong><br><span class="small">Browser · Writer · Code · Plate · Mail</span></td>
+      <td><strong>Applications</strong><br><span class="small">Browser · Writer · Code · Plate · Mail · Cells</span></td>
       <td>Window and chrome, page/document lifecycle, favourites and recent files, clipboard policy, platform heads</td>
       <td>Rendering, layout, parsing, codecs, control implementations</td>
     </tr>
     <tr>
-      <td><strong>Integration</strong><br><span class="small">HtmlBridge · JSeal · UI · Documents</span></td>
-      <td>JavaScript-facing browser behaviour, the engine-neutral script contracts, retained-mode controls, document codecs and the rich-text model</td>
+      <td><strong>Integration</strong><br><span class="small">HtmlBridge · JSeal · UI · Documents · Hosting</span></td>
+      <td>JavaScript-facing browser behaviour, the engine-neutral script contracts, retained-mode controls, document codecs and the rich-text model, the shared per-platform application host</td>
       <td>Parallel implementations of the canonical engines below</td>
     </tr>
     <tr>
@@ -197,9 +197,9 @@
 
 <p>
   The aggregate <a href="https://github.com/Broiler-Platform/Broiler">Broiler</a> repository is a
-  composition, not a monolith. It gathers twenty-five git submodules, each with its own remote
-  under the <code>Broiler-Platform</code> organisation: eighteen components, five applications,
-  the planned Broiler Fond, and <code>Broiler.Terminal</code>, an empty placeholder. Since
+  composition, not a monolith. It gathers twenty-seven git submodules, each with its own remote
+  under the <code>Broiler-Platform</code> organisation: nineteen components, six applications,
+  Broiler Fond (in development), and <code>Broiler.Terminal</code>, an empty placeholder. Since
   2026-09-29 no component lives in the aggregate tree any more — the in-tree
   <code>Broiler.Layout</code>, the Broiler.VM documents and the HtmlBridge sources were deleted
   and came back as submodules. What remains is the tools and tests under <code>src/</code> and
@@ -229,6 +229,7 @@
 ├── Broiler.JSeal/             # submodule; JavaScript engine abstraction
 ├── Broiler.UI/                # submodule
 ├── Broiler.Documents/         # submodule
+├── Broiler.Hosting/           # submodule; shared per-platform application host
 │   platform core
 ├── Broiler.Graphics/          # submodule
 ├── Broiler.Media/             # submodule
@@ -242,7 +243,8 @@
 ├── Broiler.Code/              # submodule; Broiler Code, review tool
 ├── Broiler.Plate/             # submodule; document and picture viewer
 ├── Broiler.Mail/              # submodule; mail app, in development
-├── Broiler.Fond/              # submodule; homebanking, planned
+├── Broiler.Cells/             # submodule; minimal spreadsheet, in development
+├── Broiler.Fond/              # submodule; homebanking, milestone 1 in progress
 └── Broiler.Terminal/          # submodule; empty placeholder</code></pre>
 </div>
 

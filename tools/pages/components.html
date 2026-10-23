@@ -1,10 +1,10 @@
-{"title": "Components — Broiler Platform", "desc": "The eighteen Broiler components: DOM, CSS, Layout, Graphics, Media, Input, HTML, JS, UI, Documents, VM, HtmlBridge, JSeal, Net, Native, Regex, DateTime and Unicode. Purpose, packages, dependency direction and release status.", "nav": "developers"}
+{"title": "Components — Broiler Platform", "desc": "The nineteen Broiler components: DOM, CSS, Layout, Graphics, Media, Input, HTML, JS, UI, Documents, VM, HtmlBridge, JSeal, Hosting, Net, Native, Regex, DateTime and Unicode. Purpose, packages, dependency direction and release status.", "nav": "developers"}
 ---
 <section class="page-head">
   <div class="wrap">
     <p class="crumb"><a href="/developers.html">For developers</a></p>
     <span class="eyebrow">Components</span>
-    <h1>Eighteen components, released independently</h1>
+    <h1>Nineteen components, released independently</h1>
     <p class="lede">
       Every reusable part of Broiler is its own repository, with its own solution, its own CI
       and its own NuGet packages — <code>Broiler.Layout</code>, the last one that lived inside
@@ -94,7 +94,7 @@
           </tr>
           <tr>
             <td><a href="/components/documents.html"><strong>Broiler.Documents</strong></a></td>
-            <td>UI-free rich-text document model, formatting-codes projection, and the RTF, DOCX, ODT, HTML, Markdown and PDF codecs — PDF now published as a preview package, with the applications' read/write gates kept</td>
+            <td>UI-free rich-text document model, formatting-codes projection, pagination, and the RTF, DOCX, ODT, HTML, Markdown, CSV and PDF codecs — PDF now published as a preview package, with the applications' read/write gates kept</td>
             <td class="num">11</td>
             <td><span class="pill pill-preview">Preview</span></td>
           </tr>
@@ -117,6 +117,12 @@
             <td><span class="pill pill-pending">Review pending</span></td>
           </tr>
           <tr>
+            <td><a href="https://github.com/Broiler-Platform/Broiler.Hosting"><strong>Broiler.Hosting</strong></a></td>
+            <td>The shared desktop and mobile host for the applications: windowing and DPI, clipboard, system theme and high contrast, printing, native input and IME delivery, and the Windows UI Automation bridge — one package per platform</td>
+            <td class="num">3</td>
+            <td><span class="pill pill-preview">Preview · no review record</span></td>
+          </tr>
+          <tr>
             <td><a href="https://github.com/Broiler-Platform/Broiler.Net"><strong>Broiler.Net</strong></a></td>
             <td>A cookie engine, site resolution and a policy-aware HTTP transport, depending only on the .NET base class library. Code under Apache-2.0; the bundled Public Suffix List data under MPL-2.0</td>
             <td class="num">1</td>
@@ -124,7 +130,7 @@
           </tr>
           <tr>
             <td><a href="https://github.com/Broiler-Platform/Broiler.Native"><strong>Broiler.Native</strong></a></td>
-            <td>Shared native API bindings for Graphics, Input and Media: entry points, ABI structures, COM contracts and library probing. Hardware validation on Linux and Android is still open</td>
+            <td>Shared native API bindings for Graphics, Input, Media and Hosting: entry points, ABI structures, COM contracts and library probing. Hardware validation on Linux and Android is still open</td>
             <td class="num">5</td>
             <td><span class="pill pill-preview">Preview · no review record</span></td>
           </tr>
@@ -151,7 +157,7 @@
     </div>
 
     <p class="small">
-      The first eleven have a page on this site; the last seven link to their repositories.
+      The first eleven have a page on this site; the last eight link to their repositories.
       Package counts are the shipping NuGet packages a component publishes to nuget.org, and
       they are also how the components reach each other — no component builds from a nested
       checkout of another any more. Review status is summarised from each component's
@@ -197,7 +203,10 @@ Broiler.HtmlBridge.Scripting ────&gt; Broiler.JSeal.BroilerJs ──&gt;
 Broiler.HtmlBridge.Scripting.Vm ─&gt; Broiler.JSeal.Vm ────────&gt; Broiler.JSeal, Broiler.VM.Runtime,
                                                                Broiler.VM.Profile.JavaScript
 
-Broiler.Browser.Core (application) ──&gt; Broiler.HtmlBridge.Scripting, Broiler.Net, …</code></pre>
+Broiler.Hosting.&lt;OS&gt; ──&gt; Broiler.UI.*, Broiler.Graphics.&lt;Backend&gt;, Broiler.Input.*, Broiler.Native.&lt;OS&gt;
+
+Broiler.Browser.Core (application) ──&gt; Broiler.HtmlBridge.Scripting, Broiler.Net, …
+Broiler.&lt;App&gt;.&lt;OS&gt; (applications) ──&gt; Broiler.Hosting.&lt;OS&gt;</code></pre>
     </div>
 
     <h2 id="constraints">Shared component constraints</h2>
