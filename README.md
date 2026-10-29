@@ -6,6 +6,97 @@ written from scratch in .NET.
 
 Live at **<https://broiler-platform.github.io/>**.
 
+## Browser app entry points
+
+The website also hosts the independently published WebAssembly products:
+
+| Entry | Intended short-domain forwarding |
+| --- | --- |
+| <https://broiler-platform.github.io/demo/> | `https://demo.broiler.app/` → this URL |
+| <https://broiler-platform.github.io/writer/> | `https://writer.broiler.app/` → this URL |
+| <https://broiler-platform.github.io/cell/> | `https://cell.broiler.app/` → this URL |
+
+These are real directories, so GitHub Pages normalizes `/demo`, `/writer` and
+`/cell` to their trailing-slash forms. The home and applications pages link to
+all three. Before a product has a published web release, its entry explains
+that the preview is not available yet. The Office entry activates once all
+three products exist; Writer and Cell can activate independently.
+
+The **Site** workflow resolves current public WebAssembly releases on every
+publication. It scans the public releases in `Broiler-Platform/Broiler`,
+`Broiler-Platform/Broiler.Writer` and `Broiler-Platform/Broiler.Cells` for a
+`.web-artifact.json` descriptor. Drafts and desktop-only releases are excluded;
+prereleases are included because these browser editions are previews. The
+newest `published_at` wins for each product, independently of native release
+versions. Re-running **Site** with `workflow_dispatch` refreshes the products
+without a website-source change. An external release integration may also send
+the `web-release-published` repository-dispatch event; no cross-repository token
+is required for the normal website publication path.
+
+The workflow downloads original producer ZIPs, verifies source tag/commit,
+repository/product identity, release eligibility, pinned runtime cohort,
+archive size/SHA-256, full file inventory, generated entry/import map and SRI,
+then extracts the complete `wwwroot` unchanged. It never compiles an application
+or uses local NuGet packages. A malformed or damaged published web artifact
+fails the build instead of silently using an older version. Normal network or
+GitHub API errors also fail; they are not treated as absent releases.
+
+Files live under `/demo/releases/<version>/`, `/writer/releases/<version>/` and
+`/cell/releases/<version>/`. All published web versions discovered in the
+producer release history are retained, and duplicate component versions are
+rejected. Keep those producer releases/assets published while historical URLs
+are required. The build stops before a 900 MiB site storage budget rather than
+silently pruning rollback versions.
+
+`/office-web-site.json` records selected versions, producer release/asset IDs,
+tags/commits, digests and retained file inventories. `/office-web.json` pins the
+Launcher to the selected Writer and Cell version URLs on this website. The
+complete marketing site, products and catalog are one Pages deployment; there
+is no separate three-repository promotion step in this hosting configuration.
+The Launcher and editors must include their website-path support before their
+producer releases are published. Browser/Plate remain disabled.
+
+The workflow runs extracted-product smoke tests plus website entry/navigation
+tests in Chromium, Firefox and WebKit, checks website links and markup, and
+rechecks every deployed product file. Evidence and the resolved release ledger
+are uploaded as `website-web-product-evidence`. Pull requests perform the same
+checks without deploying. Only `main` deploys. Use the manual `require_products`
+option to fail until all three producer releases are available; its default
+permits the honest availability pages while the first releases are prepared.
+
+To reproduce locally (Python 3, authenticated GitHub CLI, Node 24):
+
+```bash
+python tools/build.py --out _site
+python -m unittest discover -s tools/tests -v
+python tools/web_products.py --out _site
+python tools/verify.py _site
+python tools/web_products.py --out _site --verify-only
+npm ci --prefix tools/web
+npx --prefix tools/web playwright install chromium firefox webkit
+node tools/web/site-smoke.mjs _site evidence/website.json
+```
+
+`tools/web/artifact.py` and `smoke.mjs` are vendored from the Office repository's
+`eng/web-producer`; keep those copies aligned. A plain offline `tools/build.py`
+build produces marketing and availability pages without accessing GitHub.
+
+### Short-domain forwarding
+
+Configure **HTTP URL forwarding** at the domain provider or another redirect
+service, with HTTPS certificates for all three source domains, to the table's
+targets. Use ordinary redirects, not framed/masked forwarding. A DNS CNAME
+cannot redirect to a path, and setting the website's single Pages custom domain
+to one of these subdomains does not implement three path redirects. Keep this
+Pages site at `broiler-platform.github.io`.
+
+After a redirect the browser address and application origin are the website's.
+Writer and Cell keep separate recovery database names, but share the website
+origin and storage quota. Existing recovery drafts on the old subdomain origins
+are not automatically migrated. Product return links go to `/demo/` on this
+origin, so working website navigation does not depend on the forwarding service.
+Check the three real HTTPS redirects after configuring the provider.
+
 ## Who the site is for
 
 **End users first.** The top-level pages — the home page, the apps, About and Status — are

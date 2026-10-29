@@ -88,6 +88,10 @@ def main(argv: list[str]) -> int:
 
     text = {p: p.read_text(encoding="utf-8") for p in found}
     url_of = {"/" + p.relative_to(root).as_posix() for p in found} | {"/"}
+    aliases = {"/" + p.parent.relative_to(root).as_posix() + "/": "/" + p.relative_to(root).as_posix()
+               for p in found if p.name == "index.html" and p.parent != root}
+    aliases.update({name.rstrip("/"): target for name, target in list(aliases.items())})
+    url_of.update(aliases)
     ids = {
         "/" + p.relative_to(root).as_posix(): set(re.findall(r'id="([^"]+)"', s))
         for p, s in text.items()
@@ -106,7 +110,7 @@ def main(argv: list[str]) -> int:
             if target not in url_of:
                 note(page, f"link to missing page {target}")
             elif fragment:
-                key = "/index.html" if target == "/" else target
+                key = "/index.html" if target == "/" else aliases.get(target, target)
                 if fragment[1:] not in ids.get(key, set()):
                     note(page, f"link to missing anchor {target}{fragment}")
 

@@ -5,6 +5,13 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      require_products:
+        description: Fail unless all three WebAssembly products have published producer releases.
+        type: boolean
+        default: false
+  repository_dispatch:
+    types: [web-release-published]
 
 # Nothing generated is committed: the site is built here and the built
 # directory is what GitHub Pages publishes, so `tools/` and this workflow
@@ -29,8 +36,48 @@ jobs:
       - name: Build
         run: python tools/build.py --out _site
 
+      - name: Web artifact integration tests
+        run: python -m unittest discover -s tools/tests -v
+
+      - name: Resolve current published WebAssembly products
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUIRE_PRODUCTS: ${{ inputs.require_products || false }}
+        run: |
+          flags=()
+          if [ "$REQUIRE_PRODUCTS" = true ]; then flags+=(--require-products); fi
+          python tools/web_products.py --out _site "${flags[@]}"
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Test the extracted current browser products
+        run: |
+          npm ci --prefix tools/web
+          npx --prefix tools/web playwright install --with-deps chromium firefox webkit
+          python - <<'PY'
+          import json, subprocess
+          for row in json.load(open('_site/office-web-site.json'))['products']:
+              prefix={'launcher':'demo','writer':'writer','cell':'cell'}[row['product']]
+              subprocess.run(['node','tools/web/smoke.mjs',f"_site/{prefix}/releases/{row['version']}",row['product'],f"evidence/{row['product']}.json"],check=True)
+          PY
+          node tools/web/site-smoke.mjs _site evidence/website.json
+
       - name: Links, anchors and markup
         run: python tools/verify.py _site
+
+      - name: Recheck every deployed product byte
+        run: python tools/web_products.py --out _site --verify-only
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: website-web-product-evidence
+          path: |
+            _site/office-web-site.json
+            evidence
+          if-no-files-found: warn
 
       - uses: actions/upload-pages-artifact@v3
         with:
