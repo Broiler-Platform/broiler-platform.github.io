@@ -38,7 +38,7 @@ class WebProductsTests(unittest.TestCase):
         (source/'index.html').write_text('<script type="importmap">'+json.dumps(mapping)+'</script><script type="module" src="main.hash.js"></script>')
         tag=product+'-web-v'+version
         identity=dict(product=product,productName={'writer':'Writer','cell':'Cells','launcher':'Launcher'}[product],repository=repo,version=version,tag=tag,commit='a'*40,
-            sdk=web.artifact.SDK,workload=web.artifact.WORKLOAD,workloadSet='10.403.0',runtimeMode=web.artifact.MODE,publishTrimmed=True,runAotCompilation=False,dirty=False,verificationOnly=False)
+            sdk="10.0.403",workload="10.0.114/10.0.100",workloadSet=["10.0.403", ""],runtimeMode=web.artifact.MODE,publishTrimmed=True,runAotCompilation=False,dirty=False,verificationOnly=False)
         meta=web.artifact.pack(source,self.root/('release-'+str(release_id)),identity)
         archive=meta.parent/json.loads(meta.read_text())['archive']
         assets=[dict(id=release_id*10+i,name=p.name,size=p.stat().st_size) for i,p in enumerate((meta,archive))]
