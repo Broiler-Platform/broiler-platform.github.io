@@ -33,6 +33,17 @@ without a website-source change. An external release integration may also send
 the `web-release-published` repository-dispatch event; no cross-repository token
 is required for the normal website publication path.
 
+The default product **Publish** workflows are supported: `writer-v…`, `cells-v…`
+and `launcher-v…` releases are discovered by their `.web-artifact.json` assets,
+just like legacy `*-web-v…` releases. Discovery does not watch workflow names or
+require the removed web-only entry points. Draft releases remain excluded even
+when their build workflow succeeded. Publish the draft before refreshing Site.
+Cross-repository release publication does not trigger Site automatically; run
+Site manually after publication unless an external integration sends the dispatch
+event described above. Legacy web-only tags shown during unit tests are fixtures,
+not the actual selected deployment; the resolve step and `office-web-site.json`
+record the real selection.
+
 The workflow downloads original producer ZIPs, verifies source tag/commit,
 repository/product identity, release eligibility, stable .NET 10 toolchain provenance,
 archive size/SHA-256, full file inventory, generated entry/import map and SRI,

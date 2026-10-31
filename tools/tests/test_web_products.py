@@ -27,7 +27,7 @@ class WebProductsTests(unittest.TestCase):
             path.parent.mkdir()
             path.write_text('not available yet')
 
-    def fixture(self,product='writer',version='0.1.0-preview.1',release_id=1):
+    def fixture(self,product='writer',version='0.1.0-preview.1',release_id=1,legacy=False):
         repo=web.PRODUCTS[product][0]
         source=self.root/('source-'+str(release_id))
         (source/'_framework').mkdir(parents=True)
@@ -36,7 +36,8 @@ class WebProductsTests(unittest.TestCase):
             path=source/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(data)
         mapping={'imports':{'./main.js':'./main.hash.js'},'integrity':{'./main.js':'sha256-'+base64.b64encode(hashlib.sha256(entry).digest()).decode()}}
         (source/'index.html').write_text('<script type="importmap">'+json.dumps(mapping)+'</script><script type="module" src="main.hash.js"></script>')
-        tag=product+'-web-v'+version
+        prefix={'launcher':'launcher','writer':'writer','cell':'cells'}[product]
+        tag=prefix+('-web-v' if legacy else '-v')+version
         identity=dict(product=product,productName={'writer':'Writer','cell':'Cells','launcher':'Launcher'}[product],repository=repo,version=version,tag=tag,commit='a'*40,
             sdk="10.0.403",workload="10.0.114/10.0.100",workloadSet=["10.0.403", ""],runtimeMode=web.artifact.MODE,publishTrimmed=True,runAotCompilation=False,dirty=False,verificationOnly=False)
         meta=web.artifact.pack(source,self.root/('release-'+str(release_id)),identity)
@@ -68,6 +69,21 @@ class WebProductsTests(unittest.TestCase):
         web.verify(self.out)
         (self.out/'writer/releases/0.2.0-preview.1/main.hash.js').write_text('tampered')
         with self.assertRaises(ValueError):web.verify(self.out)
+
+    def test_consolidated_publish_replaces_legacy_web_release(self):
+        data, fixtures = {}, {}
+        for index, product in enumerate(web.PRODUCTS, 1):
+            old, old_data = self.fixture(product=product, release_id=index*2, legacy=True)
+            new, new_data = self.fixture(product=product, version='0.1.0-preview.9', release_id=index*2+1)
+            fixtures[web.PRODUCTS[product][0]] = [new, old]
+            data.update(old_data)
+            data.update(new_data)
+        with patch.object(web, 'releases', side_effect=lambda repo: fixtures[repo]), patch.object(web, 'asset_bytes', side_effect=lambda repo, a: data[a['id']]), patch.object(web, 'source_commit', return_value='a'*40):
+            ledger = web.resolve(self.out, required=True)
+        self.assertEqual(len(ledger['history']), 6)
+        self.assertEqual({row['tag'] for row in ledger['products']},
+                         {'launcher-v0.1.0-preview.9', 'writer-v0.1.0-preview.9', 'cells-v0.1.0-preview.9'})
+        web.verify(self.out)
 
     def test_damaged_current_release_never_silently_falls_back(self):
         release,data=self.fixture()
