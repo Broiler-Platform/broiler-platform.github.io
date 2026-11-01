@@ -51,16 +51,23 @@ try {
   await page.goto(origin + '/de/');
   await mkdir('evidence', { recursive: true });
   await page.screenshot({ path: 'evidence/localization-desktop.png', fullPage: true });
-  for (const width of [320, 390, 768]) {
-    await page.setViewportSize({ width, height: 844 });
-    for (const path of ['/de/', '/de/applications.html', '/de/applications/writer.html', '/architecture.html']) {
-      await page.goto(origin + path);
-      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Horizontal overflow: ' + path + ' at ' + width);
-      const menu = page.locator('[data-nav-toggle]');
-      await menu.click();
-      assert.equal(await menu.getAttribute('aria-expanded'), 'true');
-      await page.locator('.nav a').first().click();
-      await page.waitForURL(origin + (path.startsWith('/de/') ? '/de/applications.html' : '/applications.html'));
+  // CI system fonts can make the untranslated-page language label wider.
+  // Exercise both normal metrics and a wide fallback without external fonts.
+  for (const headerFont of [null, 'monospace']) {
+    for (const width of [320, 390, 768]) {
+      await page.setViewportSize({ width, height: 844 });
+      for (const path of ['/de/', '/de/applications.html', '/de/applications/writer.html', '/architecture.html']) {
+        await page.goto(origin + path);
+        if (headerFont) await page.addStyleTag({ content: '.site-header { --font-sans: monospace; --font-display: monospace; }' });
+        const dimensions = await page.evaluate(() => ({ page: document.documentElement.scrollWidth, viewport: innerWidth }));
+        assert.ok(dimensions.page <= dimensions.viewport,
+          `Horizontal overflow: ${path} at ${width} (${headerFont || 'default'} header: ${dimensions.page}px > ${dimensions.viewport}px)`);
+        const menu = page.locator('[data-nav-toggle]');
+        await menu.click();
+        assert.equal(await menu.getAttribute('aria-expanded'), 'true');
+        await page.locator('.nav a').first().click();
+        await page.waitForURL(origin + (path.startsWith('/de/') ? '/de/applications.html' : '/applications.html'));
+      }
     }
   }
   await page.goto(origin + '/de/');
