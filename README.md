@@ -195,6 +195,34 @@ robots.txt                Copied into the site verbatim
 .github/workflows/        Build, check and publish
 ```
 
+## Languages
+
+English keeps its existing URLs. German visitor pages live under `/de/`, with
+sources in `tools/pages/de/`. These are localized introductions; the complete
+technical reference remains in English and is explicitly labelled as such.
+The header links to the same page in the other language when available, and to
+the German overview for technical pages without a translation. Switching does
+not require JavaScript and never redirects based on browser language.
+
+Keep the same relative filename in both languages. The build derives the HTML
+language, canonical URL and reciprocal `hreflang` links from that path. Shared
+German navigation, footer and accessibility labels live in
+`tools/locales/de.json`; assets remain shared. Preserve preview warnings and
+update both language versions when product status changes. Browser entry pages
+are localized by `tools/web_products.py` when verified releases are integrated;
+the producer artifacts and the language of the apps themselves are unchanged.
+
+Validate language links and mobile navigation after the standard build:
+
+```bash
+python -m unittest discover -s tools/tests -v
+python tools/verify.py _site
+node tools/web/localization-smoke.mjs _site
+```
+
+The browser check uses the Chromium installed by the existing Playwright setup
+and writes screenshots under ignored `evidence/`.
+
 ## Writing a page
 
 A source is a JSON metadata object on the first line, a `---` line, then the body â€”
@@ -248,18 +276,32 @@ Wide content must sit inside its own scrolling container â€” `.table-wrap` 
 
 ## Artwork
 
-`assets/img/` holds artwork taken from the Broiler repositories themselves:
+Original upstream illustrations are served locally from `assets/img/`:
 
-| File | Source |
+| File | Original source |
 |---|---|
-| `component-*.png` | The NuGet package icons from each component's `eng/icon.png` â€” the cartoon chickens. A broiler is a chicken; the project runs with the joke. |
-| `broiler-mark.png` | The shared component package icon, the orange "B". |
-| `app-browser.svg`, `app-writer.svg` | Converted from the Android app icons (`Resources/drawable/appicon.xml`) in the Browser and Writer repositories, path for path. |
-| `app-code.svg` | **Not from the project.** Broiler Code has no icon of its own, so this one was drawn to match the other two â€” same blue, same flat style. Replace it if the project gains a real one. |
-| `app-plate.svg`, `app-mail.svg`, `app-cells.svg` | **Not from the project** either. Broiler Plate, Broiler.Mail and Broiler Cells have no icons in their repositories, so these were drawn in the same style. Replace them if the projects gain real ones. |
+| `app-browser.png` | `Broiler.Browser/icon-256.png`: chicken at a laptop |
+| `app-writer.png` | `Broiler.Writer/About.png`: chicken writing at a desk |
+| `app-code.png` | `Broiler.Code/eng/icon.png`: SDK construction artwork |
+| `app-mail.png` | `Broiler.Mail/icon-256.png`: mail-themed chicken artwork |
+| `component-*.png` | Component package artwork from each component's `eng/icon.png` |
+| `broiler-mark.png` | Shared component package icon |
 
-All of it is Apache-2.0, from the same organisation as the site. The site's own header mark is
-an inline SVG in `tools/shell.html` that matches `broiler-mark.png`.
+The four imported application illustrations are unchanged original bytes under
+Apache-2.0. `assets/artwork-sources.json` records their exact repository commits,
+source paths, source and license URLs, and SHA-256 hashes. No image is hotlinked;
+builds and page visits do not depend on GitHub. The Browser illustration also
+appears on both homepages; German and English app pages use the same assets.
+
+The old `app-browser.svg` and `app-writer.svg` are conversions of the Android
+vector icons and remain available, but are no longer used by these pages.
+`app-code.svg`, `app-plate.svg`, `app-mail.svg` and `app-cells.svg` are website-drawn
+fallbacks, not original application branding. Plate currently has no image in its
+public repository. Cells has original icons, but no explicit license was found
+in its inspected repository; its fallback remains until reuse terms are clear.
+The website-drawn fallbacks and the existing component artwork are Apache-2.0.
+
+The header's inline SVG remains the site's existing orange Broiler mark.
 
 ## Colour and theme
 

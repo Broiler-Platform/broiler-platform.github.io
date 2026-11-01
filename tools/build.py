@@ -44,6 +44,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
+from html.parser import HTMLParser
 
 ROOT = Path(__file__).resolve().parent.parent
 PAGES = ROOT / "tools" / "pages"
@@ -61,6 +62,50 @@ SITEMAP_SKIP = {"404.html"}
 # Written into an output directory so a later run knows it made it, and will
 # not empty a directory that holds something else.
 MARKER = ".build-output"
+
+
+def page_url(relative: str) -> str:
+    return "/" + relative.removesuffix("index.html")
+
+
+class GermanShell(HTMLParser):
+    """Translate shared UI text without touching markup, code or product names."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.parts = []
+        self.messages = json.loads((ROOT / "tools/locales/de.json").read_text(encoding="utf-8"))
+
+    def handle_starttag(self, tag, attrs):
+        translated = []
+        for key, value in attrs:
+            if value is not None and key in {"aria-label", "title"}:
+                value = self.messages.get(value, value)
+            if key == "href" and value and value.startswith("/") and not value.startswith("//"):
+                path, _, fragment = value.partition("#")
+                relative = path.lstrip("/")
+                if not relative or relative.endswith("/"):
+                    relative += "index.html"
+                if (PAGES / "de" / relative).is_file():
+                    value = "/de" + path + ("#" + fragment if fragment else "")
+            translated.append(key if value is None else f'{key}="{esc(value)}"')
+        self.parts.append("<" + tag + (" " + " ".join(translated) if translated else "") + ">")
+
+    def handle_endtag(self, tag):
+        self.parts.append(f"</{tag}>")
+
+    def handle_data(self, data):
+        value = " ".join(data.split())
+        self.parts.append(esc(data.replace(data.strip(), self.messages[value]) if value in self.messages else data))
+
+    def handle_entityref(self, name):
+        self.parts.append(f"&{name};")
+
+    def handle_charref(self, name):
+        self.parts.append(f"&#{name};")
+
+    def handle_decl(self, decl):
+        self.parts.append(f"<!{decl}>")
 
 
 class BuildError(Exception):
@@ -124,8 +169,32 @@ def render(shell: str, meta: dict, body: str) -> str:
     attribute is resolved against the shell alone, so a page body is inserted
     verbatim and can contain whatever it likes.
     """
+    language = meta.get("lang", "en")
+    if language not in {"en", "de"}:
+        raise BuildError(f"unsupported language: {language}")
+    if language == "de":
+        translator = GermanShell()
+        translator.feed(shell)
+        shell = "".join(translator.parts)
+    relative = meta.get("path", "index.html")
+    original = relative.removeprefix("de/")
+    translated = (PAGES / "de" / original).is_file()
+    alternatives = {"en": page_url(original)}
+    if translated:
+        alternatives["de"] = page_url("de/" + original)
+    current = page_url(relative)
+    language_links = f'<link rel="canonical" href="{BASE_URL.rstrip("/")}{esc(current)}">\n'
+    language_links += "".join(f'<link rel="alternate" hreflang="{lang}" href="{BASE_URL.rstrip("/")}{esc(url)}">\n' for lang, url in alternatives.items())
+    language_links += f'<link rel="alternate" hreflang="x-default" href="{BASE_URL.rstrip("/")}{esc(alternatives["en"])}">\n'
+    other = "en" if language == "de" else "de"
+    target = alternatives.get(other, "/de/")
+    label = "English" if other == "en" else "Deutsch"
+    if other == "de" and not translated:
+        label = "Deutsch · Übersicht"
+    switch = f'<a class="language-switch" href="{esc(target)}" lang="{other}" hreflang="{other}" aria-label="{label}">{label}</a>'
     og_url = meta.get("og_url")
     page = mark_current(shell, meta.get("nav", ""))
+    page = page.replace("%%LANG%%", language).replace("%%LANG_LINKS%%", language_links).replace("%%LANG_SWITCH%%", switch)
     page = page.replace("%%TITLE%%", esc(meta["title"]))
     page = page.replace("%%DESC%%", esc(meta["desc"]))
     page = page.replace("%%OG_TITLE%%", esc(meta.get("og_title", meta["title"])))
@@ -152,9 +221,9 @@ def build_sitemap(relatives: list[str]) -> str:
     """A deterministic sitemap: no lastmod, so it never drifts on a rebuild."""
     entries = []
     for rel in sorted(relatives):
-        if rel in SITEMAP_SKIP:
+        if rel in SITEMAP_SKIP or rel.removeprefix("de/") in SITEMAP_SKIP:
             continue
-        loc = BASE_URL if rel == "index.html" else BASE_URL + rel
+        loc = BASE_URL.rstrip("/") + page_url(rel)
         priority = "1.0" if rel == "index.html" else ("0.8" if "/" not in rel else "0.6")
         entries.append(
             f"  <url>\n    <loc>{loc}</loc>\n    <priority>{priority}</priority>\n  </url>"
@@ -254,7 +323,12 @@ def main(argv: list[str]) -> int:
 
     # Render everything before writing anything, so a broken source fails the
     # run without leaving a half-built site.
-    rendered = [(rel_of(s), render(shell, *read_source(s))) for s in selected]
+    rendered = []
+    for source in selected:
+        relative = rel_of(source)
+        meta, body = read_source(source)
+        meta.update(path=relative, lang="de" if relative.startswith("de/") else "en")
+        rendered.append((relative, render(shell, meta, body)))
 
     if names:
         # A partial rebuild updates an existing build in place.

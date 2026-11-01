@@ -63,6 +63,7 @@ jobs:
               subprocess.run(['node','tools/web/smoke.mjs',f"_site/{prefix}/releases/{row['version']}",row['product'],f"evidence/{row['product']}.json"],check=True)
           PY
           node tools/web/site-smoke.mjs _site evidence/website.json
+          node tools/web/localization-smoke.mjs _site
 
       - name: Links, anchors and markup
         run: python tools/verify.py _site
