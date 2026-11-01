@@ -4,6 +4,15 @@ import { readFile, mkdir, writeFile, mkdtemp, rm } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { tmpdir } from 'node:os';
 import assert from 'node:assert/strict';
+// New apps expose navigation through the Office menu; retained releases use a link.
+async function returnToOffice(page) {
+    if (await page.locator('body').evaluate(body => body.classList.contains('office-menu-ready'))) {
+        await page.evaluate(() => window.dispatchEvent(new CustomEvent('broiler-open-office-panel', { detail: 'home' })));
+    } else {
+        await page.getByRole('link', { name: 'Return to Office' }).click({ noWaitAfter: true });
+    }
+}
+
 const [directory,reportFile]=process.argv.slice(2),root=resolve(directory);
 const ledger=JSON.parse(await readFile(resolve(root,'office-web-site.json'),'utf8'));
 const mime={'.html':'text/html','.js':'text/javascript','.json':'application/json','.wasm':'application/wasm','.css':'text/css','.svg':'image/svg+xml','.woff2':'font/woff2'};
@@ -43,7 +52,7 @@ for(const [name,engine] of Object.entries({chromium,firefox,webkit})) {
                     await link.click({noWaitAfter:true});await page.waitForURL(editor.entryUrl,{waitUntil:'domcontentloaded'});
                     await page.waitForFunction(id=>document.getElementById(id+'-status')?.hidden,editor.product==='cell'?'cells':'writer');
                     await page.waitForLoadState('networkidle');
-                    await page.getByRole('link',{name:'Return to Office'}).click({noWaitAfter:true});
+                    await returnToOffice(page);
                     await page.waitForURL(row.entryUrl,{waitUntil:'domcontentloaded'});
                     await page.waitForFunction(()=>document.body.dataset.ready==='true');
                     await page.waitForLoadState('networkidle');
@@ -51,7 +60,7 @@ for(const [name,engine] of Object.entries({chromium,firefox,webkit})) {
             } else {
                 await page.waitForFunction(id=>document.getElementById(id+'-status')?.hidden,product==='cell'?'cells':'writer');
                 await page.waitForLoadState('networkidle');
-                assert.equal(await page.getByRole('link',{name:'Return to Office'}).getAttribute('href'),'/demo/');
+                assert.equal(await page.locator('.office-nav > a').getAttribute('href'),'/demo/');
             }
         }
         if(name==='chromium') {await page.setViewportSize({width:390,height:844});await page.goto('https://broiler-platform.github.io/',{waitUntil:'domcontentloaded'});await page.screenshot({path:reportFile+'.mobile.png'});}
