@@ -137,8 +137,17 @@ def resolve(out, required=False):
             target = f'./releases/{row["version"]}/'
             body = f'<section class="section"><div class="wrap"><h1>{title}</h1><p>Opening browser preview {html.escape(row["version"])}…</p><p><a class="btn btn-primary" href="{target}">Open {title}</a></p></div></section>'
             body += '<script>location.replace(new URL(' + json.dumps(target) + ',location.href).href);</script>'
-            page = build.render(build.SHELL.read_text(encoding="utf-8"), {"title": title + " browser preview", "desc": "Open the current published browser preview of " + title + ".", "nav": "apps"}, body)
+            page = build.render(build.SHELL.read_text(encoding="utf-8"), {"title": title + " browser preview", "desc": "Open the current published browser preview of " + title + ".", "nav": "apps", "path": prefix + "/index.html"}, body)
             (out / prefix / "index.html").write_text(page, encoding="utf-8")
+            # Both languages enter the same verified product bytes. Application
+            # language belongs to the producer; do not rewrite its artifacts.
+            german_target = f'/{prefix}/releases/{row["version"]}/'
+            german_body = f'<section class="section"><div class="wrap"><h1>{title}</h1><p>Browser-Vorschau {html.escape(row["version"])} wird geöffnet …</p><p><a class="btn btn-primary" href="{german_target}">{title} öffnen</a></p></div></section>'
+            german_body += '<script>location.replace(new URL(' + json.dumps(german_target) + ',location.href).href);</script>'
+            german_page = build.render(build.SHELL.read_text(encoding="utf-8"), {"title": title + " im Browser", "desc": "Die aktuelle veröffentlichte Browser-Vorschau von " + title + " öffnen.", "nav": "apps", "lang": "de", "path": "de/" + prefix + "/index.html"}, german_body)
+            german_entry = out / "de" / prefix / "index.html"
+            german_entry.parent.mkdir(parents=True, exist_ok=True)
+            german_entry.write_text(german_page, encoding="utf-8")
             print(title + ": " + row["version"] + " (" + row["tag"] + ")")
     ledger = {"schemaVersion": 1, "artifactKind": "broiler-website-web-products", "selectionPolicy": "newest-published-web-release-including-prereleases",
               "products": list(selected.values()), "history": history, "unavailable": sorted(set(PRODUCTS) - set(selected)), "disabledProducts": ["browser", "plate"]}

@@ -26,6 +26,9 @@ class WebProductsTests(unittest.TestCase):
             path=self.out/prefix/'index.html'
             path.parent.mkdir()
             path.write_text('not available yet')
+            german=self.out/'de'/prefix/'index.html'
+            german.parent.mkdir(parents=True)
+            german.write_text('noch nicht verfügbar',encoding='utf-8')
 
     def fixture(self,product='writer',version='0.1.0-preview.1',release_id=1,legacy=False):
         repo=web.PRODUCTS[product][0]
@@ -52,6 +55,7 @@ class WebProductsTests(unittest.TestCase):
             ledger=web.resolve(self.out)
             self.assertEqual(ledger['unavailable'],['cell','launcher','writer'])
             self.assertEqual(json.loads((self.out/'office-web.json').read_text())['status'],'unavailable')
+            self.assertIn('noch nicht verfügbar',(self.out/'de/writer/index.html').read_text())
             web.verify(self.out)
             (self.out/'office-web-site.json').unlink()
             with self.assertRaises(ValueError):web.resolve(self.out,required=True)
@@ -66,6 +70,11 @@ class WebProductsTests(unittest.TestCase):
         self.assertEqual(len(ledger['history']),2)
         self.assertTrue((self.out/'writer/releases/0.1.0-preview.1/fonts/test.woff2').is_file())
         self.assertIn('./releases/0.2.0-preview.1/',(self.out/'writer/index.html').read_text())
+        german=(self.out/'de/writer/index.html').read_text(encoding='utf-8')
+        self.assertIn('<html lang="de">',german)
+        self.assertIn('/writer/releases/0.2.0-preview.1/',german)
+        self.assertIn('wird geöffnet',german)
+        self.assertIn('rel="canonical" href="https://broiler-platform.github.io/de/writer/"',german)
         web.verify(self.out)
         (self.out/'writer/releases/0.2.0-preview.1/main.hash.js').write_text('tampered')
         with self.assertRaises(ValueError):web.verify(self.out)

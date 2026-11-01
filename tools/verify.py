@@ -72,7 +72,7 @@ class Nesting(HTMLParser):
 
 def pages(root: Path) -> list[Path]:
     """Every built page: the site root and one level below it."""
-    return sorted(list(root.glob("*.html")) + list(root.glob("*/*.html")))
+    return sorted(p for p in root.rglob("*.html") if "releases" not in p.relative_to(root).parts)
 
 
 def main(argv: list[str]) -> int:
