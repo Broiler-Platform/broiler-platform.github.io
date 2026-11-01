@@ -4,6 +4,7 @@
 
   /* ---------- Theme ---------- */
   var root = document.documentElement;
+  var german = root.lang === 'de';
   try {
     var saved = localStorage.getItem('broiler-theme');
     if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
@@ -50,7 +51,7 @@
         var text = pre.innerText;
         var done = function () {
           var was = btn.textContent;
-          btn.textContent = 'Copied';
+          btn.textContent = german ? 'Kopiert' : 'Copied';
           btn.classList.add('done');
           setTimeout(function () { btn.textContent = was; btn.classList.remove('done'); }, 1600);
         };
@@ -82,7 +83,7 @@
       a.className = 'anchor';
       a.href = '#' + h.id;
       a.textContent = '#';
-      a.setAttribute('aria-label', 'Link to this section');
+      a.setAttribute('aria-label', german ? 'Link zu diesem Abschnitt' : 'Link to this section');
       h.appendChild(a);
     });
 

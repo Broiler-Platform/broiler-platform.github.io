@@ -1174,3 +1174,48 @@ details.disclosure > *:last-child { padding-bottom: 1rem; }
 .faq details > *:not(summary) { padding: 0 1.1rem 0 2.3rem; }
 .faq details > *:last-child { padding-bottom: 1.1rem; }
 .faq p { font-size: .93rem; margin-bottom: .8rem; }
+
+/* Language links work without JavaScript and retain the corresponding page. */
+.language-switch {
+  flex: 0 0 auto;
+  padding: .45rem .6rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: .8rem;
+  text-decoration: none;
+}
+.language-switch:hover { border-color: var(--ember); color: var(--ember); }
+@media (max-width: 560px) {
+  .site-header .wrap { gap: .4rem; }
+  .site-header .brand { font-size: 1rem; gap: .4rem; }
+  .site-header .brand-mark { width: 26px; height: 26px; }
+  .language-switch {
+    flex-shrink: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    padding: .4rem;
+    font-size: .75rem;
+    text-align: center;
+  }
+  .site-header a.icon-btn[title="GitHub"] { display: none; }
+}
+
+/* Original upstream illustrations retain their full silhouette and aspect ratio. */
+.app-icon.app-artwork {
+  width: 112px;
+  height: 112px;
+  object-fit: contain;
+  border-radius: 0;
+}
+.app-head-row .app-icon.app-artwork { width: 160px; height: 160px; }
+.app-intro-artwork { float: right; margin: 0 0 1rem 1.5rem; }
+.hero .hero-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 3rem; align-items: center; }
+.hero-copy { min-width: 0; }
+.hero-artwork { margin: 0; }
+.hero-artwork img { display: block; width: 100%; height: auto; }
+@media (max-width: 760px) {
+  .hero .hero-layout { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .hero-artwork { width: min(200px, 60%); justify-self: center; }
+  .app-intro-artwork { float: none; display: block; margin: 0 0 1.5rem; }
+}
