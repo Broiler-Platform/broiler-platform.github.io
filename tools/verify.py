@@ -87,9 +87,12 @@ def main(argv: list[str]) -> int:
         return 1
 
     text = {p: p.read_text(encoding="utf-8") for p in found}
-    url_of = {"/" + p.relative_to(root).as_posix() for p in found} | {"/"}
+    # Producer HTML is verified by the artifact checks, not the website's shell
+    # rules. It must still be discoverable as a destination of website links.
+    destinations = sorted(root.rglob("*.html"))
+    url_of = {"/" + p.relative_to(root).as_posix() for p in destinations} | {"/"}
     aliases = {"/" + p.parent.relative_to(root).as_posix() + "/": "/" + p.relative_to(root).as_posix()
-               for p in found if p.name == "index.html" and p.parent != root}
+               for p in destinations if p.name == "index.html" and p.parent != root}
     aliases.update({name.rstrip("/"): target for name, target in list(aliases.items())})
     url_of.update(aliases)
     ids = {
@@ -111,6 +114,8 @@ def main(argv: list[str]) -> int:
                 note(page, f"link to missing page {target}")
             elif fragment:
                 key = "/index.html" if target == "/" else aliases.get(target, target)
+                if key not in ids:
+                    ids[key] = set(re.findall(r'id="([^"]+)"', (root / key.lstrip("/")).read_text(encoding="utf-8")))
                 if fragment[1:] not in ids.get(key, set()):
                     note(page, f"link to missing anchor {target}{fragment}")
 
