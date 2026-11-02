@@ -253,7 +253,7 @@ mark { background: var(--mark-bg); color: var(--text); padding: 0 .2em; border-r
   flex: none;
 }
 .brand:hover { color: var(--text); }
-.brand-mark { width: 26px; height: 26px; flex: none; border-radius: 7px; }
+.brand-mark { width: 26px; height: 26px; flex: none; border-radius: 7px; object-fit: contain; }
 .brand-sub {
   font-family: var(--font-mono);
   font-size: .62rem;

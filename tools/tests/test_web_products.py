@@ -55,7 +55,7 @@ class WebProductsTests(unittest.TestCase):
             ledger=web.resolve(self.out)
             self.assertEqual(ledger['unavailable'],['cell','launcher','writer'])
             self.assertEqual(json.loads((self.out/'office-web.json').read_text())['status'],'unavailable')
-            self.assertIn('noch nicht verfügbar',(self.out/'de/writer/index.html').read_text())
+            self.assertIn('noch nicht verfügbar',(self.out/'de/writer/index.html').read_text(encoding='utf-8'))
             web.verify(self.out)
             (self.out/'office-web-site.json').unlink()
             with self.assertRaises(ValueError):web.resolve(self.out,required=True)

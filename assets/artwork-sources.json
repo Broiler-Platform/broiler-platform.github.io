@@ -12,6 +12,17 @@
       "modifications": "None; original bytes. CSS scales the image for display."
     },
     {
+      "file": "img/app-cells.png",
+      "repository": "Broiler-Platform/Broiler.Cells",
+      "commit": "25cf06dc11164ffecc99e8cc7f6bb63069d69eee",
+      "source_path": "icon-256.png",
+      "source_url": "https://raw.githubusercontent.com/Broiler-Platform/Broiler.Cells/25cf06dc11164ffecc99e8cc7f6bb63069d69eee/icon-256.png",
+      "sha256": "82ce55274d0f75e9c54268f1d66b4859fd78a1525c99d81c90c7d6bfd60c83b7",
+      "license": "Apache-2.0",
+      "license_url": "https://github.com/Broiler-Platform/Broiler.Cells/blob/25cf06dc11164ffecc99e8cc7f6bb63069d69eee/LICENSE",
+      "modifications": "None; original bytes. CSS scales the image for display."
+    },
+    {
       "file": "img/app-code.png",
       "repository": "Broiler-Platform/Broiler.Code",
       "commit": "2c1ad0640aa52f7e996a1daa4fc19a251e43681c",
@@ -31,6 +42,17 @@
       "sha256": "79588c02f66917686545b9cecd5b7bb71ffc1a90ef32bfb81142f01b92a5a67a",
       "license": "Apache-2.0",
       "license_url": "https://github.com/Broiler-Platform/Broiler.Mail/blob/fc1f74ffc5e8d3dae03b8fd81c39aa851bdf5c23/LICENSE",
+      "modifications": "None; original bytes. CSS scales the image for display."
+    },
+    {
+      "file": "img/app-plate.png",
+      "repository": "Broiler-Platform/Broiler.Plate",
+      "commit": "a40ad35e00859199703fce0eccd17b0b30d78178",
+      "source_path": "icon-256.png",
+      "source_url": "https://raw.githubusercontent.com/Broiler-Platform/Broiler.Plate/a40ad35e00859199703fce0eccd17b0b30d78178/icon-256.png",
+      "sha256": "0cd2d803d8e462b6239e6ff5b9360bd0534947586d894cc6ed6acce99ad9b449",
+      "license": "Apache-2.0",
+      "license_url": "https://github.com/Broiler-Platform/Broiler.Plate/blob/a40ad35e00859199703fce0eccd17b0b30d78178/LICENSE",
       "modifications": "None; original bytes. CSS scales the image for display."
     },
     {

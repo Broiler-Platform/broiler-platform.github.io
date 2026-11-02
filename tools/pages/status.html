@@ -20,11 +20,11 @@
 <h2 id="download">Can I download it?</h2>
 
 <div class="status-band">
-  <h3>Three of the apps, as early previews — read the small print first.</h3>
+  <h3>Four of the apps, as early previews — read the small print first.</h3>
   <p>
     Since 22 September 2026 the project has published preview builds of the
     <a href="/applications/writer.html#get">Writer</a> and of
-    <a href="/applications/plate.html#get">Plate</a> as GitHub pre-releases, and since
+    <a href="/applications/plate.html#get">Plate</a> as GitHub pre-releases, of <a href="/applications/cells.html#get">Cells</a>, and since
     30 September 2026 of the <a href="/applications/browser.html#get">Browser</a>. Each describes
     itself as "a preview build for evaluation and testing, not for production use". There is
     still <strong>no installer</strong>: the desktop downloads are single files you unzip and
@@ -66,7 +66,7 @@
       </tr>
       <tr>
         <td><strong>Cells</strong></td>
-        <td>Nothing. It builds only on a developer's machine.</td>
+        <td><a href="https://github.com/Broiler-Platform/Broiler.Cells/releases">0.1.0-preview.1</a> — Windows (plus browser edition)</td>
         <td>—</td>
         <td><span class="pill pill-risk">No review record</span></td>
       </tr>
@@ -84,7 +84,7 @@
   <p style="margin-bottom:0">
     The project's roadmap says a release should come from an exact commit that has passed
     human, dependency, licence, static-analysis and vulnerability review, should build
-    reproducibly, and should be signed. None of that is recorded for any of the three
+    reproducibly, and should be signed. None of that is recorded for any of the four
     previews: the Browser's review record is a pending summary rather than a review of its code,
     the Writer has no human-review record at all, Plate's reads pending with nothing reviewed, and the Writer's latest preview was published from a version whose automated
     tests were failing. Use them to look around, on copies of files that do not matter.
@@ -92,7 +92,7 @@
 </div>
 
 <div class="progress-row">
-  <div class="stage done"><b>Done</b><span>Apps that build and run on their supported systems; first preview downloads of the Browser, Writer and Plate</span></div>
+  <div class="stage done"><b>Done</b><span>Apps that build and run on their supported systems; first preview downloads of the Browser, Writer, Plate and Cells</span></div>
   <div class="stage now"><b>In progress</b><span>Human review of the code</span></div>
   <div class="stage"><b>Next</b><span>Releases that have passed review, built reproducibly and signed</span></div>
   <div class="stage"><b>Later</b><span>Automatic updates, native installers, a stable 1.0</span></div>
@@ -133,6 +133,7 @@
       <li>Insert pictures; zoom from 25&nbsp;% to 400&nbsp;%</li>
       <li>Reveal-codes view showing exactly what formatting is where</li>
       <li>Undo, redo, cut, copy, paste, and a prompt before unsaved work is lost</li>
+      <li>Print with live preview across Windows, Linux and Android</li>
       <li class="no">No creating tables, footnotes, track changes, spell check or mail merge</li>
     </ul>
   </div>
@@ -154,12 +155,13 @@
   </div>
   <div>
     <h3 style="margin-top:0">
-      <img src="/assets/img/app-plate.svg" alt="" width="22" height="22" style="vertical-align:-4px;margin-right:.4rem">
+      <img src="/assets/img/app-plate.png" alt="" width="22" height="22" style="vertical-align:-4px;margin-right:.4rem">
       Plate
     </h3>
     <ul class="does" style="grid-template-columns:1fr">
       <li>Opens RTF, DOCX, HTML, Markdown and PDF documents</li>
       <li>Opens PNG, JPEG, GIF, BMP, TIFF and WebP pictures</li>
+      <li>Thumbnail gallery: browse folders with background image decoding and cached previews</li>
       <li>Zoom, fit to window, select and copy</li>
       <li class="no">Read-only — no editing or saving, by design</li>
       <li class="no">One file at a time; no panning around large pictures</li>
@@ -181,7 +183,7 @@
   </div>
   <div>
     <h3 style="margin-top:0">
-      <img src="/assets/img/app-cells.svg" alt="" width="22" height="22" style="vertical-align:-4px;margin-right:.4rem">
+      <img src="/assets/img/app-cells.png" alt="" width="22" height="22" style="vertical-align:-4px;margin-right:.4rem">
       Cells
     </h3>
     <ul class="does" style="grid-template-columns:1fr">
@@ -189,7 +191,8 @@
       <li>Edit in place; select rows, columns and ranges; resize rows and columns</li>
       <li>Open and save CSV files</li>
       <li class="no">No formulas or calculation — cells hold text</li>
-      <li class="no">Windows only; nothing to download</li>
+      <li>Windows preview download and in-browser preview available</li>
+      <li class="no">Windows only for the desktop app</li>
     </ul>
   </div>
 </div>

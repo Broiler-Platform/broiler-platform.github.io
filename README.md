@@ -2,7 +2,7 @@
 
 The public website for [Broiler](https://github.com/Broiler-Platform/Broiler) â€” an open-source
 browser, word processor, viewer, code editor, mail app and spreadsheet built on one platform
-written from scratch in .NET.
+written from scratch in .NET. Broiler stands for Browser and Office in Intermediate Language with Enhance Reliability.
 
 Live at **<https://broiler-platform.github.io/>**.
 
@@ -284,24 +284,20 @@ Original upstream illustrations are served locally from `assets/img/`:
 | `app-writer.png` | `Broiler.Writer/About.png`: chicken writing at a desk |
 | `app-code.png` | `Broiler.Code/eng/icon.png`: SDK construction artwork |
 | `app-mail.png` | `Broiler.Mail/icon-256.png`: mail-themed chicken artwork |
+| `app-plate.png` | `Broiler.Plate/icon-256.png`: viewer and folder gallery chicken artwork |
+| `app-cells.png` | `Broiler.Cells/icon-256.png`: spreadsheet chicken artwork |
 | `component-*.png` | Component package artwork from each component's `eng/icon.png` |
 | `broiler-mark.png` | Shared component package icon |
 
-The four imported application illustrations are unchanged original bytes under
+The imported application illustrations are unchanged original bytes under
 Apache-2.0. `assets/artwork-sources.json` records their exact repository commits,
 source paths, source and license URLs, and SHA-256 hashes. No image is hotlinked;
 builds and page visits do not depend on GitHub. The Browser illustration also
 appears on both homepages; German and English app pages use the same assets.
 
-The old `app-browser.svg` and `app-writer.svg` are conversions of the Android
-vector icons and remain available, but are no longer used by these pages.
-`app-code.svg`, `app-plate.svg`, `app-mail.svg` and `app-cells.svg` are website-drawn
-fallbacks, not original application branding. Plate currently has no image in its
-public repository. Cells has original icons, but no explicit license was found
-in its inspected repository; its fallback remains until reuse terms are clear.
-The website-drawn fallbacks and the existing component artwork are Apache-2.0.
+The old `app-browser.svg`, `app-writer.svg`, `app-plate.svg` and `app-cells.svg` remain available, but are no longer used by these pages.
 
-The header's inline SVG remains the site's existing orange Broiler mark.
+The site header and default site icon use the Broiler Browser icon rather than the former orange mark.
 
 ## Colour and theme
 
