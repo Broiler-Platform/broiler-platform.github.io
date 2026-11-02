@@ -297,7 +297,7 @@ appears on both homepages; German and English app pages use the same assets.
 
 The old `app-browser.svg`, `app-writer.svg`, `app-plate.svg` and `app-cells.svg` remain available, but are no longer used by these pages.
 
-The site header and default site icon use the Broiler Browser icon rather than the former orange mark.
+The site favicon, header, footer and default branding use the Broiler Browser icon (chicken at laptop) rather than the former orange mark.
 
 ## Colour and theme
 

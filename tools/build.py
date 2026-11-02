@@ -53,7 +53,7 @@ DEFAULT_OUT = ROOT / "_site"
 BASE_URL = "https://broiler-platform.github.io/"
 
 # Copied into the output verbatim, relative to the repository root.
-STATIC = ["assets", "robots.txt"]
+STATIC = ["assets", "robots.txt", "favicon.ico"]
 
 # Pages that exist for the server rather than for a reader, and so stay out of
 # the sitemap.
