@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       require_products:
-        description: Fail unless all three WebAssembly products have published producer releases.
+        description: Fail unless all four WebAssembly products have published producer releases.
         type: boolean
         default: false
   repository_dispatch:
@@ -59,7 +59,7 @@ jobs:
           python - <<'PY'
           import json, subprocess
           for row in json.load(open('_site/office-web-site.json'))['products']:
-              prefix={'launcher':'demo','writer':'writer','cell':'cell'}[row['product']]
+              prefix={'launcher':'demo','writer':'writer','cell':'cell','plate':'plate'}[row['product']]
               subprocess.run(['node','tools/web/smoke.mjs',f"_site/{prefix}/releases/{row['version']}",row['product'],f"evidence/{row['product']}.json"],check=True)
           PY
           node tools/web/site-smoke.mjs _site evidence/website.json

@@ -39,9 +39,9 @@ class WebProductsTests(unittest.TestCase):
             path=source/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(data)
         mapping={'imports':{'./main.js':'./main.hash.js'},'integrity':{'./main.js':'sha256-'+base64.b64encode(hashlib.sha256(entry).digest()).decode()}}
         (source/'index.html').write_text('<script type="importmap">'+json.dumps(mapping)+'</script><script type="module" src="main.hash.js"></script>')
-        prefix={'launcher':'launcher','writer':'writer','cell':'cells'}[product]
+        prefix={'launcher':'launcher','writer':'writer','cell':'cells','plate':'plate'}[product]
         tag=prefix+('-web-v' if legacy else '-v')+version
-        identity=dict(product=product,productName={'writer':'Writer','cell':'Cells','launcher':'Launcher'}[product],repository=repo,version=version,tag=tag,commit='a'*40,
+        identity=dict(product=product,productName={'writer':'Writer','cell':'Cells','launcher':'Launcher','plate':'Plate'}[product],repository=repo,version=version,tag=tag,commit='a'*40,
             sdk="10.0.403",workload="10.0.114/10.0.100",workloadSet=["10.0.403", ""],runtimeMode=web.artifact.MODE,publishTrimmed=True,runAotCompilation=False,dirty=False,verificationOnly=False)
         meta=web.artifact.pack(source,self.root/('release-'+str(release_id)),identity)
         archive=meta.parent/json.loads(meta.read_text())['archive']
@@ -53,7 +53,7 @@ class WebProductsTests(unittest.TestCase):
     def test_missing_producers_are_honest_and_strict_mode_fails(self):
         with patch.object(web,'releases',return_value=[]):
             ledger=web.resolve(self.out)
-            self.assertEqual(ledger['unavailable'],['cell','launcher','writer'])
+            self.assertEqual(ledger['unavailable'],['cell','launcher','plate','writer'])
             self.assertEqual(json.loads((self.out/'office-web.json').read_text())['status'],'unavailable')
             self.assertIn('noch nicht verfügbar',(self.out/'de/writer/index.html').read_text(encoding='utf-8'))
             web.verify(self.out)
@@ -89,9 +89,9 @@ class WebProductsTests(unittest.TestCase):
             data.update(new_data)
         with patch.object(web, 'releases', side_effect=lambda repo: fixtures[repo]), patch.object(web, 'asset_bytes', side_effect=lambda repo, a: data[a['id']]), patch.object(web, 'source_commit', return_value='a'*40):
             ledger = web.resolve(self.out, required=True)
-        self.assertEqual(len(ledger['history']), 6)
+        self.assertEqual(len(ledger['history']), 8)
         self.assertEqual({row['tag'] for row in ledger['products']},
-                         {'launcher-v0.1.0-preview.9', 'writer-v0.1.0-preview.9', 'cells-v0.1.0-preview.9'})
+                         {'launcher-v0.1.0-preview.9', 'writer-v0.1.0-preview.9', 'cells-v0.1.0-preview.9', 'plate-v0.1.0-preview.9'})
         web.verify(self.out)
 
     def test_damaged_current_release_never_silently_falls_back(self):
@@ -124,7 +124,7 @@ class WebProductsTests(unittest.TestCase):
             ledger=web.resolve(self.out,required=True)
         catalog=json.loads((self.out/'office-web.json').read_text())
         self.assertEqual(catalog['status'],'approved')
-        self.assertEqual({p['id'] for p in catalog['products']},{'writer','cell'})
+        self.assertEqual({p['id'] for p in catalog['products']},{'writer','cell','plate'})
         self.assertEqual(catalog['products'][0]['url'],'https://broiler-platform.github.io/writer/releases/0.1.0-preview.1/')
         self.assertTrue(all(p['entryAvailable'] for p in ledger['products']))
         web.verify(self.out)

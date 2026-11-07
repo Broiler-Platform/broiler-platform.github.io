@@ -36,9 +36,9 @@ for(const [name,engine] of Object.entries({chromium,firefox,webkit})) {
         page.on('pageerror',error=>errors.push(String(error)));
         page.on('console',message=>{if(message.type()==='error')errors.push(message.text()+' '+JSON.stringify(message.location()));});
         await page.goto('https://broiler-platform.github.io/',{waitUntil:'domcontentloaded'});
-        for(const path of ['demo','writer','cell'])assert.ok(await page.locator(`a[href="/${path}/"]`).count());
+        for(const path of ['demo','writer','cell','plate'])assert.ok(await page.locator(`a[href="/${path}/"]`).count());
         if(name==='chromium')await page.screenshot({path:reportFile+'.desktop.png'});
-        for(const [product,prefix]of [['launcher','demo'],['writer','writer'],['cell','cell']]) {
+        for(const [product,prefix]of [['launcher','demo'],['writer','writer'],['cell','cell'],['plate','plate']]) {
             await page.goto(`https://broiler-platform.github.io/${prefix}/`,{waitUntil:'domcontentloaded'});
             const row=ledger.products.find(r=>r.product===product);
             if(!row || row.entryAvailable===false) {assert.ok((await page.locator('main').textContent()).includes('not available yet'));continue;}
@@ -50,7 +50,7 @@ for(const [name,engine] of Object.entries({chromium,firefox,webkit})) {
                     const link=page.locator(`[data-product="${editor.product}"]`);
                     assert.equal(await link.getAttribute('href'),editor.entryUrl);
                     await link.click({noWaitAfter:true});await page.waitForURL(editor.entryUrl,{waitUntil:'domcontentloaded'});
-                    await page.waitForFunction(id=>document.getElementById(id+'-status')?.hidden,editor.product==='cell'?'cells':'writer');
+                    await page.waitForFunction(id=>document.getElementById(id+'-status')?.hidden,editor.product==='cell'?'cells':editor.product==='plate'?'plate':'writer');
                     await page.waitForLoadState('networkidle');
                     await returnToOffice(page);
                     await page.waitForURL(row.entryUrl,{waitUntil:'domcontentloaded'});
@@ -58,7 +58,7 @@ for(const [name,engine] of Object.entries({chromium,firefox,webkit})) {
                     await page.waitForLoadState('networkidle');
                 }
             } else {
-                await page.waitForFunction(id=>document.getElementById(id+'-status')?.hidden,product==='cell'?'cells':'writer');
+                await page.waitForFunction(id=>document.getElementById(id+'-status')?.hidden,product==='cell'?'cells':product==='plate'?'plate':'writer');
                 await page.waitForLoadState('networkidle');
                 assert.equal(await page.locator('.office-nav > a').getAttribute('href'),'/demo/');
             }

@@ -12,19 +12,20 @@ The website also hosts the independently published WebAssembly products:
 
 | Entry | Intended short-domain forwarding |
 | --- | --- |
-| <https://broiler-platform.github.io/demo/> | `https://demo.broiler.app/` â†’ this URL |
-| <https://broiler-platform.github.io/writer/> | `https://writer.broiler.app/` â†’ this URL |
-| <https://broiler-platform.github.io/cell/> | `https://cell.broiler.app/` â†’ this URL |
+| <https://broiler-platform.github.io/demo/> | `https://demo.broiler.app/` → this URL |
+| <https://broiler-platform.github.io/writer/> | `https://writer.broiler.app/` → this URL |
+| <https://broiler-platform.github.io/cell/> | `https://cell.broiler.app/` → this URL |
+| <https://broiler-platform.github.io/plate/> | `https://plate.broiler.app/` → this URL |
 
-These are real directories, so GitHub Pages normalizes `/demo`, `/writer` and
-`/cell` to their trailing-slash forms. The home and applications pages link to
-all three. Before a product has a published web release, its entry explains
+These are real directories, so GitHub Pages normalizes `/demo`, `/writer`, `/cell` and
+`/plate` to their trailing-slash forms. The home and applications pages link to
+all four. Before a product has a published web release, its entry explains
 that the preview is not available yet. The Office entry activates once all
-three products exist; Writer and Cell can activate independently.
+four products exist; Writer, Cell and Plate can activate independently.
 
 The **Site** workflow resolves current public WebAssembly releases on every
 publication. It scans the public releases in `Broiler-Platform/Broiler`,
-`Broiler-Platform/Broiler.Writer` and `Broiler-Platform/Broiler.Cells` for a
+`Broiler-Platform/Broiler.Writer`, `Broiler-Platform/Broiler.Cells` and `Broiler-Platform/Broiler.Plate` for a
 `.web-artifact.json` descriptor. Drafts and desktop-only releases are excluded;
 prereleases are included because these browser editions are previews. The
 newest `published_at` wins for each product, independently of native release
@@ -33,7 +34,7 @@ without a website-source change. An external release integration may also send
 the `web-release-published` repository-dispatch event; no cross-repository token
 is required for the normal website publication path.
 
-The default product **Publish** workflows are supported: `writer-v…`, `cells-v…`
+The default product **Publish** workflows are supported: `writer-v…`, `cells-v…`, `plate-v…`
 and `launcher-v…` releases are discovered by their `.web-artifact.json` assets,
 just like legacy `*-web-v…` releases. Discovery does not watch workflow names or
 require the removed web-only entry points. Draft releases remain excluded even

@@ -21,7 +21,8 @@ artifact = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(artifact)
 PRODUCTS = {"launcher": ("Broiler-Platform/Broiler", "demo", "Broiler Office"),
             "writer": ("Broiler-Platform/Broiler.Writer", "writer", "Broiler Writer"),
-            "cell": ("Broiler-Platform/Broiler.Cells", "cell", "Broiler Cell")}
+            "cell": ("Broiler-Platform/Broiler.Cells", "cell", "Broiler Cell"),
+            "plate": ("Broiler-Platform/Broiler.Plate", "plate", "Broiler Plate")}
 VERSION = re.compile(r"[0-9]+\.[0-9]+\.[0-9]+(?:-[A-Za-z0-9.-]+)?\Z")
 
 
@@ -130,9 +131,9 @@ def resolve(out, required=False):
                 continue
         for product, row in selected.items():
             repo, prefix, title = PRODUCTS[product]
-            row["entryAvailable"] = product != "launcher" or len(selected) == 3
+            row["entryAvailable"] = product != "launcher" or len(selected) == len(PRODUCTS)
             if not row["entryAvailable"]:
-                print("Office entry awaits all three published web products")
+                print("Office entry awaits all four published web products")
                 continue
             target = f'./releases/{row["version"]}/'
             body = f'<section class="section"><div class="wrap"><h1>{title}</h1><p>Opening browser preview {html.escape(row["version"])}…</p><p><a class="btn btn-primary" href="{target}">Open {title}</a></p></div></section>'
@@ -150,10 +151,10 @@ def resolve(out, required=False):
             german_entry.write_text(german_page, encoding="utf-8")
             print(title + ": " + row["version"] + " (" + row["tag"] + ")")
     ledger = {"schemaVersion": 1, "artifactKind": "broiler-website-web-products", "selectionPolicy": "newest-published-web-release-including-prereleases",
-              "products": list(selected.values()), "history": history, "unavailable": sorted(set(PRODUCTS) - set(selected)), "disabledProducts": ["browser", "plate"]}
-    catalog = {"schemaVersion": 1, "status": "approved" if len(selected) == 3 else "unavailable", "channel": "preview",
+              "products": list(selected.values()), "history": history, "unavailable": sorted(set(PRODUCTS) - set(selected)), "disabledProducts": ["browser"]}
+    catalog = {"schemaVersion": 1, "status": "approved" if len(selected) == len(PRODUCTS) else "unavailable", "channel": "preview",
                "catalogVersion": "website-" + "-".join(str(selected[p]["releaseId"]) for p in sorted(selected)),
-               "products": [{"id": p, "version": selected[p]["version"], "url": selected[p]["entryUrl"]} for p in ("writer", "cell") if p in selected]}
+               "products": [{"id": p, "version": selected[p]["version"], "url": selected[p]["entryUrl"]} for p in ("writer", "cell", "plate") if p in selected]}
     # C# catalog labels are bounded; numeric GitHub IDs keep this label compact.
     for name, value in (("office-web-site.json", ledger), ("office-web.json", catalog)):
         (out / name).write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
@@ -181,7 +182,7 @@ def verify(out):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=build.DEFAULT_OUT)
-    parser.add_argument("--require-products", action="store_true", help="Fail until all three published web producers exist")
+    parser.add_argument("--require-products", action="store_true", help="Fail until all four published web producers exist")
     parser.add_argument("--verify-only", action="store_true")
     args = parser.parse_args()
     if not args.verify_only:
